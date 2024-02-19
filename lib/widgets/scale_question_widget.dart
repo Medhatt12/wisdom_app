@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:wisdom_app/controllers/questionnaire_controller.dart';
 import 'package:wisdom_app/models/question.dart';
 
 class ScaleQuestionWidget extends StatefulWidget {
@@ -29,9 +31,9 @@ class _ScaleQuestionWidgetState extends State<ScaleQuestionWidget> {
             setState(() {
               _sliderValue = value;
             });
-          },
-          onChangeEnd: (value) {
-            // Handle scale selection
+            // Call setUserAnswer to store the selected option in the QuestionnaireController
+            Provider.of<QuestionnaireController>(context, listen: false)
+                .setUserAnswer(widget.question.id, _sliderValue);
           },
         ),
         Row(

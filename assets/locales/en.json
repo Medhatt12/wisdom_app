@@ -1,21 +1,32 @@
 {
-    "questions": [
-      {
-        "id": "1",
-        "text": "What is your favorite color?",
-        "type": "MCQ",
-        "options": ["Red", "Blue", "Green", "Yellow"]
-      },
-      {
-        "id": "2",
-        "text": "How satisfied are you with our service?",
-        "type": "SCALE"
-      },
-      {
-        "id": "3",
-        "text": "What is your name?",
-        "type": "TEXT_FIELD"
-      }
-    ]
-  }
-  
+  "loginScreenTitle": "Login",
+  "emailLabel": "Email",
+  "passwordLabel": "Password",
+  "loginButtonText": "Login",
+  "registerButtonText": "Register",
+  "questionnaireScreenTitle": "Questionnaire",
+  "startQuestionnaireButtonText": "Start Questionnaire",
+  "questions": [
+    {
+      "id": "1",
+      "text": "What is your favorite color?",
+      "type": "MCQ",
+      "options": [
+        "Red",
+        "Blue",
+        "Green",
+        "Yellow"
+      ]
+    },
+    {
+      "id": "2",
+      "text": "How satisfied are you with our service?",
+      "type": "SCALE"
+    },
+    {
+      "id": "3",
+      "text": "What is your name?",
+      "type": "TEXT_FIELD"
+    }
+  ]
+}

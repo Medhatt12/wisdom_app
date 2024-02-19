@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Sign in with email and password
   Future<User?> signInWithEmailAndPassword(
@@ -30,6 +32,15 @@ class AuthService {
     } catch (e) {
       print('Error registering user: $e');
       return null;
+    }
+  }
+
+  Future<void> storeUserAnswers(
+      String userId, Map<String, dynamic> answers) async {
+    try {
+      await _firestore.collection('user_answers').doc(userId).set(answers);
+    } catch (e) {
+      print('Error storing user answers: $e');
     }
   }
 
