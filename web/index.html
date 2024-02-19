@@ -40,6 +40,29 @@
   <script src="flutter.js" defer></script>
 </head>
 <body>
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+  
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyDdAXblVu0F0TOMkVkCIGP4-KwloNqkVhI",
+      authDomain: "wisdom-app-62f23.firebaseapp.com",
+      projectId: "wisdom-app-62f23",
+      storageBucket: "wisdom-app-62f23.appspot.com",
+      messagingSenderId: "672555705798",
+      appId: "1:672555705798:web:6346c22c1fe142b4ebfec7",
+      measurementId: "G-JVF0PZQ18P"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+  </script>
   <script>
     window.addEventListener('load', function(ev) {
       // Download main.dart.js
