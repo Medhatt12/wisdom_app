@@ -5,7 +5,7 @@ import 'package:wisdom_app/controllers/questionnaire_controller.dart';
 import 'package:wisdom_app/controllers/theme_provider.dart';
 import 'package:wisdom_app/views/questionnaire_view.dart';
 import 'package:wisdom_app/services/auth_service.dart';
-import 'package:wisdom_app/services/localization_service.dart'; // Import your localization service
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -54,28 +54,14 @@ class HomePage extends StatelessWidget {
       ),
       body: Center(
         child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => QuestionnaireView()),
-            );
-          },
-          child: FutureBuilder(
-            future: LocalizationService.loadLocalizedJson(
-                languageProvider.locale.languageCode),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator();
-              }
-              if (snapshot.hasError) {
-                return Text('Error loading data');
-              }
-              final data = snapshot.data as Map<String, dynamic>;
-              final startButtonText = data['startQuestionnaireButtonText'];
-              return Text(startButtonText);
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => QuestionnaireView()),
+              );
             },
-          ),
-        ),
+            child: Text(
+                AppLocalizations.of(context)!.startQuestionnaireButtonText)),
       ),
     );
   }

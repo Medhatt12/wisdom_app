@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http; // Import the http package
 import 'package:wisdom_app/models/question.dart';
 
 class QuestionnaireController with ChangeNotifier {
@@ -10,13 +10,28 @@ class QuestionnaireController with ChangeNotifier {
   List<Question> get questions => _questions;
 
   Future<void> loadQuestions(String languageCode) async {
-    String jsonString =
-        await rootBundle.loadString('locales/$languageCode.json');
-    final jsonMap = json.decode(jsonString);
-    _questions = (jsonMap['questions'] as List)
-        .map((questionJson) => Question.fromJson(questionJson))
-        .toList();
-    notifyListeners();
+    try {
+      // Make HTTP GET request to fetch JSON data
+      http.Response response =
+          await http.get(Uri.parse('https://medhat.tech/$languageCode.json'));
+
+      // Check if the request was successful (status code 200)
+      if (response.statusCode == 200) {
+        // Parse JSON response
+        String jsonString = response.body;
+        final jsonMap = json.decode(jsonString);
+        _questions = (jsonMap['questions'] as List)
+            .map((questionJson) => Question.fromJson(questionJson))
+            .toList();
+        notifyListeners();
+      } else {
+        // Handle other status codes
+        print('Failed to load questions: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle any errors that occur during the HTTP request
+      print('Error loading questions: $e');
+    }
   }
 
   // Add methods for handling user responses

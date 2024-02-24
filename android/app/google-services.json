@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "672555705798",
+    "project_id": "wisdom-app-62f23",
+    "storage_bucket": "wisdom-app-62f23.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:672555705798:android:a91ee9e8ad52dc87ebfec7",
+        "android_client_info": {
+          "package_name": "com.example.wisdom_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9F1UQ1mTJ0KK9FhZUJEWNmiM2tflGh64"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,30 @@
+{
+  "loginScreenTitle": "Login",
+  "@loginScreenTitle":{
+    "description":"The login text in login screen"
+  },
+  "emailLabel": "Email",
+  "@emailLabel":{
+    "description":"The email text in login screen"
+  },
+  "passwordLabel": "Password",
+  "@passwordLabel":{
+    "description":"The password text in login screen"
+  },
+  "loginButtonText": "Login",
+  "@loginButtonText":{
+    "description":"The login button text in login screen"
+  },
+  "registerButtonText": "Register",
+  "@registerButtonText":{
+    "description":"The register text in login screen"
+  },
+  "questionnaireScreenTitle": "Questionnaire",
+  "@questionnaireScreenTitle":{
+    "description":"The questionnaire text in login screen"
+  },
+  "startQuestionnaireButtonText": "Start Questionnaire",
+  "@startQuestionnaireButtonText":{
+    "description":"The start questionnaire text in login screen"
+  }
+}

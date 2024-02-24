@@ -5,7 +5,7 @@ import 'package:wisdom_app/controllers/language_provider.dart';
 import 'package:wisdom_app/controllers/questionnaire_controller.dart';
 import 'package:wisdom_app/controllers/theme_provider.dart';
 import 'package:wisdom_app/services/auth_service.dart';
-import 'package:wisdom_app/services/localization_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginPage extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
@@ -40,7 +40,7 @@ class LoginPage extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.brightness_6),
             onPressed: () {
-              //languageProvider.toggleLanguage(); // Toggle language
+              languageProvider.toggleLanguage(); // Toggle language
               Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
             },
           ),
@@ -64,90 +64,61 @@ class LoginPage extends StatelessWidget {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () async {
-                  String email = _emailController.text.trim();
-                  String password = _passwordController.text.trim();
-                  AuthService authService =
-                      Provider.of<AuthService>(context, listen: false);
-                  User? user = await authService.signInWithEmailAndPassword(
-                      email, password);
-                  if (user != null) {
-                    Navigator.pushReplacementNamed(context, '/home');
-                  } else {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: Text('Error'),
-                        content: Text('Invalid email or password.'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: Text('OK'),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-                },
-                child: FutureBuilder(
-                  future: LocalizationService.loadLocalizedJson(
-                      languageProvider.locale.languageCode),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
+                  onPressed: () async {
+                    String email = _emailController.text.trim();
+                    String password = _passwordController.text.trim();
+                    AuthService authService =
+                        Provider.of<AuthService>(context, listen: false);
+                    User? user = await authService.signInWithEmailAndPassword(
+                        email, password);
+                    if (user != null) {
+                      Navigator.pushReplacementNamed(context, '/home');
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Error'),
+                          content: Text('Invalid email or password.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text('OK'),
+                            ),
+                          ],
+                        ),
+                      );
                     }
-                    if (snapshot.hasError) {
-                      return Text('Error loading data');
-                    }
-                    final data = snapshot.data as Map<String, dynamic>;
-                    final startButtonText = data['loginButtonText'];
-                    return Text(startButtonText);
                   },
-                ),
-              ),
+                  child: Text(AppLocalizations.of(context)!.loginButtonText)),
               SizedBox(height: 20),
               TextButton(
-                onPressed: () async {
-                  String email = _emailController.text.trim();
-                  String password = _passwordController.text.trim();
-                  AuthService authService =
-                      Provider.of<AuthService>(context, listen: false);
-                  User? user = await authService.registerWithEmailAndPassword(
-                      email, password);
-                  if (user != null) {
-                    Navigator.pushReplacementNamed(context, '/home');
-                  } else {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: Text('Error'),
-                        content: Text('Failed to register user.'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: Text('OK'),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-                },
-                child: FutureBuilder(
-                  future: LocalizationService.loadLocalizedJson(
-                      languageProvider.locale.languageCode),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
+                  onPressed: () async {
+                    String email = _emailController.text.trim();
+                    String password = _passwordController.text.trim();
+                    AuthService authService =
+                        Provider.of<AuthService>(context, listen: false);
+                    User? user = await authService.registerWithEmailAndPassword(
+                        email, password);
+                    if (user != null) {
+                      Navigator.pushReplacementNamed(context, '/home');
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Error'),
+                          content: Text('Failed to register user.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text('OK'),
+                            ),
+                          ],
+                        ),
+                      );
                     }
-                    if (snapshot.hasError) {
-                      return Text('Error loading data');
-                    }
-                    final data = snapshot.data as Map<String, dynamic>;
-                    final startButtonText = data['registerButtonText'];
-                    return Text(startButtonText);
                   },
-                ),
-              ),
+                  child:
+                      Text(AppLocalizations.of(context)!.registerButtonText)),
             ],
           ),
         ),

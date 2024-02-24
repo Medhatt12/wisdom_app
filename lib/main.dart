@@ -4,27 +4,24 @@ import 'package:provider/provider.dart';
 import 'package:wisdom_app/controllers/language_provider.dart';
 import 'package:wisdom_app/controllers/questionnaire_controller.dart';
 import 'package:wisdom_app/controllers/theme_provider.dart';
+import 'package:wisdom_app/l10n/l10n.dart';
 import 'package:wisdom_app/services/auth_service.dart';
 import 'package:wisdom_app/views/home_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:wisdom_app/views/login_page.dart';
+import 'firebase_options.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //await Firebase.initializeApp();
-  FirebaseApp app = await Firebase.initializeApp(
-    options: FirebaseOptions(
-      apiKey: "AIzaSyDdAXblVu0F0TOMkVkCIGP4-KwloNqkVhI",
-      appId: "1:672555705798:web:6346c22c1fe142b4ebfec7",
-      messagingSenderId: "672555705798",
-      projectId: "wisdom-app-62f23",
-    ),
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
   );
   final languageProvider = LanguageProvider();
   final questionnaireController = QuestionnaireController();
   languageProvider.toggleLanguage(); // Set default language to English
-  await questionnaireController
-      .loadQuestions(languageProvider.locale.languageCode);
+  // await questionnaireController
+  //     .loadQuestions(languageProvider.locale.languageCode);
   runApp(
     MultiProvider(
       providers: [
@@ -33,12 +30,14 @@ void main() async {
         ChangeNotifierProvider.value(value: questionnaireController),
         Provider<AuthService>(create: (_) => AuthService()),
       ],
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(
@@ -52,15 +51,16 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: themeProvider.themeData,
           locale: Provider.of<LanguageProvider>(context).locale,
-          localizationsDelegates: [
+          localizationsDelegates: const [
+            AppLocalizations.delegate, // Add this line
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: [
-            const Locale('en', 'US'),
-            const Locale('de', 'DE'),
-          ],
+            Locale('en'), // English
+            Locale('de'), // Deutsch
+          ], // Spanish,
           home: HomePage(),
         );
       },
