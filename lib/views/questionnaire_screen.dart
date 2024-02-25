@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wisdom_app/controllers/language_provider.dart';
@@ -7,7 +9,7 @@ import 'package:wisdom_app/widgets/mcq_question_widget.dart';
 import 'package:wisdom_app/widgets/scale_question_widget.dart';
 import 'package:wisdom_app/widgets/text_field_question_widget.dart';
 
-class QuestionnaireView extends StatelessWidget {
+class QuestionnaireScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final questionnaireController =
@@ -65,8 +67,11 @@ class QuestionnaireView extends StatelessWidget {
 
     // Save user's answers to Firestore
     try {
-      // Implement saving user's answers to Firestore
-      print('User Answers: $userAnswers');
+      await FirebaseFirestore.instance
+          .collection('user_answers')
+          .doc(FirebaseAuth.instance.currentUser?.uid)
+          .set(userAnswers);
+      print('User Answers saved to Firestore');
     } catch (e) {
       print('Error saving user answers: $e');
       // Handle the error, e.g., show a snackbar to the user
