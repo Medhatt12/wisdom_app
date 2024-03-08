@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:wisdom_app/controllers/language_provider.dart';
 import 'package:wisdom_app/controllers/questionnaire_controller.dart';
 import 'package:wisdom_app/controllers/theme_provider.dart';
-import 'package:wisdom_app/l10n/l10n.dart';
 import 'package:wisdom_app/services/auth_service.dart';
 import 'package:wisdom_app/views/avatar_customization_screen.dart';
 import 'package:wisdom_app/views/caterpillar_game_screen.dart';
@@ -13,6 +12,7 @@ import 'package:wisdom_app/views/home_screen.dart';
 import 'package:wisdom_app/views/login_screen.dart';
 import 'package:wisdom_app/views/settings_screen.dart'; // Import SettingsScreen
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:wisdom_app/views/splash_screen.dart';
 import 'firebase_options.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -46,8 +46,9 @@ class MyApp extends StatelessWidget {
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, _) {
         return MaterialApp(
-          initialRoute: '/login',
+          initialRoute: '',
           routes: {
+            '': (context) => SplashScreen(),
             '/login': (context) => LoginPage(),
             '/home': (context) => MainScreen(),
             '/avatar': (context) => AvatarCustomizationScreen(),

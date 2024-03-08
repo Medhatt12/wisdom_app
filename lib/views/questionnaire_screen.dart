@@ -9,7 +9,35 @@ import 'package:wisdom_app/widgets/mcq_question_widget.dart';
 import 'package:wisdom_app/widgets/scale_question_widget.dart';
 import 'package:wisdom_app/widgets/text_field_question_widget.dart';
 
-class QuestionnaireScreen extends StatelessWidget {
+class QuestionnaireScreen extends StatefulWidget {
+  @override
+  _QuestionnaireScreenState createState() => _QuestionnaireScreenState();
+}
+
+class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
+  bool _isLoading = true; // State variable to track loading
+
+  @override
+  void initState() {
+    super.initState();
+    _loadQuestions();
+  }
+
+  Future<void> _loadQuestions() async {
+    try {
+      await Provider.of<QuestionnaireController>(context, listen: false)
+          .loadQuestions(Provider.of<LanguageProvider>(context, listen: false)
+              .locale
+              .languageCode);
+      setState(() {
+        _isLoading = false; // Set loading to false when questions are loaded
+      });
+    } catch (e) {
+      print('Error loading questions: $e');
+      // Handle error loading questions
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final questionnaireController =
@@ -20,16 +48,18 @@ class QuestionnaireScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Wisdom App'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: ListView.builder(
-          itemCount: questionnaireController.questions.length,
-          itemBuilder: (context, index) {
-            final question = questionnaireController.questions[index];
-            return _buildQuestionWidget(context, question);
-          },
-        ),
-      ),
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator()) // Show loader if loading
+          : Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: ListView.builder(
+                itemCount: questionnaireController.questions.length,
+                itemBuilder: (context, index) {
+                  final question = questionnaireController.questions[index];
+                  return _buildQuestionWidget(context, question);
+                },
+              ),
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _saveUserAnswers(context);
