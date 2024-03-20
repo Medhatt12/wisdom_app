@@ -4,6 +4,8 @@ import 'package:wisdom_app/views/caterpillar_game_screen.dart';
 import 'package:wisdom_app/views/home_screen.dart';
 import 'package:wisdom_app/views/login_screen.dart';
 import 'package:wisdom_app/views/settings_screen.dart';
+import 'package:wisdom_app/views/tasks/mindfulness_task_screen.dart';
+import 'package:wisdom_app/views/tasks/similarities_and_differences_screen.dart';
 
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -18,6 +20,12 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => CaterpillarGameScreen());
       case '/settings':
         return MaterialPageRoute(builder: (_) => SettingsScreen());
+      case '/similarities-and-differences':
+        return MaterialPageRoute(
+            builder: (_) => SimilaritiesAndDifferencesPage());
+      case '/mindfulness':
+        return MaterialPageRoute(builder: (_) => MindfulnessScreen());
+
       default:
         return MaterialPageRoute(builder: (_) => Scaffold());
     }

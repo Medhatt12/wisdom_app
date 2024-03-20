@@ -8,6 +8,9 @@ import 'package:wisdom_app/controllers/theme_provider.dart';
 import 'package:wisdom_app/views/questionnaire_screen.dart';
 import 'package:wisdom_app/services/auth_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:wisdom_app/views/tasks/drawing_game_screen.dart';
+import 'package:wisdom_app/views/tasks/mindfulness_task_screen.dart';
+import 'package:wisdom_app/views/tasks/similarities_and_differences_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -49,6 +52,13 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => MindfulnessScreen()),
+                    );
+                  },
                   child: Container(
                     decoration: BoxDecoration(
                       color: themeProvider.themeData.colorScheme.secondary,
@@ -56,7 +66,7 @@ class HomeScreen extends StatelessWidget {
                           10), // Adjust the value as needed
                     ),
                     padding: const EdgeInsets.all(8),
-                    child: const Text('Daily Tasks'),
+                    child: const Text('Painting task'),
                   ),
                 ),
                 GestureDetector(
