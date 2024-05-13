@@ -1,5 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:wisdom_app/views/tasks/drawing_game_screen.dart';
 import 'package:wisdom_app/widgets/player_widget.dart';
 
 class MindfulnessScreen extends StatefulWidget {
@@ -19,10 +20,18 @@ class _MindfulnessScreenState extends State<MindfulnessScreen> {
     audioPlayer.setReleaseMode(ReleaseMode.stop);
 
     // Start playing the audio when the screen is loaded
-    WidgetsBinding.instance!.addPostFrameCallback((_) async {
-      await audioPlayer.setSource(AssetSource('assets/audio/music.mp3'));
-      await audioPlayer.resume();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await audioPlayer.setSourceAsset('audio/music.mp3',
+          mimeType: 'audio/mpeg');
+      audioPlayer.state = PlayerState.paused;
     });
+  }
+
+  @override
+  void dispose() {
+    // Stop the audio player when disposing of the screen
+    audioPlayer.dispose();
+    super.dispose();
   }
 
   @override
@@ -81,25 +90,20 @@ class _MindfulnessScreenState extends State<MindfulnessScreen> {
             SizedBox(height: 20),
             // Drawing Area (You can use a package like drawing_animation for this)
             // Replace the Container below with your drawing area widget
-            Container(
-              width: double.infinity,
-              height: 200,
-              color: Colors.grey.shade300,
-              child: Center(
-                child: Text('Drawing Area'),
-              ),
-            ),
-            SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Navigate to Summary Screen
+                // Stop the audio player
+                audioPlayer.stop();
+
+                // Navigate to DrawingGameScreen
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => SummaryScreen(selectedColor)),
+                    builder: (context) => DrawingPage(),
+                  ),
                 );
               },
-              child: Text('Continue to Summary'),
+              child: Text('Continue to Drawing'),
             ),
           ],
         ),

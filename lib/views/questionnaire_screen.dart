@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wisdom_app/controllers/language_provider.dart';
 import 'package:wisdom_app/controllers/questionnaire_controller.dart';
+import 'package:wisdom_app/main.dart';
 import 'package:wisdom_app/models/question.dart';
 import 'package:wisdom_app/widgets/mcq_question_widget.dart';
 import 'package:wisdom_app/widgets/scale_question_widget.dart';
@@ -63,6 +64,10 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _saveUserAnswers(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MainScreen()),
+          );
         },
         child: Icon(Icons.check),
       ),
@@ -95,12 +100,15 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
       return; // Exit function if no answers are available
     }
 
-    // Save user's answers to Firestore
     try {
+      // Save user's answers to Firestore only for the specified task
       await FirebaseFirestore.instance
           .collection('user_answers')
           .doc(FirebaseAuth.instance.currentUser?.uid)
-          .set(userAnswers);
+          .set({
+        "first_questionnaire":
+            userAnswers, // Save user answers for the specified task
+      });
       print('User Answers saved to Firestore');
     } catch (e) {
       print('Error saving user answers: $e');

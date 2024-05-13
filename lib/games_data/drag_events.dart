@@ -5,69 +5,49 @@ import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame/geometry.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 class DragEventsGame extends FlameGame {
+  final Color selectedColor;
+  final void Function(Color) changeColor; // Function to update the color
+
+  DragEventsGame(this.selectedColor, this.changeColor);
+
   @override
   Future<void> onLoad() async {
     addAll([
-      DragTarget(),
-      Star(
-        n: 5,
-        radius1: 40,
-        radius2: 20,
-        sharpness: 0.2,
-        color: const Color(0xffbae5ad),
-        position: Vector2(70, 70),
-      ),
-      Star(
-        n: 3,
-        radius1: 50,
-        radius2: 40,
-        sharpness: 0.3,
-        color: const Color(0xff6ecbe5),
-        position: Vector2(70, 160),
-      ),
-      Star(
-        n: 12,
-        radius1: 10,
-        radius2: 75,
-        sharpness: 1.3,
-        color: const Color(0xfff6df6a),
-        position: Vector2(70, 270),
-      ),
-      Star(
-        n: 10,
-        radius1: 20,
-        radius2: 17,
-        sharpness: 0.85,
-        color: const Color(0xfff82a4b),
-        position: Vector2(110, 110),
-      ),
-      Eraser(position: Vector2(50, 50))
+      DragTarget(selectedColor,
+          changeColor), // Pass selectedColor and changeColor function
     ]);
   }
 }
 
-/// This component is the pink-ish rectangle in the center of the game window.
-/// It uses the [DragCallbacks] mixin in order to receive drag events.
+// This component is the pink-ish rectangle in the center of the game window.
+// It uses the [DragCallbacks] mixin in order to receive drag events.
 class DragTarget extends PositionComponent with DragCallbacks {
-  DragTarget() : super(anchor: Anchor.center);
+  Color selectedColor;
+  final void Function(Color) changeColor; // Function to update the color
+
+  DragTarget(this.selectedColor, this.changeColor)
+      : super(size: Vector2.zero());
 
   final _rectPaint = Paint()..color = Colors.white;
 
-  /// We will store all current circles into this map, keyed by the `pointerId`
-  /// of the event that created the circle.
   final Map<int, Trail> _trails = {};
+  // Rest of the class...
+
+  void updateColor(Color color) {
+    selectedColor = color;
+    for (final trail in _trails.values) {
+      trail.color = color; // Update the color of existing trails
+    }
+  }
 
   @override
   void onGameResize(Vector2 size) {
     super.onGameResize(size);
-    this.size = size - Vector2(100, 75);
-    if (this.size.x < 100 || this.size.y < 100) {
-      this.size = size * 0.9;
-    }
-    position = size / 2;
+    this.size = size;
+    position = Vector2
+        .zero(); // Ensure the drawing area starts from the top-left corner
   }
 
   @override
@@ -78,7 +58,7 @@ class DragTarget extends PositionComponent with DragCallbacks {
   @override
   void onDragStart(DragStartEvent event) {
     super.onDragStart(event);
-    final trail = Trail(event.localPosition);
+    final trail = Trail(event.localPosition, selectedColor);
     _trails[event.pointerId] = trail;
     add(trail);
   }
@@ -101,60 +81,26 @@ class DragTarget extends PositionComponent with DragCallbacks {
   }
 }
 
-class Eraser extends PositionComponent with DragCallbacks {
-  final Paint _paint = Paint()..color = Colors.purple;
-  static const double _radius = 20.0;
-
-  Eraser({required Vector2 position}) {
-    this.position = position;
-    width = height = _radius * 2;
-  }
-
-  @override
-  bool containsLocalPoint(Vector2 point) {
-    final center = size / 2;
-    return (point - center).length2 <= _radius * _radius;
-  }
-
-  @override
-  void render(Canvas canvas) {
-    canvas.drawCircle(Offset(_radius, _radius), _radius, _paint);
-  }
-
-  @override
-  void onDragUpdate(DragUpdateEvent event) {
-    position += event.localDelta;
-  }
-
-  @override
-  void onDragStart(DragStartEvent event) {
-    // Implement as needed
-  }
-
-  @override
-  void onDragEnd(DragEndEvent event) {
-    // Implement as needed
-  }
-}
-
 class Trail extends Component {
-  Trail(Vector2 origin)
+  Trail(Vector2 origin, this.color)
       : _paths = [Path()..moveTo(origin.x, origin.y)],
         _opacities = [1],
-        _lastPoint = origin.clone(),
-        _color =
-            HSLColor.fromAHSL(1, random.nextDouble() * 360, 1, 0.8).toColor();
+        _lastPoint = origin.clone();
 
   final List<Path> _paths;
   final List<double> _opacities;
-  Color _color;
+  Color color;
   late final _linePaint = Paint()..style = PaintingStyle.stroke;
-  late final _circlePaint = Paint()..color = _color;
+  late final _circlePaint = Paint()..color = color;
   bool _released = false;
   final Vector2 _lastPoint;
 
   static final random = Random();
   static const lineWidth = 10.0;
+
+  void updateColor(Color newColor) {
+    color = newColor;
+  }
 
   @override
   void render(Canvas canvas) {
@@ -163,7 +109,7 @@ class Trail extends Component {
       final path = _paths[i];
       final opacity = _opacities[i];
       if (opacity > 0) {
-        _linePaint.color = _color.withOpacity(opacity);
+        _linePaint.color = color.withOpacity(opacity);
         _linePaint.strokeWidth = lineWidth * opacity;
         canvas.drawPath(path, _linePaint);
       }
@@ -194,7 +140,7 @@ class Trail extends Component {
 
   void cancel() {
     _released = true;
-    _color = const Color(0xFFFFFFFF);
+    //color = const Color(0xFFFFFFFF);
   }
 }
 

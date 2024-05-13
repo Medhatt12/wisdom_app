@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:wisdom_app/main.dart';
 
 class SimilaritiesAndDifferencesPage extends StatefulWidget {
   @override
@@ -40,11 +43,39 @@ class _SimilaritiesAndDifferencesPageState
     });
   }
 
+  void saveAnswersToFirestore() async {
+    try {
+      String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+      await FirebaseFirestore.instance
+          .collection('tasks_answers')
+          .doc(uid)
+          .set({
+        'SND': {
+          'similarities': similarities,
+          'differences': differences,
+          'learning': learning,
+        },
+      }, SetOptions(merge: true)); // Use merge option to merge new data
+      print('Answers saved to Firestore');
+    } catch (e) {
+      print('Error saving answers: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Characteristics'),
+        leading: GestureDetector(
+          child: Icon(Icons.arrow_back_ios),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => MainScreen()),
+            );
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -149,6 +180,18 @@ class _SimilaritiesAndDifferencesPageState
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        heroTag: null,
+        key: UniqueKey(),
+        onPressed: () async {
+          saveAnswersToFirestore();
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MainScreen()),
+          );
+        },
+        child: Icon(Icons.check),
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http; // Import the http package
 import 'package:wisdom_app/models/question.dart';
@@ -8,6 +9,31 @@ class QuestionnaireController with ChangeNotifier {
   List<Question> _questions = [];
   Map<String, dynamic> _userAnswers = {}; // Store user answers
   List<Question> get questions => _questions;
+
+  Future<Object?> getSharedAnswers(String code) async {
+    try {
+      // Retrieve shared answers from Firestore using the entered code
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('user_answers')
+          .doc(code)
+          .get();
+
+      if (snapshot.exists) {
+        // Extract and display shared answers from the snapshot
+        Object sharedAnswers = snapshot.data()!;
+        return sharedAnswers;
+        // Display sharedAnswers in your application
+      } else {
+        print('Shared answers not found');
+        // Display a message in your application indicating that no shared answers were found
+        return null;
+      }
+    } catch (e) {
+      print('Error getting shared answers: $e');
+      // Handle the error, e.g., show a snackbar to the user
+    }
+    return null;
+  }
 
   Future<void> loadQuestions(String languageCode) async {
     try {
@@ -32,6 +58,11 @@ class QuestionnaireController with ChangeNotifier {
       // Handle any errors that occur during the HTTP request
       print('Error loading questions: $e');
     }
+  }
+
+  void setUserAnswersByTask(String taskTitle, Map<String, dynamic> answers) {
+    _userAnswers[taskTitle] = answers;
+    notifyListeners();
   }
 
   // Add methods for handling user responses

@@ -100,7 +100,7 @@ class LoginPage extends StatelessWidget {
                     User? user = await authService.registerWithEmailAndPassword(
                         email, password);
                     if (user != null) {
-                      Navigator.pushReplacementNamed(context, '/home');
+                      Navigator.pushReplacementNamed(context, '/avatar');
                     } else {
                       showDialog(
                         context: context,

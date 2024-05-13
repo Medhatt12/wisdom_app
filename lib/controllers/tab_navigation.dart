@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:wisdom_app/controllers/theme_provider.dart';
 import 'package:wisdom_app/views/home_screen.dart';
-import 'package:wisdom_app/views/avatar_customization_screen.dart';
-import 'package:wisdom_app/views/caterpillar_game_screen.dart';
 import 'package:wisdom_app/views/settings_screen.dart';
 
 class TabNavigation extends StatefulWidget {
@@ -14,29 +14,24 @@ class _TabNavigationState extends State<TabNavigation> {
 
   final List<Widget> _screens = [
     HomeScreen(),
-    AvatarCustomizationScreen(),
-    CaterpillarGameScreen(),
+    //AvatarCustomizationScreen(),
+    //CaterpillarGameScreen(),
     SettingsScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return Scaffold(
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
+        selectedItemColor: themeProvider.themeData.colorScheme.primaryContainer,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Create Avatar',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bathtub_rounded),
-            label: 'Caterpillar',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),

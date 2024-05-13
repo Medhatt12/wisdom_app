@@ -46,6 +46,12 @@ dependencies:
   intl: any
   flame: ^1.16.0
   audioplayers: ^6.0.0
+  image_gallery_saver: ^2.0.3
+  random_avatar: ^0.0.8
+  fluttermoji: ^1.0.2
+  flutter_svg: ^2.0.10+1
+  badges: ^3.1.2
+  mailer: ^6.1.0
   
 dev_dependencies:
   flutter_test:
@@ -73,6 +79,9 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
+    - assets/audio/
+    - assets/images/
+    - assets/images/wise-owl.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
