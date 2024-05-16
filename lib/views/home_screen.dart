@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,6 +14,7 @@ import 'package:wisdom_app/views/tasks/gratefulness_task.dart';
 import 'package:wisdom_app/views/tasks/questions_task.dart';
 import 'package:wisdom_app/views/tasks/similarities_and_differences_screen.dart';
 import 'package:wisdom_app/views/tasks/values.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../widgets/grid_item.dart';
 import '../views/tasks/mindfulness_task_screen.dart'; // Import MindfulnessScreen
@@ -30,21 +32,28 @@ class _HomeScreenState extends State<HomeScreen> {
   late bool _hasPartner = false;
 
   late List<TaskItem> _dailyTasks;
+  int tasksFinished = 0;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
     _dailyTasks = [
       TaskItem(
-        title: 'Mindfullness',
+        title: 'Mindfulness',
         icon: Icons.self_improvement,
         route: MindfulnessScreen(), // Add route to MindfulnessScreen
       ),
       TaskItem(
-        title: 'Similarities and differnces',
+        title: 'Similarities and differences',
         icon: Icons.compare_arrows,
         route:
             SimilaritiesAndDifferencesPage(), // Add route to MindfulnessScreen
+      ),
+      TaskItem(
+        title: 'Questions',
+        icon: Icons.question_answer,
+        route: QuestionsTaskScreen(), // Add route to MindfulnessScreen
       ),
       TaskItem(
         title: 'Values',
@@ -60,21 +69,30 @@ class _HomeScreenState extends State<HomeScreen> {
         title: 'A day in the life',
         icon: Icons.directions_walk,
         route: ADayInTheLifeScreen(), // Add route to MindfulnessScreen
-      ),
-      TaskItem(
-        title: 'Questions',
-        icon: Icons.question_answer,
-        route: QuestionsTaskScreen(), // Add route to MindfulnessScreen
-      ),
+      )
     ];
     checkUserStatus();
   }
 
   Future<void> checkUserStatus() async {
+    await fetchUserData();
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  Future<void> fetchUserData() async {
     _isNewUser = !(await hasCompletedQuestionnaire());
     _hasCompletedQuestionnaire = await hasCompletedQuestionnaire();
     _hasPartner = await hasPartner();
-    setState(() {});
+
+    String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    DocumentSnapshot snapshot =
+        await FirebaseFirestore.instance.collection('user_data').doc(uid).get();
+
+    Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+    tasksFinished = data['tasks_finished'] ?? 0;
+    print('Tasks finished: $tasksFinished');
   }
 
   Future<bool> hasCompletedQuestionnaire() async {
@@ -100,136 +118,217 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context, themeProvider, _) {
         return SafeArea(
           child: Scaffold(
-            body: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(18.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        FutureBuilder<String?>(
-                          future: getGreeting(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return CircularProgressIndicator();
-                            } else if (snapshot.hasError) {
-                              return Text('Error: ${snapshot.error}');
-                            } else {
-                              return Text(
-                                snapshot.data ?? '',
-                                style: const TextStyle(fontSize: 20),
-                              );
-                            }
-                          },
-                        ),
-                        const SizedBox(width: 10),
-                        SVGImageWidget(),
-                      ],
-                    ),
-                  ),
-                  GridItem(
-                    text: AppLocalizations.of(context)!
-                        .startQuestionnaireButtonText,
-                    // backgroundColor:
-                    //     themeProvider.themeData.colorScheme.secondary,
-                    enabled: _isNewUser,
-                    onTap: _isNewUser
-                        ? () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => QuestionnaireScreen(),
-                              ),
-                            );
-                          }
-                        : null,
-                    icon: Icons.assignment,
-                  ),
-                  SizedBox(
-                    height: 200.0,
-                    child: Container(
-                      width: MediaQuery.of(context)
-                          .size
-                          .width, // Use full width of the screen
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: _dailyTasks.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: TaskGridItem(
-                              title: _dailyTasks[index].title,
-                              icon: _dailyTasks[index].icon,
-                              backgroundColor: themeProvider
-                                  .themeData.colorScheme.primaryContainer,
-                              enabled: !_isNewUser,
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        _dailyTasks[index].route,
-                                  ),
-                                );
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                  GridItem(
-                    text: "Compare answers with your partner",
-                    // backgroundColor:
-                    //     themeProvider.themeData.colorScheme.secondary,
-                    enabled: _hasPartner,
-                    onTap: _hasPartner
-                        ? () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => CompareAnswersScreen(),
-                              ),
-                            );
-                          }
-                        : () {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: Text('No Partner'),
-                                  content: Text(
-                                      'You do not currently have a partner.'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Text('OK'),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          },
-                    icon: Icons.people,
-                  ),
-                  GridItem(
-                    text: "Final Questionnaire",
-                    // backgroundColor:
-                    //     themeProvider.themeData.colorScheme.secondary,
-                    enabled: false, // Placeholder item
-                    onTap: null, icon: Icons.assignment_turned_in,
-                  ),
-                ],
-              ),
-            ),
+            body: isLoading
+                ? buildShimmerEffect(context)
+                : buildHomeScreenContent(context, themeProvider),
           ),
         );
       },
+    );
+  }
+
+  Widget buildShimmerEffect(BuildContext context) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(18.0),
+        child: Column(
+          children: [
+            Shimmer.fromColors(
+              baseColor: Colors.grey[300]!,
+              highlightColor: Colors.grey[100]!,
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 200,
+                            height: 20,
+                            color: Colors.grey[300],
+                          ),
+                          SizedBox(height: 10),
+                          Container(
+                            width: 200,
+                            height: 10,
+                            color: Colors.grey[300],
+                          ),
+                        ],
+                      ),
+                      CircleAvatar(
+                        radius: 34,
+                        backgroundColor: Colors.grey[300],
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Container(
+                    width: double.infinity,
+                    height: 200,
+                    color: Colors.grey[300],
+                  ),
+                  SizedBox(height: 20),
+                  for (int i = 0; i < 3; i++)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Container(
+                        width: double.infinity,
+                        height: 100,
+                        color: Colors.grey[300],
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildHomeScreenContent(
+      BuildContext context, ThemeProvider themeProvider) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                FutureBuilder<String?>(
+                  future: getGreeting(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            snapshot.data ?? '',
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                          SizedBox(height: 10),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Container(
+                              height: 10,
+                              width: 200,
+                              child: LinearProgressIndicator(
+                                value: tasksFinished / 6,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  themeProvider
+                                      .themeData.colorScheme.primaryContainer,
+                                ),
+                                backgroundColor:
+                                    Color.fromARGB(255, 224, 208, 255),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                  },
+                ),
+                const SizedBox(width: 10),
+                SVGImageWidget(),
+              ],
+            ),
+          ),
+          GridItem(
+            text: AppLocalizations.of(context)!.startQuestionnaireButtonText,
+            enabled: _isNewUser,
+            onTap: _isNewUser
+                ? () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => QuestionnaireScreen(),
+                      ),
+                    );
+                  }
+                : null,
+            icon: Icons.assignment,
+          ),
+          SizedBox(
+            height: 200.0,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: _dailyTasks.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: TaskGridItem(
+                      isCompleted: (!_isNewUser && tasksFinished > index),
+                      title: _dailyTasks[index].title,
+                      icon: _dailyTasks[index].icon,
+                      backgroundColor:
+                          themeProvider.themeData.colorScheme.primaryContainer,
+                      enabled: !_isNewUser && tasksFinished >= index,
+                      onTap: () {
+                        if (tasksFinished >= index) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => _dailyTasks[index].route,
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          GridItem(
+            text: "Compare answers with your partner",
+            enabled: _hasPartner,
+            onTap: _hasPartner
+                ? () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CompareAnswersScreen(),
+                      ),
+                    );
+                  }
+                : () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text('No Partner'),
+                          content: Text('You do not currently have a partner.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+            icon: Icons.people,
+          ),
+          GridItem(
+            text: "Final Questionnaire",
+            enabled: false,
+            onTap: null,
+            icon: Icons.assignment_turned_in,
+          ),
+        ],
+      ),
     );
   }
 

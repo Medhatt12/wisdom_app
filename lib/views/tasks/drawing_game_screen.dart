@@ -5,13 +5,14 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
+import 'package:wisdom_app/services/auth_service.dart';
+import 'package:wisdom_app/services/invitation_service.dart';
 import 'package:wisdom_app/views/home_screen.dart';
-import 'package:wisdom_app/views/tasks/similarities_and_differences_screen.dart';
 import 'package:wisdom_app/widgets/drawn_line.dart';
 import 'package:wisdom_app/widgets/sketcher.dart';
 
@@ -38,6 +39,18 @@ class _DrawingPageState extends State<DrawingPage> {
     setState(() {
       selectedColor = color;
     });
+  }
+
+  List<Color> generateColorGradients(Color color) {
+    // Generate lighter and darker shades of the selected color
+    final hslColor = HSLColor.fromColor(color);
+    final lighterColor = hslColor
+        .withLightness((hslColor.lightness + 0.2).clamp(0.0, 1.0))
+        .toColor();
+    final darkerColor = hslColor
+        .withLightness((hslColor.lightness - 0.2).clamp(0.0, 1.0))
+        .toColor();
+    return [lighterColor, color, darkerColor];
   }
 
   Future<void> saveDrawing() async {
@@ -93,8 +106,101 @@ class _DrawingPageState extends State<DrawingPage> {
     });
   }
 
+  void showSummaryBottomSheet(BuildContext context, Uint8List imageBytes) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+      ),
+      isScrollControlled: true,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          expand: false,
+          builder: (BuildContext context, ScrollController scrollController) {
+            return SingleChildScrollView(
+              controller: scrollController,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        height: 4,
+                        width: 40,
+                        margin: const EdgeInsets.only(bottom: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                    Text(
+                      'Summary of Your Drawing',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 16),
+                    Center(
+                      child: Image.memory(imageBytes, height: 200, width: 200),
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      'Note: Once you submit, you cannot go back to this task.',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text('Edit'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey,
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () async {
+                            await saveDrawing();
+                            final authService = Provider.of<AuthService>(
+                                context,
+                                listen: false);
+                            final invitationService =
+                                Provider.of<InvitationService>(context,
+                                    listen: false);
+                            invitationService.incrementTasksFinished(
+                                authService.getCurrentUser()!.uid);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MainScreen()),
+                            );
+                          },
+                          child: Text('Confirm'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primaryContainer,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+    final invitationService = Provider.of<InvitationService>(context);
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
@@ -109,11 +215,17 @@ class _DrawingPageState extends State<DrawingPage> {
         heroTag: null,
         key: UniqueKey(),
         onPressed: () async {
-          await saveDrawing();
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => MainScreen()),
-          );
+          RenderRepaintBoundary? boundary = _globalKey.currentContext
+              ?.findRenderObject() as RenderRepaintBoundary?;
+          if (boundary != null) {
+            ui.Image image = await boundary.toImage();
+            ByteData? byteData =
+                await image.toByteData(format: ui.ImageByteFormat.png);
+            if (byteData != null) {
+              Uint8List pngBytes = byteData.buffer.asUint8List();
+              showSummaryBottomSheet(context, pngBytes);
+            }
+          }
         },
         child: Icon(Icons.check),
       ),
@@ -137,7 +249,7 @@ class _DrawingPageState extends State<DrawingPage> {
             builder: (context, snapshot) {
               return CustomPaint(
                 painter: Sketcher(
-                  lines: [line!],
+                  lines: [line],
                 ),
               );
             },
@@ -180,13 +292,13 @@ class _DrawingPageState extends State<DrawingPage> {
     RenderBox? box = context.findRenderObject() as RenderBox?;
     Offset point = box!.globalToLocal(details.globalPosition);
 
-    List<Offset> path = List.from(line!.path)..add(point);
+    List<Offset> path = List.from(line.path)..add(point);
     line = DrawnLine(path, selectedColor, selectedWidth);
-    currentLineStreamController.add(line!);
+    currentLineStreamController.add(line);
   }
 
   void onPanEnd(DragEndDetails details) {
-    lines = List.from(lines)..add(line!);
+    lines = List.from(lines)..add(line);
     linesStreamController.add(lines);
   }
 
@@ -247,7 +359,11 @@ class _DrawingPageState extends State<DrawingPage> {
                     content: SingleChildScrollView(
                       child: BlockPicker(
                         pickerColor: selectedColor,
-                        onColorChanged: changeColor,
+                        onColorChanged: (color) {
+                          changeColor(color);
+                          Navigator.pop(context);
+                          setState(() {});
+                        },
                       ),
                     ),
                   );
@@ -259,6 +375,7 @@ class _DrawingPageState extends State<DrawingPage> {
               color: selectedColor,
             ),
           ),
+          _buildColorGradients(selectedColor)
         ],
       ),
     );
@@ -273,6 +390,29 @@ class _DrawingPageState extends State<DrawingPage> {
           size: 20.0,
         ),
       ),
+    );
+  }
+
+  Widget _buildColorGradients(Color color) {
+    List<Color> gradients = generateColorGradients(color);
+    return Column(
+      children: gradients.map((Color gradientColor) {
+        return GestureDetector(
+          onTap: () {
+            changeColor(gradientColor);
+          },
+          child: Container(
+            width: 40.0,
+            height: 40.0,
+            margin: EdgeInsets.symmetric(vertical: 4.0),
+            decoration: BoxDecoration(
+              color: gradientColor,
+              border: Border.all(color: Colors.white),
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 }

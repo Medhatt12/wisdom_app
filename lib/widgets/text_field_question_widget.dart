@@ -5,8 +5,11 @@ import 'package:wisdom_app/models/question.dart';
 
 class TextFieldQuestionWidget extends StatefulWidget {
   final Question question;
+  final VoidCallback
+      onChanged; // Callback to notify when the text field value changes
 
-  const TextFieldQuestionWidget({Key? key, required this.question})
+  const TextFieldQuestionWidget(
+      {Key? key, required this.question, required this.onChanged})
       : super(key: key);
 
   @override
@@ -34,6 +37,7 @@ class _TextFieldQuestionWidgetState extends State<TextFieldQuestionWidget> {
             // Call setUserAnswer to store the selected option in the QuestionnaireController
             Provider.of<QuestionnaireController>(context, listen: false)
                 .setUserAnswer(widget.question.id, _textFieldValue);
+            widget.onChanged(); // Notify that the text field value has changed
           },
         ),
       ],

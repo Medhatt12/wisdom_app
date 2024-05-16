@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -93,9 +94,11 @@ class _MainScreenState extends State<MainScreen> {
   late User? _currentUser;
   final List<Widget> _screens = [
     HomeScreen(),
-    CaterpillarGameScreen(),
+    //CaterpillarGameScreen(),
     const SettingsScreen(),
   ];
+
+  int tasksFinished = 0;
 
   @override
   void initState() {
@@ -104,12 +107,24 @@ class _MainScreenState extends State<MainScreen> {
     _invitationsStream = _getInvitationsStream();
   }
 
-  void _checkCurrentUser() async {
+  Future<void> _checkCurrentUser() async {
     AuthService authService = Provider.of<AuthService>(context, listen: false);
     User? user = authService.getCurrentUser();
     setState(() {
       _currentUser = user;
     });
+    //String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    DocumentSnapshot snapshot = await FirebaseFirestore.instance
+        .collection('user_data')
+        .doc(Provider.of<AuthService>(context, listen: false)
+            .getCurrentUser()
+            ?.uid)
+        .get();
+    Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+    //String? svgData = data['user_image'];
+    tasksFinished = data['tasks_finished'] ?? 0;
+    print('Tasks finished: $tasksFinished');
+    setState(() {});
   }
 
   void _onItemTapped(int index) {
@@ -133,17 +148,13 @@ class _MainScreenState extends State<MainScreen> {
       return Scaffold(
         body: _screens[_selectedIndex],
         bottomNavigationBar: BottomNavigationBar(
-          selectedItemColor:
-              themeProvider.themeData.colorScheme.primaryContainer,
+          backgroundColor: themeProvider.themeData.colorScheme.primaryContainer,
+          selectedItemColor: themeProvider.themeData.colorScheme.primary,
           type: BottomNavigationBarType.fixed,
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
               label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.bathtub_rounded),
-              label: 'Caterpillar',
             ),
             BottomNavigationBarItem(
               icon: StreamBuilder<List<Invitation>>(
@@ -171,6 +182,23 @@ class _MainScreenState extends State<MainScreen> {
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
         ),
+        floatingActionButton: FloatingActionButton(
+          elevation: 8,
+          shape: CircleBorder(
+            side: BorderSide(
+                color: themeProvider.themeData.colorScheme.primaryContainer,
+                width: 3),
+          ),
+          backgroundColor: Colors.white,
+          onPressed: () {},
+          child: Text(
+            tasksFinished > 5 ? '🦋' : '🐛',
+            style: TextStyle(
+                color: themeProvider.themeData.colorScheme.primaryContainer,
+                fontSize: 30),
+          ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       );
     } else {
       return LoginPage();

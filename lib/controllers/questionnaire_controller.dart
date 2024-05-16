@@ -35,6 +35,31 @@ class QuestionnaireController with ChangeNotifier {
     return null;
   }
 
+  Future<void> loadTaskQuestions(String languageCode) async {
+    try {
+      // Make HTTP GET request to fetch JSON data
+      http.Response response = await http.get(Uri.parse(
+          'https://raw.githubusercontent.com/Medhatt12/wisdom_app/main/assets/locales/$languageCode.json'));
+
+      // Check if the request was successful (status code 200)
+      if (response.statusCode == 200) {
+        // Parse JSON response
+        String jsonString = response.body;
+        final jsonMap = json.decode(jsonString);
+        _questions = (jsonMap['Task-Questions'] as List)
+            .map((questionJson) => Question.fromJson(questionJson))
+            .toList();
+        notifyListeners();
+      } else {
+        // Handle other status codes
+        print('Failed to load questions: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle any errors that occur during the HTTP request
+      print('Error loading questions: $e');
+    }
+  }
+
   Future<void> loadQuestions(String languageCode) async {
     try {
       // Make HTTP GET request to fetch JSON data

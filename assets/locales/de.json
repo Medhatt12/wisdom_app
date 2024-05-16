@@ -28,5 +28,77 @@
       "text": "Wie ist dein Name?",
       "type": "TEXT_FIELD"
     }
+  ],
+  "Task-Questions":[
+    {
+      "id": "1",
+      "text": "Gibt es etwas, von dem du schon lange träumst, es zu tun? Warum hast du es noch nicht getan?",
+      "type": "TEXT_FIELD"
+    },
+    {
+      "id": "2",
+      "text": "Über welche Themen, die dich momentan beschäftigen, würdest du gerne öfter sprechen? ",
+      "type": "TEXT_FIELD"
+    },
+    {
+      "id": "3",
+      "text": "Wie gehst du mit Unvorhersehbarkeit und Unsicherheit im Leben um?",
+      "type": "TEXT_FIELD"
+    },
+    {
+      "id": "4",
+      "text": "Was ist so ernst, dass man darüber keine Witze machen sollte?",
+      "type": "TEXT_FIELD"
+    },
+    {
+      "id": "5",
+      "text": "Was möchtest du auf dieser Welt hinterlassen?",
+      "type": "TEXT_FIELD"
+    },
+    {
+      "id": "6",
+      "text": "Worauf greifst du zurück, wenn du in schwierigen Lebenssituationen nicht mehr weiter weißt?",
+      "type": "TEXT_FIELD"
+    },
+    {
+      "id": "7",
+      "text": "Was konntest du aus einer schwierigen Phase in deinem Leben lernen und mitnehmen?",
+      "type": "TEXT_FIELD"
+    },
+    {
+      "id": "8",
+      "text": "Was würdest du deinem jüngeren Ich vor 10 Jahren gerne sagen?",
+      "type": "TEXT_FIELD"
+    },
+    {
+      "id": "9",
+      "text": "Was war die letzte Sache, die dich von Herzen begeistert hat?",
+      "type": "TEXT_FIELD"
+    },
+    {
+      "id": "10",
+      "text": "Gab es in deiner Kindheit oder Jugend eine Persönlichkeit (z.B. Lehrer*innen, berühmte Persönlichkeiten, fiktive Charaktere), die deine weitere Entwicklung in einem besonderen Maß geprägt hat?",
+      "type": "TEXT_FIELD"
+    },
+    {
+      "id": "11",
+      "text": "Glaubst du daran, dass jeder Mensch eine Aufgabe auf dieser Welt hat? Welche ist deine? Erzähle von deiner liebsten Kindheitserinnerung.",
+      "type": "TEXT_FIELD"
+    },
+    {
+      "id": "12",
+      "text": "Gibt es ein Erlebnis, welches dazu beigetragen hat, dass du deine Meinung zu einem Thema verändert hast, bei dem du dachtest, dass es sich niemals verändern würde?",
+      "type": "TEXT_FIELD"
+    },
+    {
+      "id": "13",
+      "text": "Kannst du dich an ein Erlebnis erinnern, in dem du inneren Frieden und eine Verbundenheit zur Welt und zur Natur gespürt hast? Welches war es?",
+      "type": "TEXT_FIELD"
+    },
+    {
+      "id": "14",
+      "text": "Denke an ein aktuelles Problem oder eine Sorge, die dich gerade beschäftigt. Erkläre mir dieses Problem so, als würdest du es einem Alien erklären.",
+      "type": "TEXT_FIELD"
+    }
   ]
 }

@@ -154,4 +154,14 @@ class InvitationService {
         .map((snapshot) =>
             snapshot.docs.map((doc) => Invitation.fromSnapshot(doc)).toList());
   }
+
+  Future<void> incrementTasksFinished(String userId) async {
+    try {
+      await FirebaseFirestore.instance.collection('user_data').doc(userId).set(
+          {'tasks_finished': FieldValue.increment(1)}, SetOptions(merge: true));
+      print('tasks finished saved!');
+    } catch (e) {
+      print('Error saving tasks finished: $e');
+    }
+  }
 }

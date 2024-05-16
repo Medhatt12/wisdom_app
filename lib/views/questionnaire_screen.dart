@@ -16,7 +16,9 @@ class QuestionnaireScreen extends StatefulWidget {
 }
 
 class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
-  bool _isLoading = true; // State variable to track loading
+  bool _isLoading = true;
+  bool _allQuestionsAnswered =
+      false; // State variable to track if all questions are answered
 
   @override
   void initState() {
@@ -30,13 +32,25 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
           .loadQuestions(Provider.of<LanguageProvider>(context, listen: false)
               .locale
               .languageCode);
+      _checkAllQuestionsAnswered(); // Check if all questions are answered after loading
       setState(() {
-        _isLoading = false; // Set loading to false when questions are loaded
+        _isLoading = false;
       });
     } catch (e) {
       print('Error loading questions: $e');
       // Handle error loading questions
     }
+  }
+
+  void _checkAllQuestionsAnswered() {
+    final questionnaireController =
+        Provider.of<QuestionnaireController>(context, listen: false);
+    bool allAnswered = questionnaireController.questions.every((question) {
+      return questionnaireController.getUserAnswers()[question.id] != null;
+    });
+    setState(() {
+      _allQuestionsAnswered = allAnswered;
+    });
   }
 
   @override
@@ -50,7 +64,7 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
         title: Text('Wisdom App'),
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator()) // Show loader if loading
+          ? Center(child: CircularProgressIndicator())
           : Padding(
               padding: const EdgeInsets.all(15.0),
               child: ListView.builder(
@@ -62,14 +76,19 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
               ),
             ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _saveUserAnswers(context);
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => MainScreen()),
-          );
-        },
+        onPressed: _allQuestionsAnswered
+            ? () {
+                _saveUserAnswers(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MainScreen()),
+                );
+              }
+            : null, // Disable the button if not all questions are answered
         child: Icon(Icons.check),
+        backgroundColor: _allQuestionsAnswered
+            ? Theme.of(context).colorScheme.primaryContainer
+            : Colors.grey, // Change color based on state
       ),
     );
   }
@@ -77,42 +96,50 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
   Widget _buildQuestionWidget(BuildContext context, Question question) {
     switch (question.type) {
       case QuestionType.MCQ:
-        return MCQQuestionWidget(question: question);
+        return MCQQuestionWidget(
+          question: question,
+          onChanged: _handleAnswerChange,
+        );
       case QuestionType.SCALE:
-        return ScaleQuestionWidget(question: question);
+        return ScaleQuestionWidget(
+          question: question,
+          onChanged: _handleAnswerChange,
+        );
       case QuestionType.TEXT_FIELD:
-        return TextFieldQuestionWidget(question: question);
+        return TextFieldQuestionWidget(
+          question: question,
+          onChanged: _handleAnswerChange,
+        );
       default:
-        return Container(); // Return an empty container for unsupported question types
+        return Container();
     }
+  }
+
+  void _handleAnswerChange() {
+    _checkAllQuestionsAnswered();
   }
 
   void _saveUserAnswers(BuildContext context) async {
     final questionnaireController =
         Provider.of<QuestionnaireController>(context, listen: false);
 
-    // Get user's answers from the controller
     Map<String, dynamic> userAnswers = questionnaireController.getUserAnswers();
 
-    // Check if userAnswers map is empty
     if (userAnswers.isEmpty) {
       print('No user answers to save');
-      return; // Exit function if no answers are available
+      return;
     }
 
     try {
-      // Save user's answers to Firestore only for the specified task
       await FirebaseFirestore.instance
           .collection('user_answers')
           .doc(FirebaseAuth.instance.currentUser?.uid)
           .set({
-        "first_questionnaire":
-            userAnswers, // Save user answers for the specified task
+        "first_questionnaire": userAnswers,
       });
       print('User Answers saved to Firestore');
     } catch (e) {
       print('Error saving user answers: $e');
-      // Handle the error, e.g., show a snackbar to the user
     }
   }
 }

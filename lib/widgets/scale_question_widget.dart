@@ -5,8 +5,11 @@ import 'package:wisdom_app/models/question.dart';
 
 class ScaleQuestionWidget extends StatefulWidget {
   final Question question;
+  final VoidCallback
+      onChanged; // Callback to notify when the slider value changes
 
-  const ScaleQuestionWidget({Key? key, required this.question})
+  const ScaleQuestionWidget(
+      {Key? key, required this.question, required this.onChanged})
       : super(key: key);
 
   @override
@@ -34,6 +37,7 @@ class _ScaleQuestionWidgetState extends State<ScaleQuestionWidget> {
             // Call setUserAnswer to store the selected option in the QuestionnaireController
             Provider.of<QuestionnaireController>(context, listen: false)
                 .setUserAnswer(widget.question.id, _sliderValue);
+            widget.onChanged(); // Notify that the slider value has changed
           },
         ),
         Row(

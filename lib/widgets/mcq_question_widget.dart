@@ -5,8 +5,11 @@ import 'package:wisdom_app/models/question.dart';
 
 class MCQQuestionWidget extends StatefulWidget {
   final Question question;
+  final VoidCallback onChanged; // Callback to notify when an answer changes
 
-  const MCQQuestionWidget({Key? key, required this.question}) : super(key: key);
+  const MCQQuestionWidget(
+      {Key? key, required this.question, required this.onChanged})
+      : super(key: key);
 
   @override
   _MCQQuestionWidgetState createState() => _MCQQuestionWidgetState();
@@ -29,9 +32,9 @@ class _MCQQuestionWidgetState extends State<MCQQuestionWidget> {
                 setState(() {
                   _selectedOption = value as String?;
                 });
-                // Call setUserAnswer to store the selected option in the QuestionnaireController
                 Provider.of<QuestionnaireController>(context, listen: false)
                     .setUserAnswer(widget.question.id, _selectedOption);
+                widget.onChanged(); // Notify that an answer has changed
               },
             )),
       ],
