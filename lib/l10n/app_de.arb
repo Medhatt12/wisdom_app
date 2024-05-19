@@ -5,5 +5,17 @@
     "loginButtonText": "Anmelden",
     "registerButtonText": "Registrieren",
     "questionnaireScreenTitle": "Fragebogen",
-    "startQuestionnaireButtonText": "Fragebogen starten"
+    "startQuestionnaireButtonText": "Fragebogen starten",
+    "registeringHintText": "Geben Sie Ihre E-Mail-Adresse und Ihr Passwort ein und klicken Sie dann auf „Registrieren“, um ein Konto zu erstellen.",
+    "loginScreenAppbarTitle": "Wisdom App - Anmelden",
+    "splashScreenFirstText": "Liebe Teilnehmerinnen und Teilnehmer, vielen Dank für Ihre Teilnahme an unserer Studie! Mit Ihrer Teilnahme helfen Sie uns sehr bei unserer Forschung. Wir bitten Sie, die Aufgaben ernsthaft zu bearbeiten und bis zum Ende bei unserer Intervention zu bleiben. Natürlich haben Sie jederzeit das Recht, die Studie ohne Angabe von Gründen abzubrechen. Sie haben auch das Recht, die Verwendung Ihrer Daten zu widerrufen, indem Sie Ihre ID angeben. Für die Teilnahme erhalten Sie eine ID, um an der Studie teilzunehmen. Falls Sie ein anderes Gerät verwenden, können Sie dort weitermachen, wo Sie das letzte Mal aufgehört haben, indem Sie Ihre ID eingeben.",
+    "splashScreenSecondText": "Sie haben sich entschieden, eine Reise zu unternehmen, bei der Sie täglich eine kleine Aufgabe erhalten, in der Sie sich mit der Beziehung zu einer nahestehenden Person in Ihrem Leben auseinandersetzen. Es muss dieselbe Person für alle sieben Aufgaben sein. Sie arbeiten alleine an der Aufgabe, die andere Person ist nicht verpflichtet, ebenfalls an der Studie teilzunehmen. Wir würden uns jedoch freuen, wenn die andere Person auch an dieser Studie teilnehmen würde.",
+    "splashScreenThirdText":"Falls die nahestehende Person ebenfalls an der Intervention teilnimmt, lassen Sie es uns bitte wissen. Geben Sie die ID der anderen Person ein. Sie können die ID auch später hinzufügen.",
+    "nextButtonText":"Weiter",
+    "previousButtonText":"Zurück",
+    "emailErrorText":"Geben Sie eine gültige E-Mail-Adresse ein",
+    "errorRegisteringUser":"Registrierung des Benutzers fehlgeschlagen.",
+    "morningGreetingText":"Guten Morgen",
+    "afternoonGreetingText":"Guten Nachmittag",
+    "eveningGreetingText":"Guten Abend"
   }

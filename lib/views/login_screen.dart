@@ -55,9 +55,10 @@ class _LoginPageState extends State<LoginPage> {
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text('Wisdom App - Login'),
+        title: Text(AppLocalizations.of(context)!.loginScreenAppbarTitle),
         actions: [
           Text(
             languageProvider.locale.languageCode,
@@ -71,12 +72,12 @@ class _LoginPageState extends State<LoginPage> {
                   .loadQuestions(languageProvider.locale.languageCode);
             },
           ),
-          IconButton(
-            icon: Icon(Icons.brightness_6),
-            onPressed: () {
-              themeProvider.toggleTheme();
-            },
-          ),
+          // IconButton(
+          //   icon: Icon(Icons.brightness_6),
+          //   onPressed: () {
+          //     themeProvider.toggleTheme();
+          //   },
+          // ),
         ],
       ),
       body: Center(
@@ -88,14 +89,17 @@ class _LoginPageState extends State<LoginPage> {
               TextField(
                 controller: _emailController,
                 decoration: InputDecoration(
-                  labelText: 'Email',
-                  errorText: isEmailValid ? null : 'Enter a valid email',
+                  labelText: AppLocalizations.of(context)!.emailLabel,
+                  errorText: isEmailValid
+                      ? null
+                      : AppLocalizations.of(context)!.emailErrorText,
                 ),
               ),
               SizedBox(height: 20),
               TextField(
                 controller: _passwordController,
-                decoration: InputDecoration(labelText: 'Password'),
+                decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.passwordLabel),
                 obscureText: true,
               ),
               SizedBox(height: 20),
@@ -103,6 +107,10 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          themeProvider.themeData.colorScheme.primaryContainer,
+                    ),
                     onPressed: () async {
                       String email = _emailController.text.trim();
                       String password = _passwordController.text.trim();
@@ -128,9 +136,16 @@ class _LoginPageState extends State<LoginPage> {
                         );
                       }
                     },
-                    child: Text(AppLocalizations.of(context)!.loginButtonText),
+                    child: Text(
+                      AppLocalizations.of(context)!.loginButtonText,
+                      style: TextStyle(color: Colors.black),
+                    ),
                   ),
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          themeProvider.themeData.colorScheme.primaryContainer,
+                    ),
                     onPressed: isButtonEnabled && isEmailValid
                         ? () async {
                             String email = _emailController.text.trim();
@@ -148,11 +163,15 @@ class _LoginPageState extends State<LoginPage> {
                                 context: context,
                                 builder: (context) => AlertDialog(
                                   title: Text('Error'),
-                                  content: Text('Failed to register user.'),
+                                  content: Text(AppLocalizations.of(context)!
+                                      .errorRegisteringUser),
                                   actions: [
                                     TextButton(
                                       onPressed: () => Navigator.pop(context),
-                                      child: Text('OK'),
+                                      child: Text(
+                                        'OK',
+                                        style: TextStyle(color: Colors.black),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -160,14 +179,16 @@ class _LoginPageState extends State<LoginPage> {
                             }
                           }
                         : null,
-                    child:
-                        Text(AppLocalizations.of(context)!.registerButtonText),
+                    child: Text(
+                      AppLocalizations.of(context)!.registerButtonText,
+                      style: TextStyle(color: Colors.black),
+                    ),
                   ),
                 ],
               ),
               SizedBox(height: 20),
               Text(
-                'Enter your email and password, then click "Register" to create an account.',
+                AppLocalizations.of(context)!.registeringHintText,
                 style: TextStyle(color: Colors.grey),
                 textAlign: TextAlign.center,
               ),

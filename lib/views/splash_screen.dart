@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:wisdom_app/controllers/language_provider.dart';
+import 'package:wisdom_app/controllers/questionnaire_controller.dart';
+import 'package:wisdom_app/controllers/theme_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -6,8 +11,8 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  int _currentStep = 0; // Track the current step of onboarding
-  bool _isLoading = true; // Track loading state
+  int _currentStep = 0;
+  bool _isLoading = true;
 
   @override
   void didChangeDependencies() {
@@ -25,59 +30,167 @@ class _SplashScreenState extends State<SplashScreen> {
       setState(() {
         _isLoading = false;
       });
-      // Handle image loading error
       print('Error preloading image: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final languageProvider = Provider.of<LanguageProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Wisdom App"),
+        actions: [
+          Text(
+            languageProvider.locale.languageCode,
+            style: TextStyle(fontSize: 16),
+          ),
+          IconButton(
+            icon: Icon(Icons.language),
+            onPressed: () {
+              languageProvider.toggleLanguage();
+              Provider.of<QuestionnaireController>(context, listen: false)
+                  .loadQuestions(languageProvider.locale.languageCode);
+            },
+          ),
+        ],
+      ),
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: _isLoading
             ? Center(child: CircularProgressIndicator())
             : LayoutBuilder(
                 builder: (context, constraints) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
-                          flex: 2,
-                          child: Center(
-                            child: Image.asset(
-                              'assets/images/wise-owl.png',
-                              fit: BoxFit.contain,
-                            ),
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        flex: 2,
+                        child: Center(
+                          child: Image.asset(
+                            'assets/images/wise-owl.png',
+                            fit: BoxFit.contain,
                           ),
                         ),
-                        Flexible(
-                          flex: 3,
-                          child: Center(
-                            child: SingleChildScrollView(
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Text(
-                                  _getCurrentStepText(),
-                                  style: TextStyle(fontSize: 15),
-                                  textAlign: TextAlign.center,
-                                ),
+                      ),
+                      Flexible(
+                        flex: 3,
+                        child: Center(
+                          child: SingleChildScrollView(
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Text(
+                                _getCurrentStepText(),
+                                style: TextStyle(fontSize: 15),
+                                textAlign: TextAlign.center,
                               ),
                             ),
                           ),
                         ),
-                        SizedBox(height: 20),
-                        ElevatedButton(
-                          onPressed: _handleButtonPress,
-                          child: Text(
-                            _currentStep < 2
-                                ? 'Next Step'
-                                : 'Go to Login Screen',
+                      ),
+                      Positioned(
+                        bottom: MediaQuery.of(context).size.height * 0.3,
+                        left: MediaQuery.of(context).size.width * 0.44,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(
+                            3,
+                            (index) => buildDot(index: index),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      SizedBox(height: 20),
+                      _currentStep < 2
+                          ? Padding(
+                              padding:
+                                  const EdgeInsets.only(top: 8, bottom: 20.0),
+                              child: Positioned(
+                                bottom:
+                                    MediaQuery.of(context).size.height * 0.2,
+                                width: MediaQuery.of(context).size.width,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: _currentStep > 0
+                                          ? () {
+                                              setState(() {
+                                                _currentStep = _currentStep - 1;
+                                              });
+                                            }
+                                          : null,
+                                      child: Text(
+                                        AppLocalizations.of(context)!
+                                            .previousButtonText,
+                                        style: TextStyle(
+                                            fontSize: 18, color: Colors.black),
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: themeProvider.themeData
+                                            .colorScheme.primaryContainer,
+                                        shape: const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.only(
+                                                topRight: Radius.circular(20.0),
+                                                bottomRight:
+                                                    Radius.circular(20.0))),
+                                      ),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          _currentStep = _currentStep + 1;
+                                        });
+                                      },
+                                      child: Text(
+                                        AppLocalizations.of(context)!
+                                            .nextButtonText,
+                                        style: TextStyle(
+                                            fontSize: 18, color: Colors.black),
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: themeProvider.themeData
+                                            .colorScheme.primaryContainer,
+                                        shape: const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(20.0),
+                                                bottomLeft:
+                                                    Radius.circular(20.0))),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            )
+                          : Padding(
+                              padding:
+                                  const EdgeInsets.only(top: 8, bottom: 20.0),
+                              child: Positioned(
+                                bottom:
+                                    MediaQuery.of(context).size.height * 0.2,
+                                left: MediaQuery.of(context).size.width * 0.33,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pushReplacementNamed(
+                                        context, '/login');
+                                  },
+                                  child: Text(
+                                    "Get Started",
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.black),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: themeProvider
+                                        .themeData.colorScheme.primaryContainer,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(20.0)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                    ],
                   );
                 },
               ),
@@ -85,14 +198,30 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
+  AnimatedContainer buildDot({int? index}) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 200),
+      margin: EdgeInsets.only(right: 5),
+      height: 6,
+      width: _currentStep == index ? 20 : 6,
+      decoration: BoxDecoration(
+        color: _currentStep == index
+            ? themeProvider.themeData.colorScheme.primaryContainer
+            : Color(0xFFD8D8D8),
+        borderRadius: BorderRadius.circular(3),
+      ),
+    );
+  }
+
   String _getCurrentStepText() {
     switch (_currentStep) {
       case 0:
-        return 'Dear participants, thank you for participating in our study! With your participation you help us a lot with our research. We ask you to work on the tasks seriously and stay with our intervention until the end. Of course, you always have the right to discontinue the study at any time without giving reasons. You also have the right to revoke the use of your data by providing your ID. For the participation you get an ID to participate in the study. In case you are using another device, you can continue where you stopped the last time by entering your ID.';
+        return AppLocalizations.of(context)!.splashScreenFirstText;
       case 1:
-        return 'You decided to go on a journey where you get a small task daily in which you deal with the relationship of a close person in your life. It must be the same person for all seven tasks. You work on the task by yourself, the other person is not obligated to take part in the study as well. However, we would be glad if the other person will also take part in this study.';
+        return AppLocalizations.of(context)!.splashScreenSecondText;
       case 2:
-        return 'If your close person also takes part in the intervention, please let us know. Please enter the ID of the other person. You can also add the ID later.';
+        return AppLocalizations.of(context)!.splashScreenThirdText;
       default:
         return '';
     }

@@ -3,7 +3,7 @@
   "@loginScreenTitle":{
     "description":"The login text in login screen"
   },
-  "emailLabel": "Email",
+  "emailLabel": "E-Mail",
   "@emailLabel":{
     "description":"The email text in login screen"
   },
@@ -26,5 +26,53 @@
   "startQuestionnaireButtonText": "Start Questionnaire",
   "@startQuestionnaireButtonText":{
     "description":"The start questionnaire text in login screen"
+  },
+  "registeringHintText": "Enter your email and password, then click \"Register\" to create an account.",
+  "@registeringHintText":{
+    "description":"The text to guide users to register"
+  },
+  "loginScreenAppbarTitle": "Wisdom App - Login",
+  "@loginScreenAppbarTitle":{
+    "description":"The appbar title text in login screen"
+  },
+  "splashScreenFirstText": "Dear participants, thank you for participating in our study! With your participation you help us a lot with our research. We ask you to work on the tasks seriously and stay with our intervention until the end. Of course, you always have the right to discontinue the study at any time without giving reasons. You also have the right to revoke the use of your data by providing your ID. For the participation you get an ID to participate in the study. In case you are using another device, you can continue where you stopped the last time by entering your ID.",
+  "@splashScreenFirstText":{
+    "description":"Splash screen first introductory text"
+  },
+  "splashScreenSecondText": "You decided to go on a journey where you get a small task daily in which you deal with the relationship of a close person in your life. It must be the same person for all seven tasks. You work on the task by yourself, the other person is not obligated to take part in the study as well. However, we would be glad if the other person will also take part in this study.",
+  "@splashScreenSecondText":{
+    "description":"Splash screen second introductory text"
+  },
+  "splashScreenThirdText": "If your close person also takes part in the intervention, please let us know. Please enter the ID of the other person. You can also add the ID later.",
+  "@splashScreenThirdText":{
+    "description":"Splash screen second introductory text"
+  },
+  "nextButtonText": "Next",
+  "@nextButtonText":{
+    "description":"Next button text"
+  },
+  "previousButtonText": "Previous",
+  "@previousButtonText":{
+    "description":"Previous button text"
+  },
+  "emailErrorText": "Enter a valid email",
+  "@emailErrorText":{
+    "description":"email Error Text"
+  },
+  "errorRegisteringUser": "Failed to register user",
+  "@errorRegisteringUser":{
+    "description":"error Registering User"
+  },
+  "morningGreetingText": "Good Morning",
+  "@morningGreetingText":{
+    "description":"morning Greeting Text"
+  },
+  "afternoonGreetingText": "Good Afternoon",
+  "@afternoonGreetingText":{
+    "description":"afternoon Greeting Text"
+  },
+  "eveningGreetingText": "Good Evening",
+  "@eveningGreetingText":{
+    "description":"evening Greeting Text"
   }
 }

@@ -194,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(18.0),
+            padding: const EdgeInsets.all(8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -211,22 +211,29 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Text(
                             snapshot.data ?? '',
-                            style: const TextStyle(fontSize: 20),
+                            style: const TextStyle(fontSize: 18),
                           ),
                           SizedBox(height: 10),
                           ClipRRect(
                             borderRadius: BorderRadius.circular(8),
                             child: Container(
-                              height: 10,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    width: 2,
+                                    color: themeProvider.themeData.colorScheme
+                                        .primaryContainer),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              height: 15,
                               width: 200,
                               child: LinearProgressIndicator(
+                                borderRadius: BorderRadius.circular(10),
                                 value: tasksFinished / 6,
                                 valueColor: AlwaysStoppedAnimation<Color>(
                                   themeProvider
                                       .themeData.colorScheme.primaryContainer,
                                 ),
-                                backgroundColor:
-                                    Color.fromARGB(255, 224, 208, 255),
+                                backgroundColor: Colors.white,
                               ),
                             ),
                           ),
@@ -254,6 +261,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
                 : null,
             icon: Icons.assignment,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              alignment: Alignment.centerLeft,
+              height: 25,
+              child: Text(
+                "Daily Tasks",
+                style: TextStyle(fontSize: 20),
+              ),
+            ),
           ),
           SizedBox(
             height: 200.0,
@@ -288,38 +306,103 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          GridItem(
-            text: "Compare answers with your partner",
-            enabled: _hasPartner,
-            onTap: _hasPartner
-                ? () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CompareAnswersScreen(),
+          // GridItem(
+          //   text: "Compare answers with your partner",
+          //   enabled: _hasPartner,
+          //   onTap: _hasPartner
+          //       ? () {
+          //           Navigator.push(
+          //             context,
+          //             MaterialPageRoute(
+          //               builder: (context) => CompareAnswersScreen(),
+          //             ),
+          //           );
+          //         }
+          //       : () {
+          //           showDialog(
+          //             context: context,
+          //             builder: (context) {
+          //               return AlertDialog(
+          //                 title: Text('No Partner'),
+          //                 content: Text('You do not currently have a partner.'),
+          //                 actions: [
+          //                   TextButton(
+          //                     onPressed: () {
+          //                       Navigator.of(context).pop();
+          //                     },
+          //                     child: Text('OK'),
+          //                   ),
+          //                 ],
+          //               );
+          //             },
+          //           );
+          //         },
+          //   icon: Icons.people,
+          // ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GestureDetector(
+              //onTap: enabled ? onTap : null,
+              onTap: _hasPartner
+                  ? () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CompareAnswersScreen(),
+                        ),
+                      );
+                    }
+                  : () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text('No Partner'),
+                            content:
+                                Text('You do not currently have a partner.'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+              child: Container(
+                height: 100,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                    color: _hasPartner
+                        ? themeProvider.themeData.colorScheme.primaryContainer
+                        : Colors.grey.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(10)),
+                padding: const EdgeInsets.all(8),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.people, // Add this line
+                      size: 30, // Adjust size as needed
+                      color:
+                          themeProvider.themeData.textTheme.bodyMedium?.color,
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      "Compare answers with your partner",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color:
+                            themeProvider.themeData.textTheme.bodyMedium?.color,
                       ),
-                    );
-                  }
-                : () {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Text('No Partner'),
-                          content: Text('You do not currently have a partner.'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text('OK'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-            icon: Icons.people,
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
           GridItem(
             text: "Final Questionnaire",
@@ -341,12 +424,12 @@ class _HomeScreenState extends State<HomeScreen> {
     Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
     String? username = data['username'];
     var hour = DateTime.now().hour;
-    if (hour < 12) {
-      return 'Good Morning, $username!';
+    if (hour < 10) {
+      return '${AppLocalizations.of(context)!.morningGreetingText}, $username!';
     } else if (hour < 17) {
-      return 'Good Afternoon, $username!';
+      return '${AppLocalizations.of(context)!.afternoonGreetingText}, $username!';
     } else {
-      return 'Good Evening, $username!';
+      return '${AppLocalizations.of(context)!.eveningGreetingText}, $username!';
     }
   }
 }

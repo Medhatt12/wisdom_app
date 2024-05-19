@@ -63,6 +63,7 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
       appBar: AppBar(
         title: Text('Wisdom App'),
       ),
+      backgroundColor: Colors.white,
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : Padding(

@@ -47,7 +47,6 @@ class GridItem extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: themeProvider.themeData.textTheme.bodyMedium?.color,
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
@@ -123,7 +122,6 @@ class TaskGridItem extends StatelessWidget {
                     style: TextStyle(
                       color:
                           themeProvider.themeData.textTheme.bodyMedium?.color,
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
