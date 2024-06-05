@@ -37,67 +37,32 @@
     },
     {
       "id": "2",
-      "text": "Which topics that concern you a lot currently would you like to talk about more often?",
-      "type": "TEXT_FIELD"
-    },
-    {
-      "id": "3",
-      "text": "How do you deal with unpredictability and uncertainty in life?",
-      "type": "TEXT_FIELD"
-    },
-    {
-      "id": "4",
-      "text": "What is so serious that you shouldn’t make jokes about?",
-      "type": "TEXT_FIELD"
-    },
-    {
-      "id": "5",
       "text": "What would you like to leave behind in this world?",
       "type": "TEXT_FIELD"
     },
     {
-      "id": "6",
-      "text": "What do you fall back to when you don’t know how to deal with difficult life situations?",
-      "type": "TEXT_FIELD"
-    },
-    {
-      "id": "7",
-      "text": "Which thing could you learn from a difficult phase in your life?",
-      "type": "TEXT_FIELD"
-    },
-    {
-      "id": "8",
+      "id": "3",
       "text": "What would you like to say to your younger self 10 years ago?",
       "type": "TEXT_FIELD"
     },
     {
-      "id": "9",
+      "id": "4",
       "text": "What was the last thing that you really got excited about?",
       "type": "TEXT_FIELD"
     },
     {
-      "id": "10",
+      "id": "5",
       "text": "Was there a personality (f.e. teachers, famous people, fictional characters) in your childhood or youth that had a particular influence on your further personal development?",
       "type": "TEXT_FIELD"
     },
     {
-      "id": "11",
-      "text": "Do you think that everyone has a purpose in life? Which is yours? Tell me about your favourite childhood memory.",
+      "id": "6",
+      "text": "Have you ever had an experience that made you change your mind about a topic that you thought would never change? What kind of experience was it?",
       "type": "TEXT_FIELD"
     },
     {
-      "id": "12",
-      "text": "Have you ever had an experience that made you change your mind about a topic that you thought would never change?",
-      "type": "TEXT_FIELD"
-    },
-    {
-      "id": "13",
+      "id": "7",
       "text": "Can you remember an experience when you felt inner peace and connection to the world and nature? What was it?",
-      "type": "TEXT_FIELD"
-    },
-    {
-      "id": "14",
-      "text": "Think of a problem that concerns you recently. Explain it to me like you would explain it to an alien.",
       "type": "TEXT_FIELD"
     }
   ]
