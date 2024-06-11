@@ -6,6 +6,8 @@ import 'package:wisdom_app/main.dart';
 import 'package:wisdom_app/services/auth_service.dart';
 import 'package:wisdom_app/services/invitation_service.dart';
 
+import '../../widgets/feedback_popup.dart';
+
 class SimilaritiesAndDifferencesPage extends StatefulWidget {
   @override
   _SimilaritiesAndDifferencesPageState createState() =>
@@ -15,14 +17,17 @@ class SimilaritiesAndDifferencesPage extends StatefulWidget {
 class _SimilaritiesAndDifferencesPageState
     extends State<SimilaritiesAndDifferencesPage> {
   List<String> similarities = [];
-  List<String> differences = [];
+  List<String> userDifferences = [];
+  List<String> partnerDifferences = [];
   List<String> learnings = [];
   List<bool> shareSimilarities = [];
-  List<bool> shareDifferences = [];
+  List<bool> shareUserDifferences = [];
+  List<bool> sharePartnerDifferences = [];
   List<bool> shareLearnings = [];
 
   TextEditingController similarityController = TextEditingController();
-  TextEditingController differenceController = TextEditingController();
+  TextEditingController userDifferenceController = TextEditingController();
+  TextEditingController partnerDifferenceController = TextEditingController();
   TextEditingController learningController = TextEditingController();
 
   void addSimilarity(String similarity) {
@@ -40,18 +45,33 @@ class _SimilaritiesAndDifferencesPageState
     });
   }
 
-  void addDifference(String difference) {
+  void addUserDifference(String difference) {
     setState(() {
-      differences.add(difference);
-      shareDifferences.add(false);
+      userDifferences.add(difference);
+      shareUserDifferences.add(false);
     });
   }
 
-  void removeDifference(String difference) {
+  void removeUserDifference(String difference) {
     setState(() {
-      int index = differences.indexOf(difference);
-      differences.removeAt(index);
-      shareDifferences.removeAt(index);
+      int index = userDifferences.indexOf(difference);
+      userDifferences.removeAt(index);
+      shareUserDifferences.removeAt(index);
+    });
+  }
+
+  void addPartnerDifference(String difference) {
+    setState(() {
+      partnerDifferences.add(difference);
+      sharePartnerDifferences.add(false);
+    });
+  }
+
+  void removePartnerDifference(String difference) {
+    setState(() {
+      int index = partnerDifferences.indexOf(difference);
+      partnerDifferences.removeAt(index);
+      sharePartnerDifferences.removeAt(index);
     });
   }
 
@@ -79,10 +99,12 @@ class _SimilaritiesAndDifferencesPageState
           .set({
         'SND': {
           'similarities': similarities,
-          'differences': differences,
-          'learning': learnings,
+          'userDifferences': userDifferences,
+          'partnerDifferences': partnerDifferences,
+          'learnings': learnings,
           'shareSimilarities': shareSimilarities,
-          'shareDifferences': shareDifferences,
+          'shareUserDifferences': shareUserDifferences,
+          'sharePartnerDifferences': sharePartnerDifferences,
           'shareLearnings': shareLearnings,
         },
       }, SetOptions(merge: true)); // Use merge option to merge new data
@@ -95,7 +117,7 @@ class _SimilaritiesAndDifferencesPageState
   void showSummaryBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
       ),
       isScrollControlled: true,
@@ -121,23 +143,25 @@ class _SimilaritiesAndDifferencesPageState
                         ),
                       ),
                     ),
-                    Text(
+                    const Text(
                       'Summary of Your Answers',
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     buildAnswerSummary(
                         'Similarities', similarities, shareSimilarities),
-                    buildAnswerSummary(
-                        'Differences', differences, shareDifferences),
+                    buildAnswerSummary('Your Differences', userDifferences,
+                        shareUserDifferences),
+                    buildAnswerSummary('Partner\'s Differences',
+                        partnerDifferences, sharePartnerDifferences),
                     buildAnswerSummary('Learnings', learnings, shareLearnings),
-                    SizedBox(height: 20),
-                    Text(
+                    const SizedBox(height: 20),
+                    const Text(
                       'Note: Once you submit, you cannot go back to this task.',
                       style: TextStyle(color: Colors.red),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -145,15 +169,13 @@ class _SimilaritiesAndDifferencesPageState
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          child: Text('Edit'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.grey,
-                          ),
+                          child: const Text('Edit'),
                         ),
                         ElevatedButton(
-                          onPressed: !learnings.isEmpty &&
-                                  !differences.isEmpty &&
-                                  !similarities.isEmpty
+                          onPressed: learnings.isNotEmpty &&
+                                  userDifferences.isNotEmpty &&
+                                  partnerDifferences.isNotEmpty &&
+                                  similarities.isNotEmpty
                               ? () async {
                                   saveAnswersToFirestore();
                                   final authService = Provider.of<AuthService>(
@@ -167,15 +189,15 @@ class _SimilaritiesAndDifferencesPageState
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => MainScreen()),
-                                  );
+                                        builder: (context) =>
+                                            const MainScreen()),
+                                  ).then((_) {
+                                    showFeedbackPopup(context,
+                                        'Similarities and Differences');
+                                  });
                                 }
                               : null,
-                          child: Text('Confirm'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primaryContainer,
-                          ),
+                          child: const Text('Confirm'),
                         ),
                       ],
                     ),
@@ -195,8 +217,8 @@ class _SimilaritiesAndDifferencesPageState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(title,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        SizedBox(height: 10),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 10),
         for (int i = 0; i < answers.length; i++)
           ListTile(
             title: Text(answers[i]),
@@ -210,20 +232,18 @@ class _SimilaritiesAndDifferencesPageState
             ),
             subtitle: Text(shareFlags[i] ? 'Shared' : 'Not shared'),
           ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
       ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final authService = Provider.of<AuthService>(context);
-    final invitationService = Provider.of<InvitationService>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Characteristics'),
+        title: const Text('Characteristics'),
         leading: GestureDetector(
-          child: Icon(Icons.arrow_back_ios),
+          child: const Icon(Icons.arrow_back_ios),
           onTap: () {
             Navigator.push(
               context,
@@ -238,12 +258,12 @@ class _SimilaritiesAndDifferencesPageState
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'In this task, you are asked to write some similarities and differences between you and your partner. Based on these entries, please write what you can learn from them.',
                 style: TextStyle(fontSize: 12),
               ),
-              SizedBox(height: 20),
-              Text('Similarities', style: TextStyle(fontSize: 20)),
+              const SizedBox(height: 20),
+              const Text('Similarities', style: TextStyle(fontSize: 20)),
               TextField(
                 controller: similarityController,
                 decoration: InputDecoration(labelText: 'Enter Similarity'),
@@ -255,7 +275,7 @@ class _SimilaritiesAndDifferencesPageState
                     addSimilarity(similarityController.text);
                     similarityController.clear();
                   },
-                  child: Text('Add'),
+                  child: const Text('Add'),
                 ),
               ),
               Wrap(
@@ -265,34 +285,60 @@ class _SimilaritiesAndDifferencesPageState
                       (similarity) => _buildTag(similarity, removeSimilarity)),
                 ],
               ),
-              SizedBox(height: 20),
-              Text('Differences', style: TextStyle(fontSize: 20)),
+              const SizedBox(height: 20),
+              const Text('Your Differences', style: TextStyle(fontSize: 20)),
               TextField(
-                controller: differenceController,
-                decoration: InputDecoration(labelText: 'Enter Difference'),
+                controller: userDifferenceController,
+                decoration: InputDecoration(labelText: 'Enter Your Difference'),
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 8.0, top: 8.0),
                 child: ElevatedButton(
                   onPressed: () {
-                    addDifference(differenceController.text);
-                    differenceController.clear();
+                    addUserDifference(userDifferenceController.text);
+                    userDifferenceController.clear();
                   },
-                  child: Text('Add'),
+                  child: const Text('Add'),
                 ),
               ),
               Wrap(
                 spacing: 8.0,
                 children: [
-                  ...differences.map(
-                      (difference) => _buildTag(difference, removeDifference)),
+                  ...userDifferences.map((difference) =>
+                      _buildTag(difference, removeUserDifference)),
                 ],
               ),
-              SizedBox(height: 20),
-              Text('Learnings', style: TextStyle(fontSize: 20)),
+              const SizedBox(height: 20),
+              const Text('Partner\'s Differences',
+                  style: TextStyle(fontSize: 20)),
+              TextField(
+                controller: partnerDifferenceController,
+                decoration:
+                    InputDecoration(labelText: 'Enter Partner\'s Difference'),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0, top: 8.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    addPartnerDifference(partnerDifferenceController.text);
+                    partnerDifferenceController.clear();
+                  },
+                  child: const Text('Add'),
+                ),
+              ),
+              Wrap(
+                spacing: 8.0,
+                children: [
+                  ...partnerDifferences.map((difference) =>
+                      _buildTag(difference, removePartnerDifference)),
+                ],
+              ),
+              const SizedBox(height: 20),
+              const Text('Learnings', style: TextStyle(fontSize: 20)),
               TextField(
                 controller: learningController,
-                decoration: InputDecoration(labelText: 'What can you learn?'),
+                decoration:
+                    const InputDecoration(labelText: 'What can you learn?'),
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 8.0, top: 8.0),
@@ -301,7 +347,7 @@ class _SimilaritiesAndDifferencesPageState
                     addLearning(learningController.text);
                     learningController.clear();
                   },
-                  child: Text('Add'),
+                  child: const Text('Add'),
                 ),
               ),
               Wrap(
@@ -311,7 +357,7 @@ class _SimilaritiesAndDifferencesPageState
                       .map((learning) => _buildTag(learning, removeLearning)),
                 ],
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
             ],
           ),
         ),
@@ -319,17 +365,21 @@ class _SimilaritiesAndDifferencesPageState
       floatingActionButton: FloatingActionButton(
         heroTag: null,
         key: UniqueKey(),
-        child: Icon(Icons.check),
-        onPressed:
-            !learnings.isEmpty && !differences.isEmpty && !similarities.isEmpty
-                ? () {
-                    showSummaryBottomSheet(context);
-                  }
-                : null,
-        backgroundColor:
-            !learnings.isEmpty && !differences.isEmpty && !similarities.isEmpty
-                ? Theme.of(context).colorScheme.primaryContainer
-                : Colors.grey,
+        onPressed: learnings.isNotEmpty &&
+                userDifferences.isNotEmpty &&
+                partnerDifferences.isNotEmpty &&
+                similarities.isNotEmpty
+            ? () {
+                showSummaryBottomSheet(context);
+              }
+            : null,
+        backgroundColor: learnings.isNotEmpty &&
+                userDifferences.isNotEmpty &&
+                partnerDifferences.isNotEmpty &&
+                similarities.isNotEmpty
+            ? Theme.of(context).colorScheme.primaryContainer
+            : Colors.grey,
+        child: const Icon(Icons.check),
       ),
     );
   }
@@ -338,7 +388,7 @@ class _SimilaritiesAndDifferencesPageState
     return Padding(
       padding: const EdgeInsets.only(bottom: 4.0),
       child: ActionChip(
-        avatar: Icon(Icons.clear),
+        avatar: const Icon(Icons.clear),
         label: Text(text),
         onPressed: () => onPressed(text),
       ),

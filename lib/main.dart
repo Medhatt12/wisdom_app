@@ -16,7 +16,6 @@ import 'package:wisdom_app/views/login_screen.dart';
 import 'package:wisdom_app/views/old_splash.dart';
 import 'package:wisdom_app/views/settings_screen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:wisdom_app/views/splash_screen.dart';
 import 'package:wisdom_app/views/tasks/drawing_game_screen.dart';
 import 'firebase_options.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -72,7 +71,7 @@ class MyApp extends StatelessWidget {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: [
+          supportedLocales: const [
             Locale('en'),
             Locale('de'),
           ],
@@ -95,7 +94,6 @@ class _MainScreenState extends State<MainScreen> {
   late User? _currentUser;
   final List<Widget> _screens = [
     HomeScreen(),
-    //CaterpillarGameScreen(),
     const SettingsScreen(),
   ];
 
@@ -148,14 +146,13 @@ class _MainScreenState extends State<MainScreen> {
     if (_currentUser != null) {
       return Scaffold(
         body: _screens[_selectedIndex],
-        backgroundColor: Colors.white,
         bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Colors.white,
-          selectedItemColor:
-              themeProvider.themeData.colorScheme.primaryContainer,
+          backgroundColor: themeProvider.themeData.colorScheme.background,
+          elevation: 0,
+          selectedItemColor: themeProvider.themeData.colorScheme.primary,
           type: BottomNavigationBarType.fixed,
           items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
+            const BottomNavigationBarItem(
               icon: Icon(Icons.home),
               label: 'Home',
             ),
@@ -187,12 +184,12 @@ class _MainScreenState extends State<MainScreen> {
         ),
         floatingActionButton: FloatingActionButton(
           elevation: 0,
-          shape: CircleBorder(),
+          shape: const CircleBorder(),
           backgroundColor: themeProvider.themeData.colorScheme.primaryContainer,
           onPressed: () {},
           child: Text(
             tasksFinished > 5 ? '🦋' : '🐛',
-            style: TextStyle(color: Colors.black, fontSize: 30),
+            style: const TextStyle(fontSize: 30),
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

@@ -2,9 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wisdom_app/games_data/day-in-the-life.dart';
 import 'package:wisdom_app/main.dart';
 import 'package:wisdom_app/services/auth_service.dart';
 import 'package:wisdom_app/services/invitation_service.dart';
+import 'package:flame/game.dart';
 
 class ADayInTheLifeScreen extends StatefulWidget {
   const ADayInTheLifeScreen({super.key});
@@ -14,6 +16,14 @@ class ADayInTheLifeScreen extends StatefulWidget {
 }
 
 class _ADayInTheLifeScreenState extends State<ADayInTheLifeScreen> {
+  late DayInTheLifeGame game;
+
+  @override
+  void initState() {
+    super.initState();
+    game = DayInTheLifeGame();
+  }
+
   void saveAnswersToFirestore() async {
     try {
       String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
@@ -24,7 +34,7 @@ class _ADayInTheLifeScreenState extends State<ADayInTheLifeScreen> {
         'ADITL': {
           'answered': true,
         },
-      }, SetOptions(merge: true)); // Use merge option to merge new data
+      }, SetOptions(merge: true));
       print('Answers saved to Firestore');
     } catch (e) {
       print('Error saving answers: $e');
@@ -37,9 +47,9 @@ class _ADayInTheLifeScreenState extends State<ADayInTheLifeScreen> {
     final invitationService = Provider.of<InvitationService>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('A day in the life'), // Add a title to the app bar
+        title: Text('A day in the life'),
       ),
-      body: Center(child: Text("To be implemented...")),
+      body: GameWidget(game: game),
       floatingActionButton: FloatingActionButton(
           heroTag: null,
           key: UniqueKey(),
@@ -54,6 +64,38 @@ class _ADayInTheLifeScreenState extends State<ADayInTheLifeScreen> {
             );
           }),
     );
-    ;
+  }
+}
+
+class SummaryScreen extends StatelessWidget {
+  final int score;
+  final int totalScenarios;
+
+  SummaryScreen({required this.score, required this.totalScenarios});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Summary'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'You scored $score out of $totalScenarios',
+              style: TextStyle(fontSize: 24),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Play Again'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

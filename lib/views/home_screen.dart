@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wisdom_app/controllers/theme_provider.dart';
 import 'package:wisdom_app/views/comparison_screen.dart';
 import 'package:wisdom_app/views/questionnaire_screen.dart';
@@ -16,8 +16,9 @@ import 'package:wisdom_app/views/tasks/similarities_and_differences_screen.dart'
 import 'package:wisdom_app/views/tasks/values.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../app_tour.dart';
 import '../widgets/grid_item.dart';
-import '../views/tasks/mindfulness_task_screen.dart'; // Import MindfulnessScreen
+import '../views/tasks/mindfulness_task_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -27,8 +28,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey inviteFriendsKey = GlobalKey();
+  final GlobalKey inviteCodeKey = GlobalKey();
+  final GlobalKey compareAnswersKey = GlobalKey();
+  final GlobalKey finishTaskKey = GlobalKey();
+  final GlobalKey finishQuestionnaireKey = GlobalKey();
+
   late bool _isNewUser = false;
-  late bool _hasCompletedQuestionnaire = false;
   late bool _hasPartner = false;
 
   late List<TaskItem> _dailyTasks;
@@ -76,14 +82,27 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> checkUserStatus() async {
     await fetchUserData();
+    bool showTour = await shouldShowAppTour();
     setState(() {
       isLoading = false;
+      if (showTour) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          AppTour(
+            context: context,
+            inviteFriendsKey: inviteFriendsKey,
+            inviteCodeKey: inviteCodeKey,
+            compareAnswersKey: compareAnswersKey,
+            finishTaskKey: finishTaskKey,
+            finishQuestionnaireKey: finishQuestionnaireKey,
+          ).showTutorial();
+          markTourAsShown();
+        });
+      }
     });
   }
 
   Future<void> fetchUserData() async {
     _isNewUser = !(await hasCompletedQuestionnaire());
-    _hasCompletedQuestionnaire = await hasCompletedQuestionnaire();
     _hasPartner = await hasPartner();
 
     String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
@@ -110,6 +129,16 @@ class _HomeScreenState extends State<HomeScreen> {
         .get();
     Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
     return data.containsKey('partnerId');
+  }
+
+  Future<bool> shouldShowAppTour() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('showAppTour') ?? true;
+  }
+
+  Future<void> markTourAsShown() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('showAppTour', false);
   }
 
   @override
@@ -243,11 +272,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
                 const SizedBox(width: 10),
-                SVGImageWidget(),
+                SVGImageWidget(key: inviteFriendsKey),
               ],
             ),
           ),
           GridItem(
+            key: inviteCodeKey,
             text: AppLocalizations.of(context)!.startQuestionnaireButtonText,
             enabled: _isNewUser,
             onTap: _isNewUser
@@ -269,7 +299,9 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 25,
               child: Text(
                 "Daily Tasks",
-                style: TextStyle(fontSize: 20),
+                style: TextStyle(
+                    fontSize: 20,
+                    color: themeProvider.themeData.textTheme.bodyMedium?.color),
               ),
             ),
           ),
@@ -306,43 +338,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          // GridItem(
-          //   text: "Compare answers with your partner",
-          //   enabled: _hasPartner,
-          //   onTap: _hasPartner
-          //       ? () {
-          //           Navigator.push(
-          //             context,
-          //             MaterialPageRoute(
-          //               builder: (context) => CompareAnswersScreen(),
-          //             ),
-          //           );
-          //         }
-          //       : () {
-          //           showDialog(
-          //             context: context,
-          //             builder: (context) {
-          //               return AlertDialog(
-          //                 title: Text('No Partner'),
-          //                 content: Text('You do not currently have a partner.'),
-          //                 actions: [
-          //                   TextButton(
-          //                     onPressed: () {
-          //                       Navigator.of(context).pop();
-          //                     },
-          //                     child: Text('OK'),
-          //                   ),
-          //                 ],
-          //               );
-          //             },
-          //           );
-          //         },
-          //   icon: Icons.people,
-          // ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: GestureDetector(
-              //onTap: enabled ? onTap : null,
+              key: compareAnswersKey,
               onTap: _hasPartner
                   ? () {
                       Navigator.push(
@@ -405,6 +404,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           GridItem(
+            key: finishQuestionnaireKey,
             text: "Final Questionnaire",
             enabled: false,
             onTap: null,
@@ -435,6 +435,10 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class SVGImageWidget extends StatelessWidget {
+  final GlobalKey? key;
+
+  const SVGImageWidget({this.key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<String?>(

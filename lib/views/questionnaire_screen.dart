@@ -57,7 +57,6 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
   Widget build(BuildContext context) {
     final questionnaireController =
         Provider.of<QuestionnaireController>(context);
-    final languageProvider = Provider.of<LanguageProvider>(context);
 
     return Scaffold(
       appBar: AppBar(

@@ -1,46 +1,65 @@
 import 'package:flutter/material.dart';
-
-class AppColors {
-  static const Color primaryColor = Color.fromARGB(255, 242, 205, 221);
-  static const Color backgroundColor = Colors.white;
-  static const Color textColor = Colors.black;
-  static const Color accentColor = Colors.green;
-
-  static const Color primaryDarkColor = Color.fromARGB(255, 242, 205, 221);
-  static const Color backgroundDarkColor = Colors.white;
-  static const Color textDarkColor = Colors.black;
-  static const Color accentDarkColor = Colors.lightGreen;
-
-  static const ColorScheme lightColorScheme = ColorScheme.light(
-    primary: primaryColor,
-    background: backgroundColor,
-    onPrimary: textColor,
-    onBackground: textColor,
-    secondary: accentColor,
-  );
-
-  static const ColorScheme darkColorScheme = ColorScheme.dark(
-    primary: primaryDarkColor,
-    background: backgroundDarkColor,
-    onPrimary: textDarkColor,
-    onBackground: textDarkColor,
-    secondary: accentDarkColor,
-  );
-}
+import 'theme.dart';
 
 class ThemeProvider extends ChangeNotifier {
   ThemeData lightTheme = ThemeData.light().copyWith(
-    colorScheme: AppColors.lightColorScheme,
+    colorScheme: const ColorScheme.light(
+      primary: AppColors.primaryColor,
+      background: AppColors.backgroundColor,
+      onPrimary: AppColors.textColor,
+      onBackground: AppColors.textColor,
+      secondary: AppColors.accentColor,
+    ),
+    scaffoldBackgroundColor: AppColors.backgroundColor,
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.disabled)) {
+            return Colors.grey;
+          }
+          return AppColors.primaryColor;
+        }),
+        foregroundColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.disabled)) {
+            return Colors.white; // Adjust if needed
+          }
+          return AppColors.textColor;
+        }),
+      ),
+    ),
   );
 
   ThemeData darkTheme = ThemeData.dark().copyWith(
-    colorScheme: AppColors.darkColorScheme,
+    colorScheme: const ColorScheme.dark(
+      primary: AppColors.primaryDarkColor,
+      background: AppColors.backgroundDarkColor,
+      onPrimary: AppColors.textDarkColor,
+      onBackground: AppColors.textDarkColor,
+      secondary: AppColors.accentDarkColor,
+    ),
+    scaffoldBackgroundColor: AppColors.backgroundDarkColor,
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.disabled)) {
+            return Colors.grey;
+          }
+          return AppColors.primaryDarkColor;
+        }),
+        foregroundColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.disabled)) {
+            return Colors.white; // Adjust if needed
+          }
+          return AppColors.textDarkColor;
+        }),
+      ),
+    ),
   );
 
-  late ThemeData currentThemeMode; // Declare as late
+  late ThemeData currentThemeMode;
 
   ThemeProvider() {
-    currentThemeMode = lightTheme; // Assign inside the constructor
+    currentThemeMode = lightTheme;
   }
 
   ThemeData get themeData => currentThemeMode;

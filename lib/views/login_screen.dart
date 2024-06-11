@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wisdom_app/controllers/language_provider.dart';
 import 'package:wisdom_app/controllers/questionnaire_controller.dart';
-import 'package:wisdom_app/controllers/theme_provider.dart';
 import 'package:wisdom_app/services/auth_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -18,6 +17,7 @@ class _LoginPageState extends State<LoginPage> {
 
   bool isButtonEnabled = false;
   bool isEmailValid = true;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -49,13 +49,117 @@ class _LoginPageState extends State<LoginPage> {
     return emailRegex.hasMatch(email);
   }
 
+  Future<void> _showLoadingDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+  }
+
+  Future<void> _showRegisterDialog(BuildContext context) {
+    final TextEditingController emailController = TextEditingController();
+    final TextEditingController passwordController = TextEditingController();
+    bool isRegisterButtonEnabled = false;
+    bool isEmailValid = true;
+
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            void checkRegisterInput() {
+              setState(() {
+                isRegisterButtonEnabled = emailController.text.isNotEmpty &&
+                    passwordController.text.isNotEmpty;
+                isEmailValid = _isEmailValid(emailController.text.trim());
+              });
+            }
+
+            emailController.addListener(checkRegisterInput);
+            passwordController.addListener(checkRegisterInput);
+
+            return AlertDialog(
+              title: Text(AppLocalizations.of(context)!.registerButtonText),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: emailController,
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.emailLabel,
+                      errorText: isEmailValid
+                          ? null
+                          : AppLocalizations.of(context)!.emailErrorText,
+                    ),
+                  ),
+                  TextField(
+                    controller: passwordController,
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.passwordLabel,
+                    ),
+                    obscureText: true,
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: isRegisterButtonEnabled && isEmailValid
+                      ? () async {
+                          _showLoadingDialog(context);
+                          String email = emailController.text.trim();
+                          String password = passwordController.text.trim();
+                          AuthService authService =
+                              Provider.of<AuthService>(context, listen: false);
+                          User? user = await authService
+                              .registerWithEmailAndPassword(email, password);
+                          Navigator.pop(context); // Close loading dialog
+                          Navigator.pop(context); // Close register dialog
+                          if (user != null) {
+                            Navigator.pushReplacementNamed(context, '/avatar');
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text('Error'),
+                                content: Text(AppLocalizations.of(context)!
+                                    .errorRegisteringUser),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: Text('OK'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                        }
+                      : null,
+                  child: Text(AppLocalizations.of(context)!.registerButtonText),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final languageProvider = Provider.of<LanguageProvider>(context);
-    final themeProvider = Provider.of<ThemeProvider>(context);
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text(AppLocalizations.of(context)!.loginScreenAppbarTitle),
@@ -72,12 +176,6 @@ class _LoginPageState extends State<LoginPage> {
                   .loadQuestions(languageProvider.locale.languageCode);
             },
           ),
-          // IconButton(
-          //   icon: Icon(Icons.brightness_6),
-          //   onPressed: () {
-          //     themeProvider.toggleTheme();
-          //   },
-          // ),
         ],
       ),
       body: Center(
@@ -99,92 +197,82 @@ class _LoginPageState extends State<LoginPage> {
               TextField(
                 controller: _passwordController,
                 decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context)!.passwordLabel),
+                  labelText: AppLocalizations.of(context)!.passwordLabel,
+                ),
                 obscureText: true,
               ),
               SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          themeProvider.themeData.colorScheme.primaryContainer,
+              isLoading
+                  ? CircularProgressIndicator()
+                  : ElevatedButton(
+                      onPressed: isButtonEnabled && isEmailValid
+                          ? () async {
+                              setState(() {
+                                isLoading = true;
+                              });
+                              _showLoadingDialog(context);
+                              String email = _emailController.text.trim();
+                              String password = _passwordController.text.trim();
+                              AuthService authService =
+                                  Provider.of<AuthService>(context,
+                                      listen: false);
+                              User? user = await authService
+                                  .signInWithEmailAndPassword(email, password);
+                              Navigator.pop(context); // Close loading dialog
+                              setState(() {
+                                isLoading = false;
+                              });
+                              if (user != null) {
+                                Navigator.pushReplacementNamed(
+                                    context, '/home');
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: Text('Error'),
+                                    content: Text('Invalid email or password.'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: Text('OK'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                            }
+                          : null,
+                      child:
+                          Text(AppLocalizations.of(context)!.loginButtonText),
                     ),
-                    onPressed: () async {
-                      String email = _emailController.text.trim();
-                      String password = _passwordController.text.trim();
-                      AuthService authService =
-                          Provider.of<AuthService>(context, listen: false);
-                      User? user = await authService.signInWithEmailAndPassword(
-                          email, password);
-                      if (user != null) {
-                        Navigator.pushReplacementNamed(context, '/home');
-                      } else {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: Text('Error'),
-                            content: Text('Invalid email or password.'),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: Text('OK'),
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-                    },
-                    child: Text(
-                      AppLocalizations.of(context)!.loginButtonText,
-                      style: TextStyle(color: Colors.black),
+              SizedBox(height: 20),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Divider(
+                      thickness: 1,
+                      color: Colors.grey,
                     ),
                   ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          themeProvider.themeData.colorScheme.primaryContainer,
-                    ),
-                    onPressed: isButtonEnabled && isEmailValid
-                        ? () async {
-                            String email = _emailController.text.trim();
-                            String password = _passwordController.text.trim();
-                            AuthService authService = Provider.of<AuthService>(
-                                context,
-                                listen: false);
-                            User? user = await authService
-                                .registerWithEmailAndPassword(email, password);
-                            if (user != null) {
-                              Navigator.pushReplacementNamed(
-                                  context, '/avatar');
-                            } else {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: Text('Error'),
-                                  content: Text(AppLocalizations.of(context)!
-                                      .errorRegisteringUser),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: Text(
-                                        'OK',
-                                        style: TextStyle(color: Colors.black),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }
-                          }
-                        : null,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
                     child: Text(
-                      AppLocalizations.of(context)!.registerButtonText,
-                      style: TextStyle(color: Colors.black),
+                      "or",
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ),
+                  Expanded(
+                    child: Divider(
+                      thickness: 1,
+                      color: Colors.grey,
                     ),
                   ),
                 ],
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () => _showRegisterDialog(context),
+                child: Text(AppLocalizations.of(context)!.registerButtonText),
               ),
               SizedBox(height: 20),
               Text(

@@ -1,6 +1,8 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:provider/provider.dart';
+import 'package:wisdom_app/controllers/theme_provider.dart';
 import 'package:wisdom_app/views/tasks/drawing_game_screen.dart';
 import 'package:wisdom_app/widgets/player_widget.dart';
 
@@ -12,7 +14,7 @@ class MindfulnessScreen extends StatefulWidget {
 class _MindfulnessScreenState extends State<MindfulnessScreen> {
   Color selectedColor = Colors.transparent;
   late AudioPlayer audioPlayer;
-  bool _isAudioLoading = true; // State variable to track audio loading
+  bool _isAudioLoading = true;
 
   @override
   void initState() {
@@ -20,19 +22,17 @@ class _MindfulnessScreenState extends State<MindfulnessScreen> {
     audioPlayer = AudioPlayer();
     audioPlayer.setReleaseMode(ReleaseMode.stop);
 
-    // Start playing the audio when the screen is loaded
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
         await audioPlayer.setSourceAsset('audio/music.mp3',
             mimeType: 'audio/mpeg');
         setState(() {
-          _isAudioLoading = false; // Set loading to false when audio is loaded
+          _isAudioLoading = false;
         });
         audioPlayer.state = PlayerState.paused;
       } catch (e) {
         setState(() {
-          _isAudioLoading =
-              false; // Set loading to false even if there's an error
+          _isAudioLoading = false;
         });
         print('Error loading audio: $e');
       }
@@ -79,14 +79,13 @@ class _MindfulnessScreenState extends State<MindfulnessScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Mindfulness'),
       ),
       body: _isAudioLoading
-          ? Center(
-              child:
-                  CircularProgressIndicator()) // Show loader if audio is loading
+          ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               padding: EdgeInsets.all(16.0),
               child: Column(
@@ -102,7 +101,22 @@ class _MindfulnessScreenState extends State<MindfulnessScreen> {
                   ),
                   SizedBox(height: 20),
                   // Audio Player
-                  PlayerWidget(player: audioPlayer),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: themeProvider.currentThemeMode.colorScheme.primary
+                          .withAlpha((themeProvider.currentThemeMode.colorScheme
+                                      .primary.alpha -
+                                  90)
+                              .clamp(0, 255)
+                              .toInt()),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: PlayerWidget(player: audioPlayer),
+                    ),
+                  ),
+
                   SizedBox(height: 20),
                   Text(
                     'If your current feeling towards your relationship with ___ would have colours, which colours would that be? The next step will be the creation of a painting. Don’t think too much, chose the colours that resonate with your feelings.',
@@ -127,26 +141,10 @@ class _MindfulnessScreenState extends State<MindfulnessScreen> {
                     ),
                   ),
                   SizedBox(height: 20),
-                  // Display the picked color
-                  // if (selectedColor != Colors.transparent) ...[
-                  //   Text(
-                  //     'Picked Color:',
-                  //     style: TextStyle(fontSize: 16),
-                  //   ),
-                  //   Container(
-                  //     width: double.infinity,
-                  //     height: 50,
-                  //     color: selectedColor,
-                  //     margin: EdgeInsets.only(top: 10),
-                  //   ),
-                  // ],
                   SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
-                      // Stop the audio player
                       audioPlayer.stop();
-
-                      // Navigate to DrawingGameScreen
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -183,7 +181,6 @@ class SummaryScreen extends StatelessWidget {
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 20),
-            // Display the selected color and painting
             Text(
               'Selected Color:',
               style: TextStyle(fontSize: 16),
@@ -195,7 +192,6 @@ class SummaryScreen extends StatelessWidget {
               margin: EdgeInsets.only(top: 10),
             ),
             SizedBox(height: 10),
-            // Replace the Container below with your painting widget
             Container(
               width: 200,
               height: 200,

@@ -8,6 +8,7 @@ import 'package:wisdom_app/main.dart';
 import 'package:wisdom_app/models/question.dart';
 import 'package:wisdom_app/services/auth_service.dart';
 import 'package:wisdom_app/services/invitation_service.dart';
+import 'package:wisdom_app/widgets/feedback_popup.dart';
 import 'package:wisdom_app/widgets/mcq_question_widget.dart';
 import 'package:wisdom_app/widgets/scale_question_widget.dart';
 import 'package:wisdom_app/widgets/text_field_question_widget.dart';
@@ -105,16 +106,16 @@ class _QuestionsTaskScreenState extends State<QuestionsTaskScreen> {
   Widget build(BuildContext context) {
     final questionnaireController =
         Provider.of<QuestionnaireController>(context);
-    final languageProvider = Provider.of<LanguageProvider>(context);
     final authService = Provider.of<AuthService>(context);
     final invitationService = Provider.of<InvitationService>(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Questions'), // Add a title to the app bar
+        title: const Text('Questions'), // Add a title to the app bar
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator()) // Show loader if loading
+          ? const Center(
+              child: CircularProgressIndicator()) // Show loader if loading
           : Padding(
               padding: const EdgeInsets.all(15.0),
               child: ListView.builder(
@@ -131,7 +132,6 @@ class _QuestionsTaskScreenState extends State<QuestionsTaskScreen> {
       floatingActionButton: FloatingActionButton(
         heroTag: null,
         key: UniqueKey(),
-        child: Icon(Icons.check),
         onPressed: _allQuestionsAnswered
             ? () async {
                 saveAnswersToFirestore();
@@ -140,12 +140,15 @@ class _QuestionsTaskScreenState extends State<QuestionsTaskScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => MainScreen()),
-                );
+                ).then((_) {
+                  showFeedbackPopup(context, 'Questions Task');
+                });
               }
             : null,
         backgroundColor: _allQuestionsAnswered
             ? Theme.of(context).colorScheme.primaryContainer
             : Colors.grey,
+        child: const Icon(Icons.check),
       ),
     );
   }

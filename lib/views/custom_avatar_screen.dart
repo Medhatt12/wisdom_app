@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -27,33 +28,42 @@ class _CustomAvatarScreenState extends State<CustomAvatarScreen> {
   Future<void> _saveAvatar(BuildContext context) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     String? newTemp = pref.getString('fluttermoji');
-    print(newTemp);
 
     // Get the username entered by the user
     String username = _usernameController.text.trim();
 
-    if (username.isNotEmpty) {
-      DocumentReference userDocRef = FirebaseFirestore.instance
-          .collection('user_data')
-          .doc(FirebaseAuth.instance.currentUser?.uid);
-
-      try {
-        // Update the document with the new attributes (username and user_image)
-        await userDocRef.update({
-          'username': username,
-          'user_image': newTemp,
-        });
-        print('Document updated successfully');
-        Navigator.pushReplacementNamed(context, '/home');
-      } catch (e) {
-        print('Error updating document: $e');
-      }
-    } else {
+    if (username.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Please enter a username'),
         ),
       );
+      return;
+    }
+
+    if (newTemp == null || newTemp.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please customize your avatar'),
+        ),
+      );
+      return;
+    }
+
+    DocumentReference userDocRef = FirebaseFirestore.instance
+        .collection('user_data')
+        .doc(FirebaseAuth.instance.currentUser?.uid);
+
+    try {
+      // Update the document with the new attributes (username and user_image)
+      await userDocRef.update({
+        'username': username,
+        'user_image': newTemp,
+      });
+      print('Document updated successfully');
+      Navigator.pushReplacementNamed(context, '/home');
+    } catch (e) {
+      print('Error updating document: $e');
     }
   }
 
@@ -86,12 +96,8 @@ class _CustomAvatarScreenState extends State<CustomAvatarScreen> {
                       backgroundColor:
                           themeProvider.themeData.colorScheme.primaryContainer,
                     ),
-                    icon: Icon(
-                      Icons.edit,
-                      color: Colors.black,
-                    ),
-                    label: Text("Customize Avatar",
-                        style: TextStyle(color: Colors.black)),
+                    icon: Icon(Icons.edit),
+                    label: Text("Customize Avatar"),
                     onPressed: () => Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => NewPage()),
@@ -143,7 +149,6 @@ class NewPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Customize Avatar'),
       ),
-      backgroundColor: Colors.white,
       body: Center(
         child: SingleChildScrollView(
           child: Column(
@@ -172,10 +177,7 @@ class NewPage extends StatelessWidget {
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'Save',
-                          style: TextStyle(color: Colors.black),
-                        ),
+                        child: Text('Save'),
                       )),
                 ),
               ),

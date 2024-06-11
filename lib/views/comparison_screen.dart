@@ -113,7 +113,7 @@ class _CompareAnswersScreenState extends State<CompareAnswersScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Compare Answers'),
+        title: const Text('Compare Answers'),
       ),
       body: SafeArea(
         child: userAnswers == null || partnerAnswers == null

@@ -11,11 +11,11 @@ class GridItem extends StatelessWidget {
 
   const GridItem({
     required this.text,
-    required this.icon, // Add this line
-    //required this.backgroundColor,
+    required this.icon,
     required this.enabled,
     this.onTap,
-  });
+    required GlobalKey key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

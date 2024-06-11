@@ -22,7 +22,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _preloadImage() async {
     try {
-      await precacheImage(AssetImage('assets/images/wise-owl.png'), context);
+      await precacheImage(
+          const AssetImage('assets/images/wise-owl.png'), context);
       setState(() {
         _isLoading = false;
       });
@@ -37,17 +38,16 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     final languageProvider = Provider.of<LanguageProvider>(context);
-    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("Wisdom App"),
+        title: const Text("Wisdom App"),
         actions: [
           Text(
             languageProvider.locale.languageCode,
-            style: TextStyle(fontSize: 16),
           ),
           IconButton(
-            icon: Icon(Icons.language),
+            icon: const Icon(Icons.language),
             onPressed: () {
               languageProvider.toggleLanguage();
               Provider.of<QuestionnaireController>(context, listen: false)
@@ -56,10 +56,9 @@ class _SplashScreenState extends State<SplashScreen> {
           ),
         ],
       ),
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: _isLoading
-            ? Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator())
             : LayoutBuilder(
                 builder: (context, constraints) {
                   return Column(
@@ -82,7 +81,6 @@ class _SplashScreenState extends State<SplashScreen> {
                               padding: const EdgeInsets.all(10.0),
                               child: Text(
                                 _getCurrentStepText(),
-                                style: TextStyle(fontSize: 15),
                                 textAlign: TextAlign.center,
                               ),
                             ),
@@ -100,7 +98,7 @@ class _SplashScreenState extends State<SplashScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       _currentStep < 2
                           ? Padding(
                               padding:
@@ -121,21 +119,8 @@ class _SplashScreenState extends State<SplashScreen> {
                                               });
                                             }
                                           : null,
-                                      child: Text(
-                                        AppLocalizations.of(context)!
-                                            .previousButtonText,
-                                        style: TextStyle(
-                                            fontSize: 18, color: Colors.black),
-                                      ),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: themeProvider.themeData
-                                            .colorScheme.primaryContainer,
-                                        shape: const RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.only(
-                                                topRight: Radius.circular(20.0),
-                                                bottomRight:
-                                                    Radius.circular(20.0))),
-                                      ),
+                                      child: Text(AppLocalizations.of(context)!
+                                          .previousButtonText),
                                     ),
                                     ElevatedButton(
                                       onPressed: () {
@@ -143,21 +128,8 @@ class _SplashScreenState extends State<SplashScreen> {
                                           _currentStep = _currentStep + 1;
                                         });
                                       },
-                                      child: Text(
-                                        AppLocalizations.of(context)!
-                                            .nextButtonText,
-                                        style: TextStyle(
-                                            fontSize: 18, color: Colors.black),
-                                      ),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: themeProvider.themeData
-                                            .colorScheme.primaryContainer,
-                                        shape: const RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(20.0),
-                                                bottomLeft:
-                                                    Radius.circular(20.0))),
-                                      ),
+                                      child: Text(AppLocalizations.of(context)!
+                                          .nextButtonText),
                                     )
                                   ],
                                 ),
@@ -171,23 +143,13 @@ class _SplashScreenState extends State<SplashScreen> {
                                     MediaQuery.of(context).size.height * 0.2,
                                 left: MediaQuery.of(context).size.width * 0.33,
                                 child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.pushReplacementNamed(
-                                        context, '/login');
-                                  },
-                                  child: Text(
-                                    "Get Started",
-                                    style: TextStyle(
-                                        fontSize: 18, color: Colors.black),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: themeProvider
-                                        .themeData.colorScheme.primaryContainer,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(20.0)),
-                                  ),
-                                ),
+                                    onPressed: () {
+                                      Navigator.pushReplacementNamed(
+                                          context, '/login');
+                                    },
+                                    child: const Text(
+                                      "Get Started",
+                                    )),
                               ),
                             ),
                     ],
@@ -201,14 +163,14 @@ class _SplashScreenState extends State<SplashScreen> {
   AnimatedContainer buildDot({int? index}) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return AnimatedContainer(
-      duration: Duration(milliseconds: 200),
-      margin: EdgeInsets.only(right: 5),
+      duration: const Duration(milliseconds: 200),
+      margin: const EdgeInsets.only(right: 5),
       height: 6,
       width: _currentStep == index ? 20 : 6,
       decoration: BoxDecoration(
         color: _currentStep == index
             ? themeProvider.themeData.colorScheme.primaryContainer
-            : Color(0xFFD8D8D8),
+            : const Color(0xFFD8D8D8),
         borderRadius: BorderRadius.circular(3),
       ),
     );
@@ -225,15 +187,5 @@ class _SplashScreenState extends State<SplashScreen> {
       default:
         return '';
     }
-  }
-
-  void _handleButtonPress() {
-    setState(() {
-      if (_currentStep < 2) {
-        _currentStep++;
-      } else {
-        Navigator.pushReplacementNamed(context, '/login');
-      }
-    });
   }
 }
