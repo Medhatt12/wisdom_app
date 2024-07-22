@@ -74,6 +74,7 @@ class _CustomAvatarScreenState extends State<CustomAvatarScreen> {
       appBar: AppBar(
         title: Text("Create your avatar"),
         centerTitle: true,
+        backgroundColor: themeProvider.themeData.colorScheme.background,
       ),
       body: ListView(
         physics: BouncingScrollPhysics(),
@@ -148,6 +149,7 @@ class NewPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Customize Avatar'),
+        backgroundColor: themeProvider.themeData.colorScheme.background,
       ),
       body: Center(
         child: SingleChildScrollView(

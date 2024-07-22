@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wisdom_app/controllers/language_provider.dart';
 import 'package:wisdom_app/controllers/questionnaire_controller.dart';
+import 'package:wisdom_app/controllers/theme_provider.dart';
 import 'package:wisdom_app/main.dart';
 import 'package:wisdom_app/models/question.dart';
 import 'package:wisdom_app/widgets/mcq_question_widget.dart';
@@ -57,12 +58,13 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
   Widget build(BuildContext context) {
     final questionnaireController =
         Provider.of<QuestionnaireController>(context);
-
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Wisdom App'),
+        backgroundColor: themeProvider.themeData.colorScheme.background,
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: themeProvider.themeData.colorScheme.background,
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : Padding(

@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
             '/home': (context) => const MainScreen(),
             '/avatar': (context) => CustomAvatarScreen(),
             '/caterpillar': (context) => CaterpillarGameScreen(),
-            '/settings': (context) => const SettingsScreen(),
+            '/settings': (context) => SettingsScreen(),
             '/drawing': (context) => DrawingPage(),
           },
           debugShowCheckedModeBanner: false,
@@ -94,7 +94,7 @@ class _MainScreenState extends State<MainScreen> {
   late User? _currentUser;
   final List<Widget> _screens = [
     HomeScreen(),
-    const SettingsScreen(),
+    SettingsScreen(),
   ];
 
   int tasksFinished = 0;

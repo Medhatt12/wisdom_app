@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:wisdom_app/controllers/theme_provider.dart';
 import 'package:wisdom_app/models/invitation.dart';
 import 'package:wisdom_app/services/auth_service.dart';
 import 'package:wisdom_app/services/invitation_service.dart'; // Import InvitationService
@@ -83,10 +84,12 @@ class _InvitationsScreenState extends State<InvitationsScreen> {
 
     String enteredUserCode =
         ''; // Define a variable to hold the entered user code
+    final themeProvider = Provider.of<ThemeProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Invitations'),
+        backgroundColor: themeProvider.themeData.colorScheme.background,
       ),
       body: hasPartner
           ? Column(
@@ -283,6 +286,8 @@ class _InvitationsScreenState extends State<InvitationsScreen> {
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
+                    backgroundColor:
+                        themeProvider.themeData.colorScheme.background,
                     title: Text('Send Invitation'),
                     content: TextField(
                       decoration: InputDecoration(hintText: 'Enter User Code'),
@@ -295,9 +300,15 @@ class _InvitationsScreenState extends State<InvitationsScreen> {
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        child: Text('Cancel'),
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(
+                            color: themeProvider
+                                .themeData.colorScheme.onBackground,
+                          ),
+                        ),
                       ),
-                      TextButton(
+                      ElevatedButton(
                         onPressed: () {
                           invitationService.sendInvitation(
                             authService.getCurrentUser()?.uid ??
@@ -307,6 +318,7 @@ class _InvitationsScreenState extends State<InvitationsScreen> {
                           // Show a snackbar to indicate that the invitation was sent
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
+                              backgroundColor: Colors.green,
                               content:
                                   Text('Invitation sent to $enteredUserCode'),
                             ),

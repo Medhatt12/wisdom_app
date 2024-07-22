@@ -4,8 +4,7 @@ import 'package:wisdom_app/controllers/theme_provider.dart';
 
 class GridItem extends StatelessWidget {
   final String text;
-  final IconData icon; // Add this line
-  //final Color backgroundColor;
+  final IconData icon;
   final bool enabled;
   final Function()? onTap;
 

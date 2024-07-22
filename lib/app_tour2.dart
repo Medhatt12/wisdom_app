@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
-class AppTour {
+class AppTour2 {
   final BuildContext context;
-  final GlobalKey startQuestionnaireKey;
-  final GlobalKey dailyTaskKey;
-  final GlobalKey compareAnswersKey;
-  final GlobalKey finishQuestionnaireKey;
   final GlobalKey invitationsKey;
+  final GlobalKey invitationsCodeKey;
+  final GlobalKey languageChangerKey;
+  final GlobalKey themeChangerKey;
   final Function()? onFinish;
 
-  AppTour({
+  AppTour2({
     required this.context,
-    required this.startQuestionnaireKey,
-    required this.dailyTaskKey,
-    required this.compareAnswersKey,
-    required this.finishQuestionnaireKey,
     required this.invitationsKey,
+    required this.invitationsCodeKey,
+    required this.languageChangerKey,
+    required this.themeChangerKey,
     this.onFinish,
   });
 
@@ -32,114 +30,6 @@ class AppTour {
 
   List<TargetFocus> _createTargets() {
     return [
-      TargetFocus(
-        identify: "Initial Questionnaire",
-        keyTarget: startQuestionnaireKey,
-        shape: ShapeLightFocus.RRect,
-        contents: [
-          TargetContent(
-            align: ContentAlign.bottom,
-            child: Column(
-              children: [
-                Text(
-                  "Initial Questionnaire",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: 24,
-                  ),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  "To start with your daily tasks, first you need to finish the initial questionnaire!",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-      TargetFocus(
-        identify: "Daily Tasks",
-        keyTarget: dailyTaskKey,
-        shape: ShapeLightFocus.RRect,
-        contents: [
-          TargetContent(
-            align: ContentAlign.bottom,
-            child: Column(
-              children: [
-                Text(
-                  "Daily Tasks",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: 24,
-                  ),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  "Through out your journey in the app, you will go through a series of tasks, each task works on one a specific psychological trait.",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-      TargetFocus(
-        identify: "Compare Answers",
-        keyTarget: compareAnswersKey,
-        shape: ShapeLightFocus.RRect,
-        contents: [
-          TargetContent(
-            align: ContentAlign.top,
-            child: Column(
-              children: [
-                Text(
-                  "Compare Answers",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: 24,
-                  ),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  "You can compare answers with your partner from the compare button, but first you would need to invite them from the setting bottom navigation bar icon.",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-      TargetFocus(
-        identify: "Finish Questionnaire",
-        keyTarget: finishQuestionnaireKey,
-        shape: ShapeLightFocus.RRect,
-        contents: [
-          TargetContent(
-            align: ContentAlign.top,
-            child: Column(
-              children: [
-                Text(
-                  "Final Questionnaire",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: 24,
-                  ),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  "After finishing the tasks, you must do the final questionnaire!",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
       TargetFocus(
         identify: "Partner invitaions",
         keyTarget: invitationsKey,
@@ -160,6 +50,87 @@ class AppTour {
                 SizedBox(height: 10),
                 Text(
                   "Here you can invite your partner using their invitation code, each user has an invitation code which can be found below!",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      TargetFocus(
+        identify: "User invitation code",
+        keyTarget: invitationsCodeKey,
+        shape: ShapeLightFocus.RRect,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            child: Column(
+              children: [
+                Text(
+                  "User invitation code",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  "Share your invitation code with your partner to connect!",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      TargetFocus(
+        identify: "Change language",
+        keyTarget: languageChangerKey,
+        shape: ShapeLightFocus.RRect,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            child: Column(
+              children: [
+                Text(
+                  "Change language",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  "Clicking this button switches between English and German !",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      TargetFocus(
+        identify: "Change Theme",
+        keyTarget: themeChangerKey,
+        shape: ShapeLightFocus.RRect,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            child: Column(
+              children: [
+                Text(
+                  "Change Theme",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  "Clicking this button switches between dark and light mode!",
                   style: TextStyle(color: Colors.white),
                 ),
               ],
