@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:wisdom_app/controllers/theme_provider.dart';
 import 'package:wisdom_app/main.dart';
 import 'package:wisdom_app/services/auth_service.dart';
 import 'package:wisdom_app/services/invitation_service.dart';
-
-import '../../widgets/feedback_popup.dart';
 
 class SimilaritiesAndDifferencesPage extends StatefulWidget {
   @override
@@ -93,30 +92,33 @@ class _SimilaritiesAndDifferencesPageState
   void saveAnswersToFirestore() async {
     try {
       String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+      Map<String, dynamic> formattedData = {
+        'similarities': {'text': similarities, 'shared': shareSimilarities},
+        'userDifferences': {
+          'text': userDifferences,
+          'shared': shareUserDifferences
+        },
+        'partnerDifferences': {
+          'text': partnerDifferences,
+          'shared': sharePartnerDifferences
+        },
+        'learnings': {'text': learnings, 'shared': shareLearnings},
+      };
       await FirebaseFirestore.instance
           .collection('tasks_answers')
           .doc(uid)
-          .set({
-        'SND': {
-          'similarities': similarities,
-          'userDifferences': userDifferences,
-          'partnerDifferences': partnerDifferences,
-          'learnings': learnings,
-          'shareSimilarities': shareSimilarities,
-          'shareUserDifferences': shareUserDifferences,
-          'sharePartnerDifferences': sharePartnerDifferences,
-          'shareLearnings': shareLearnings,
-        },
-      }, SetOptions(merge: true)); // Use merge option to merge new data
+          .set({'SND': formattedData}, SetOptions(merge: true));
       print('Answers saved to Firestore');
     } catch (e) {
       print('Error saving answers: $e');
     }
   }
 
-  void showSummaryBottomSheet(BuildContext context) {
+  void showSummaryBottomSheet(
+      BuildContext context, ThemeProvider themeProvider) {
     showModalBottomSheet(
       context: context,
+      backgroundColor: themeProvider.themeData.colorScheme.background,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
       ),
@@ -191,10 +193,7 @@ class _SimilaritiesAndDifferencesPageState
                                     MaterialPageRoute(
                                         builder: (context) =>
                                             const MainScreen()),
-                                  ).then((_) {
-                                    showFeedbackPopup(context,
-                                        'Similarities and Differences');
-                                  });
+                                  );
                                 }
                               : null,
                           child: const Text('Confirm'),
@@ -213,34 +212,41 @@ class _SimilaritiesAndDifferencesPageState
 
   Widget buildAnswerSummary(
       String title, List<String> answers, List<bool> shareFlags) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 10),
-        for (int i = 0; i < answers.length; i++)
-          ListTile(
-            title: Text(answers[i]),
-            trailing: Switch(
-              value: shareFlags[i],
-              onChanged: (bool value) {
-                setState(() {
-                  shareFlags[i] = value;
-                });
-              },
-            ),
-            subtitle: Text(shareFlags[i] ? 'Shared' : 'Not shared'),
-          ),
-        const SizedBox(height: 10),
-      ],
+    return StatefulBuilder(
+      builder: (BuildContext context, StateSetter setState) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title,
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+            for (int i = 0; i < answers.length; i++)
+              ListTile(
+                title: Text(answers[i]),
+                trailing: Switch(
+                  value: shareFlags[i],
+                  onChanged: (bool value) {
+                    setState(() {
+                      shareFlags[i] = value;
+                    });
+                  },
+                ),
+                subtitle: Text(shareFlags[i] ? 'Shared' : 'Not shared'),
+              ),
+            const SizedBox(height: 10),
+          ],
+        );
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: themeProvider.themeData.colorScheme.background,
         title: const Text('Characteristics'),
         leading: GestureDetector(
           child: const Icon(Icons.arrow_back_ios),
@@ -370,7 +376,7 @@ class _SimilaritiesAndDifferencesPageState
                 partnerDifferences.isNotEmpty &&
                 similarities.isNotEmpty
             ? () {
-                showSummaryBottomSheet(context);
+                showSummaryBottomSheet(context, themeProvider);
               }
             : null,
         backgroundColor: learnings.isNotEmpty &&

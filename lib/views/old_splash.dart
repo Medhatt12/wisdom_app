@@ -43,6 +43,7 @@ class _OldSplashScreenState extends State<OldSplashScreen> {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: themeProvider.themeData.colorScheme.background,
         title: Text("Wisdom App"),
         actions: [
           Text(
@@ -59,7 +60,7 @@ class _OldSplashScreenState extends State<OldSplashScreen> {
           ),
         ],
       ),
-      backgroundColor: Colors.white,
+      //backgroundColor: Colors.white,
       body: SafeArea(
         child: _isLoading
             ? Center(child: CircularProgressIndicator())

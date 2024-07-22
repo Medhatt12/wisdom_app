@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:wisdom_app/controllers/theme_provider.dart';
 
@@ -21,10 +19,13 @@ class _CompareAnswersScreenState extends State<CompareAnswersScreen> {
   Map<String, dynamic>? partnerAnswers;
   Uint8List? userDrawingData;
   Uint8List? partnerDrawingData;
+  int currentIndex = 0;
+  late PageController pageController;
 
   @override
   void initState() {
     super.initState();
+    pageController = PageController(initialPage: currentIndex);
     _initializeData();
   }
 
@@ -69,10 +70,38 @@ class _CompareAnswersScreenState extends State<CompareAnswersScreen> {
             .forEach((task) {
           partnerAnswers![task] ??= {'answer': 'Not done yet'};
         });
+
+        // Filter the SND answers based on the shared flag
+        if (userAnswers != null && userAnswers!.containsKey('SND')) {
+          userAnswers!['SND'] = _filterSNDAnswers(userAnswers!['SND']);
+        }
+        if (partnerAnswers != null && partnerAnswers!.containsKey('SND')) {
+          partnerAnswers!['SND'] = _filterSNDAnswers(partnerAnswers!['SND']);
+        }
       });
     } catch (e) {
       print('Error fetching answers: $e');
     }
+  }
+
+  Map<String, dynamic> _filterSNDAnswers(Map<String, dynamic> sndAnswers) {
+    Map<String, dynamic> filteredSND = {};
+    sndAnswers.forEach((category, answers) {
+      if (answers is Map<String, dynamic> &&
+          answers.containsKey('text') &&
+          answers.containsKey('shared')) {
+        List<dynamic> textList = answers['text'];
+        List<dynamic> sharedList = answers['shared'];
+        List<dynamic> filteredText = [];
+        for (int i = 0; i < textList.length; i++) {
+          if (sharedList[i]) {
+            filteredText.add(textList[i]);
+          }
+        }
+        filteredSND[category] = {'text': filteredText};
+      }
+    });
+    return filteredSND;
   }
 
   Future<void> fetchUserDrawing() async {
@@ -107,6 +136,32 @@ class _CompareAnswersScreenState extends State<CompareAnswersScreen> {
     }
   }
 
+  void _nextCard() {
+    if (currentIndex < userAnswers!.length - 1) {
+      setState(() {
+        currentIndex++;
+        pageController.animateToPage(
+          currentIndex,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      });
+    }
+  }
+
+  void _previousCard() {
+    if (currentIndex > 0) {
+      setState(() {
+        currentIndex--;
+        pageController.animateToPage(
+          currentIndex,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -114,17 +169,51 @@ class _CompareAnswersScreenState extends State<CompareAnswersScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Compare Answers'),
+        backgroundColor: themeProvider.themeData.colorScheme.background,
       ),
       body: SafeArea(
         child: userAnswers == null || partnerAnswers == null
             ? Center(child: CircularProgressIndicator())
-            : ListView.builder(
-                padding: EdgeInsets.all(16.0),
-                itemCount: userAnswers!.length,
-                itemBuilder: (context, index) {
-                  String taskTitle = userAnswers!.keys.elementAt(index);
-                  return _buildTaskCard(taskTitle, themeProvider);
-                },
+            : Column(
+                children: [
+                  Expanded(
+                    child: PageView.builder(
+                      itemCount: userAnswers!.length,
+                      controller: pageController,
+                      onPageChanged: (index) {
+                        setState(() {
+                          currentIndex = index;
+                        });
+                      },
+                      itemBuilder: (context, index) {
+                        String taskTitle = userAnswers!.keys.elementAt(index);
+                        return _buildTaskCard(taskTitle, themeProvider);
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 8, bottom: 20.0, right: 8, left: 8),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ElevatedButton(
+                            onPressed: currentIndex > 0 ? _previousCard : null,
+                            child: Text('Previous'),
+                          ),
+                          ElevatedButton(
+                            onPressed: currentIndex < userAnswers!.length - 1
+                                ? _nextCard
+                                : null,
+                            child: Text('Next'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
       ),
     );
@@ -136,48 +225,114 @@ class _CompareAnswersScreenState extends State<CompareAnswersScreen> {
     Map<String, dynamic> partnerTaskAnswers =
         partnerAnswers![taskTitle] as Map<String, dynamic>;
 
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 10.0),
-      child: Theme(
-        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-        child: ExpansionTile(
-          title: Text(
-            taskTitle,
-            style: TextStyle(fontWeight: FontWeight.bold),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Card(
+        margin: EdgeInsets.symmetric(vertical: 10.0),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  taskTitle,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                SizedBox(height: 10),
+                if (taskTitle == 'SND')
+                  ..._buildSNDContent(userTaskAnswers, partnerTaskAnswers)
+                else
+                  ...userTaskAnswers.keys.map<Widget>((question) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            question,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          taskTitle == 'drawing'
+                              ? Row(
+                                  children: [
+                                    _buildDrawingPreview(userDrawingData,
+                                        themeProvider, "Your Drawing"),
+                                    SizedBox(width: 10),
+                                    _buildDrawingPreview(partnerDrawingData,
+                                        themeProvider, "Partner's Drawing"),
+                                  ],
+                                )
+                              : Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Your Answer: ${userTaskAnswers[question] ?? 'Not done yet'}",
+                                      style: TextStyle(fontSize: 14),
+                                    ),
+                                    SizedBox(height: 5),
+                                    Text(
+                                      "Partner's Answer: ${partnerTaskAnswers[question] ?? 'Not done yet'}",
+                                      style: TextStyle(fontSize: 14),
+                                    ),
+                                  ],
+                                ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+              ],
+            ),
           ),
-          children: userTaskAnswers.keys.map<Widget>((question) {
-            return ListTile(
-              title: Text(question),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  taskTitle == 'drawing'
-                      ? Row(
-                          children: [
-                            _buildDrawingPreview(
-                                userDrawingData, themeProvider, "Your Drawing"),
-                            SizedBox(width: 10),
-                            _buildDrawingPreview(partnerDrawingData,
-                                themeProvider, "Partner's Drawing"),
-                          ],
-                        )
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                                "Your Answer: ${userTaskAnswers[question] ?? 'Not done yet'}"),
-                            SizedBox(height: 5),
-                            Text(
-                                "Partner's Answer: ${partnerTaskAnswers[question] ?? 'Not done yet'}"),
-                          ],
-                        ),
-                ],
-              ),
-            );
-          }).toList(),
         ),
       ),
     );
+  }
+
+  List<Widget> _buildSNDContent(Map<String, dynamic> userTaskAnswers,
+      Map<String, dynamic> partnerTaskAnswers) {
+    List<Widget> content = [];
+    userTaskAnswers.forEach((category, answers) {
+      String userAnswersText = (answers['text'] as List).isEmpty
+          ? 'Not shared'
+          : (answers['text'] as List).join(', ');
+      String partnerAnswersText = (partnerTaskAnswers[category] != null &&
+              (partnerTaskAnswers[category]['text'] as List).isNotEmpty)
+          ? (partnerTaskAnswers[category]['text'] as List).join(', ')
+          : 'Not shared';
+
+      content.add(
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                category,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              SizedBox(height: 5),
+              Text(
+                "Your Answers: $userAnswersText",
+                style: TextStyle(fontSize: 14),
+              ),
+              SizedBox(height: 5),
+              Text(
+                "Partner's Answers: $partnerAnswersText",
+                style: TextStyle(fontSize: 14),
+              ),
+            ],
+          ),
+        ),
+      );
+    });
+    return content;
   }
 
   Widget _buildDrawingPreview(

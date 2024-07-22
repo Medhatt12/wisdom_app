@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wisdom_app/controllers/theme_provider.dart';
 import 'package:wisdom_app/views/comparison_screen.dart';
 import 'package:wisdom_app/views/questionnaire_screen.dart';
@@ -19,6 +18,7 @@ import 'package:shimmer/shimmer.dart';
 import '../app_tour.dart';
 import '../widgets/grid_item.dart';
 import '../views/tasks/mindfulness_task_screen.dart';
+import 'settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -28,10 +28,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final GlobalKey inviteFriendsKey = GlobalKey();
-  final GlobalKey inviteCodeKey = GlobalKey();
+  final GlobalKey startQuestionnaireKey = GlobalKey();
+  final GlobalKey dailyTaskKey = GlobalKey();
   final GlobalKey compareAnswersKey = GlobalKey();
-  final GlobalKey finishTaskKey = GlobalKey();
   final GlobalKey finishQuestionnaireKey = GlobalKey();
 
   late bool _isNewUser = false;
@@ -54,27 +53,27 @@ class _HomeScreenState extends State<HomeScreen> {
         title: 'Similarities and differences',
         icon: Icons.compare_arrows,
         route:
-            SimilaritiesAndDifferencesPage(), // Add route to MindfulnessScreen
+            SimilaritiesAndDifferencesPage(), // Add route to SimilaritiesAndDifferencesPage
       ),
       TaskItem(
         title: 'Questions',
         icon: Icons.question_answer,
-        route: QuestionsTaskScreen(), // Add route to MindfulnessScreen
+        route: QuestionsTaskScreen(), // Add route to QuestionsTaskScreen
       ),
       TaskItem(
         title: 'Values',
         icon: Icons.admin_panel_settings,
-        route: ValuesScreen(), // Add route to MindfulnessScreen
+        route: ValuesScreen(), // Add route to ValuesScreen
       ),
       TaskItem(
         title: 'Gratefulness',
         icon: Icons.sentiment_satisfied_alt,
-        route: GratefulnessScreen(), // Add route to MindfulnessScreen
+        route: GratefulnessScreen(), // Add route to GratefulnessScreen
       ),
       TaskItem(
         title: 'A day in the life',
         icon: Icons.directions_walk,
-        route: ADayInTheLifeScreen(), // Add route to MindfulnessScreen
+        route: ADayInTheLifeScreen(), // Add route to ADayInTheLifeScreen
       )
     ];
     checkUserStatus();
@@ -89,13 +88,13 @@ class _HomeScreenState extends State<HomeScreen> {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           AppTour(
             context: context,
-            inviteFriendsKey: inviteFriendsKey,
-            inviteCodeKey: inviteCodeKey,
+            startQuestionnaireKey: startQuestionnaireKey,
+            dailyTaskKey: dailyTaskKey,
             compareAnswersKey: compareAnswersKey,
-            finishTaskKey: finishTaskKey,
             finishQuestionnaireKey: finishQuestionnaireKey,
+            invitationsKey: GlobalKey(),
+            onFinish: _navigateToSettingsScreen,
           ).showTutorial();
-          markTourAsShown();
         });
       }
     });
@@ -132,22 +131,42 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<bool> shouldShowAppTour() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('showAppTour') ?? true;
+    String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    DocumentSnapshot snapshot =
+        await FirebaseFirestore.instance.collection('user_data').doc(uid).get();
+    Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+    return !(data['viewedTour'] ?? false);
   }
 
-  Future<void> markTourAsShown() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('showAppTour', false);
+  void _navigateToSettingsScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SettingsScreen(),
+      ),
+    ).then((_) {
+      // Continue the tutorial in the SettingsScreen
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        AppTour(
+                context: context,
+                startQuestionnaireKey:
+                    GlobalKey(), // Dummy key for the next targets
+                dailyTaskKey: GlobalKey(),
+                compareAnswersKey: GlobalKey(),
+                finishQuestionnaireKey: GlobalKey(),
+                invitationsKey: GlobalKey())
+            .showTutorial();
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, _) {
-        return SafeArea(
-          child: Scaffold(
-            body: isLoading
+        return Scaffold(
+          body: SafeArea(
+            child: isLoading
                 ? buildShimmerEffect(context)
                 : buildHomeScreenContent(context, themeProvider),
           ),
@@ -272,12 +291,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
                 const SizedBox(width: 10),
-                SVGImageWidget(key: inviteFriendsKey),
+                SVGImageWidget(),
               ],
             ),
           ),
           GridItem(
-            key: inviteCodeKey,
+            key: startQuestionnaireKey,
             text: AppLocalizations.of(context)!.startQuestionnaireButtonText,
             enabled: _isNewUser,
             onTap: _isNewUser
@@ -306,6 +325,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           SizedBox(
+            key: dailyTaskKey,
             height: 200.0,
             child: Container(
               width: MediaQuery.of(context).size.width,
@@ -407,7 +427,28 @@ class _HomeScreenState extends State<HomeScreen> {
             key: finishQuestionnaireKey,
             text: "Final Questionnaire",
             enabled: false,
-            onTap: null,
+            onTap: () {
+              // Navigate to the next screen and continue the tutorial
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingsScreen(),
+                ),
+              ).then((_) {
+                // Continue the tutorial in the SettingsScreen
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  AppTour(
+                          context: context,
+                          startQuestionnaireKey:
+                              GlobalKey(), // Dummy key for the next targets
+                          dailyTaskKey: GlobalKey(),
+                          compareAnswersKey: GlobalKey(),
+                          finishQuestionnaireKey: GlobalKey(),
+                          invitationsKey: GlobalKey())
+                      .showTutorial();
+                });
+              });
+            },
             icon: Icons.assignment_turned_in,
           ),
         ],

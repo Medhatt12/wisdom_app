@@ -2,21 +2,19 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
+import 'package:wisdom_app/controllers/theme_provider.dart';
 import 'package:wisdom_app/services/auth_service.dart';
 import 'package:wisdom_app/services/invitation_service.dart';
-import 'package:wisdom_app/views/home_screen.dart';
 import 'package:wisdom_app/widgets/drawn_line.dart';
 import 'package:wisdom_app/widgets/sketcher.dart';
-
 import '../../main.dart';
+import '../../widgets/feedback_popup.dart';
 
 class DrawingPage extends StatefulWidget {
   @override
@@ -106,9 +104,11 @@ class _DrawingPageState extends State<DrawingPage> {
     });
   }
 
-  void showSummaryBottomSheet(BuildContext context, Uint8List imageBytes) {
+  void showSummaryBottomSheet(
+      BuildContext context, Uint8List imageBytes, ThemeProvider themeProvider) {
     showModalBottomSheet(
       context: context,
+      backgroundColor: themeProvider.themeData.colorScheme.background,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
       ),
@@ -173,6 +173,7 @@ class _DrawingPageState extends State<DrawingPage> {
                                     listen: false);
                             invitationService.incrementTasksFinished(
                                 authService.getCurrentUser()!.uid);
+                            //showFeedbackPopup(context, 'Mindfulness Task');
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -199,8 +200,7 @@ class _DrawingPageState extends State<DrawingPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authService = Provider.of<AuthService>(context);
-    final invitationService = Provider.of<InvitationService>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
@@ -223,7 +223,7 @@ class _DrawingPageState extends State<DrawingPage> {
                 await image.toByteData(format: ui.ImageByteFormat.png);
             if (byteData != null) {
               Uint8List pngBytes = byteData.buffer.asUint8List();
-              showSummaryBottomSheet(context, pngBytes);
+              showSummaryBottomSheet(context, pngBytes, themeProvider);
             }
           }
         },

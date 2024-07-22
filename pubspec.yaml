@@ -84,6 +84,17 @@ flutter:
     - assets/audio/
     - assets/images/
     - assets/images/wise-owl.png
+    - assets/images/scenario1.png
+    - assets/images/scenario2.png
+    - assets/images/scenario3.png
+    - assets/images/scenario4.png
+    - assets/images/scenario5.png
+    - assets/images/scenario6.png
+    - assets/images/scenario7.png
+    - assets/images/scenario8.png
+    - assets/images/scenario9.png
+    - assets/images/scenario10.png
+    - assets/ADayInTheLifeOf.html
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

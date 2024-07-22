@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:wisdom_app/controllers/theme_provider.dart';
+
+import '../main.dart';
 
 void showFeedbackPopup(BuildContext context, String taskName) {
+  final themeProvider = Provider.of<ThemeProvider>(context);
+
   showDialog(
     context: context,
     builder: (context) => Dialog(
+      backgroundColor: themeProvider.themeData.colorScheme.background,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20.0),
       ),
@@ -13,14 +20,21 @@ void showFeedbackPopup(BuildContext context, String taskName) {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Congratulations!',
+              'Nice Work!',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.green,
+                color: themeProvider.themeData.colorScheme.primary,
               ),
             ),
             SizedBox(height: 10),
+            Text(
+              '🎉',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             Text(
               'You have successfully completed the task:',
               style: TextStyle(fontSize: 16),
@@ -32,7 +46,7 @@ void showFeedbackPopup(BuildContext context, String taskName) {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.blue,
+                color: themeProvider.themeData.colorScheme.primary,
               ),
               textAlign: TextAlign.center,
             ),
@@ -40,8 +54,12 @@ void showFeedbackPopup(BuildContext context, String taskName) {
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MainScreen()),
+                );
               },
-              child: Text('Continue'),
+              child: Text('Close'),
             ),
           ],
         ),

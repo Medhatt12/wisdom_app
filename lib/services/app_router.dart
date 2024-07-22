@@ -19,7 +19,7 @@ class AppRouter {
       case '/caterpillar':
         return MaterialPageRoute(builder: (_) => CaterpillarGameScreen());
       case '/settings':
-        return MaterialPageRoute(builder: (_) => const SettingsScreen());
+        return MaterialPageRoute(builder: (_) => SettingsScreen());
       case '/similarities-and-differences':
         return MaterialPageRoute(
             builder: (_) => SimilaritiesAndDifferencesPage());

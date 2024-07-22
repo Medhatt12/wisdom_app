@@ -83,6 +83,7 @@ class _MindfulnessScreenState extends State<MindfulnessScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Mindfulness'),
+        backgroundColor: themeProvider.themeData.colorScheme.background,
       ),
       body: _isAudioLoading
           ? Center(child: CircularProgressIndicator())
@@ -91,11 +92,6 @@ class _MindfulnessScreenState extends State<MindfulnessScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Mindfulness',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 20),
                   Text(
                     'Take yourself about 15 minutes time and go to a place which is calm and where you will not be disturbed. Use headphones to listen to the following audio. It is a guided meditation. Try to be open towards your feelings. If unpleasant feelings arise during the exercise, you can interrupt or end it any time.',
                   ),

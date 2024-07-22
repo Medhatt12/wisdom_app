@@ -1,10 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wisdom_app/controllers/language_provider.dart';
 import 'package:wisdom_app/controllers/questionnaire_controller.dart';
 import 'package:wisdom_app/services/auth_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../controllers/theme_provider.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -44,7 +47,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   bool _isEmailValid(String email) {
-    // Basic email validation using regular expression
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     return emailRegex.hasMatch(email);
   }
@@ -82,8 +84,9 @@ class _LoginPageState extends State<LoginPage> {
 
             emailController.addListener(checkRegisterInput);
             passwordController.addListener(checkRegisterInput);
-
+            final themeProvider = Provider.of<ThemeProvider>(context);
             return AlertDialog(
+              backgroundColor: themeProvider.themeData.colorScheme.background,
               title: Text(AppLocalizations.of(context)!.registerButtonText),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -111,7 +114,12 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text('Cancel'),
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(
+                      color: themeProvider.themeData.colorScheme.onBackground,
+                    ),
+                  ),
                 ),
                 ElevatedButton(
                   onPressed: isRegisterButtonEnabled && isEmailValid
@@ -126,6 +134,7 @@ class _LoginPageState extends State<LoginPage> {
                           Navigator.pop(context); // Close loading dialog
                           Navigator.pop(context); // Close register dialog
                           if (user != null) {
+                            await _markUserAsNew();
                             Navigator.pushReplacementNamed(context, '/avatar');
                           } else {
                             showDialog(
@@ -155,12 +164,18 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  Future<void> _markUserAsNew() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('showAppTour', true);
+  }
+
   @override
   Widget build(BuildContext context) {
     final languageProvider = Provider.of<LanguageProvider>(context);
-
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: themeProvider.themeData.colorScheme.background,
         automaticallyImplyLeading: false,
         title: Text(AppLocalizations.of(context)!.loginScreenAppbarTitle),
         actions: [
