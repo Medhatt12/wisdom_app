@@ -54,6 +54,7 @@ dependencies:
   mailer: ^6.1.0
   shimmer: ^3.0.0
   tutorial_coach_mark: ^1.2.11
+  encrypt: ^5.0.3
   
 dev_dependencies:
   flutter_test:
