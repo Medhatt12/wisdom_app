@@ -9,27 +9,67 @@
   "questions": [
     {
       "id": "1",
-      "text": "Was ist deine Lieblingsfarbe?",
-      "type": "MCQ",
-      "options": [
-        "Rot",
-        "Blau",
-        "Grün",
-        "Gelb"
-      ]
+      "text": "Wie alt sind Sie?",
+      "type": "TEXT_FIELD"
     },
     {
       "id": "2",
-      "text": "Wie zufrieden sind Sie mit unserem Service?",
-      "type": "SCALE"
+      "text": "Welchem Geschlecht ordnen Sie sich zu?",
+      "type": "MCQ",
+      "options": [
+        "männlich",
+        "weiblich",
+        "divers",
+        "andere"
+      ]
     },
     {
       "id": "3",
-      "text": "Wie ist dein Name?",
-      "type": "TEXT_FIELD"
+      "text": "Welche Nationalität haben Sie?",
+      "type": "MCQ",
+      "options": [
+        "Österreich",
+        "Deutschland",
+        "andere"
+      ]
+    },
+    {
+      "id": "4",
+      "text": "Welche Muttersprache haben Sie?",
+      "type": "MCQ",
+      "options": [
+        "deutsch",
+        "englisch",
+        "andere"
+      ]
+    },
+    {
+      "id": "5",
+      "text": "In welcher Studienrichtung studieren Sie?",
+      "type": "MCQ",
+      "options": [
+        "Psychologie",
+        "Game Studies",
+        "andere",
+        "Ich studiere nicht"
+      ]
+    },
+    {
+      "id": "6",
+      "text": "Was ist Ihr höchster Bildungsabschluss?",
+      "type": "MCQ",
+      "options": [
+        "kein Schulabschluss",
+        "Pflichtschulabschluss",
+        "Fachschulabschluss",
+        "Matura/Abitur",
+        "abgeschlossene Lehre",
+        "Studienabschluss (Bachelor/Master)",
+        "höherer Abschluss"
+      ]
     }
   ],
-  "Task-Questions":[
+  "Task-Questions": [
     {
       "id": "1",
       "text": "Gibt es etwas, von dem du schon lange träumst, es zu tun? Warum hast du es noch nicht getan?",
