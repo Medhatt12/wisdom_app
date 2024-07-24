@@ -9,27 +9,67 @@
   "questions": [
     {
       "id": "1",
-      "text": "What is your favorite color?",
-      "type": "MCQ",
-      "options": [
-        "Red",
-        "Blue",
-        "Green",
-        "Yellow"
-      ]
+      "text": "How old are you?",
+      "type": "TEXT_FIELD"
     },
     {
       "id": "2",
-      "text": "How satisfied are you with our service?",
-      "type": "SCALE"
+      "text": "Which gender do you identify with?",
+      "type": "MCQ",
+      "options": [
+        "male",
+        "female",
+        "divers",
+        "other"
+      ]
     },
     {
       "id": "3",
-      "text": "What is your name?",
-      "type": "TEXT_FIELD"
+      "text": "Which nationality do you have?",
+      "type": "MCQ",
+      "options": [
+        "Austria",
+        "Germany",
+        "other"
+      ]
+    },
+    {
+      "id": "4",
+      "text": "What is your native language?",
+      "type": "MCQ",
+      "options": [
+        "German",
+        "English",
+        "other"
+      ]
+    },
+    {
+      "id": "5",
+      "text": "What is your field of study?",
+      "type": "MCQ",
+      "options": [
+        "Psychology",
+        "Game Studies",
+        "other",
+        "I don’t study"
+      ]
+    },
+    {
+      "id": "6",
+      "text": "What is your highest education degree?",
+      "type": "MCQ",
+      "options": [
+        "no degree",
+        "compulsory school qualification",
+        "vocational school certificate",
+        "higher education entrance qualification",
+        "completed apprenticeship",
+        "university degree",
+        "higher degree"
+      ]
     }
   ],
-  "Task-Questions":[
+  "Task-Questions": [
     {
       "id": "1",
       "text": "Is there something you have been dreaming of for a long time? Why haven't you done it yet?",
