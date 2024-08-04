@@ -7,7 +7,7 @@ final List<Scenario> story = [
     choices: [
       Choice(text: 'Start Game', nextScenarioId: 1),
     ],
-    image: 'assets/images/scenario1.png',
+    //image: 'assets/images/scenario1.png',
   ),
   Scenario(
     text:
@@ -27,7 +27,7 @@ final List<Scenario> story = [
     perspectiveSwitch: 'Switch Perspective',
     perspectiveText:
         'You wake up and realize your partner has already left. It\'s your anniversary, and you feel a bit disappointed they didn\'t wake you up to celebrate. You decide to send them a good morning text, hoping for a loving reply.',
-    image: 'assets/images/scenario2.png',
+    image: 'assets/images/scenario1.png',
   ),
   Scenario(
     text:
@@ -49,7 +49,7 @@ final List<Scenario> story = [
     perspectiveSwitch: 'Switch Perspective',
     perspectiveText:
         'You read your partner\'s reply and feel a mix of emotions. They didn\'t mention the anniversary, which makes you feel neglected.',
-    image: 'assets/images/scenario3.png',
+    image: 'assets/images/scenario2.png',
   ),
   Scenario(
     text:
@@ -68,7 +68,7 @@ final List<Scenario> story = [
     perspectiveSwitch: 'Switch Perspective',
     perspectiveText:
         'You know your partner is facing a big challenge today. How do you support them from afar?',
-    image: 'assets/images/scenario4.png',
+    image: 'assets/images/scenario3.png',
   ),
   Scenario(
     text:
@@ -87,7 +87,7 @@ final List<Scenario> story = [
     perspectiveSwitch: 'Switch Perspective',
     perspectiveText:
         'How your partner perceives your behavior later in the day.',
-    image: 'assets/images/scenario5.png',
+    image: 'assets/images/scenario4.png',
   ),
   Scenario(
     text:
@@ -102,7 +102,7 @@ final List<Scenario> story = [
           text: 'Reflect on a happy memory to uplift your spirits.',
           nextScenarioId: 6),
     ],
-    image: 'assets/images/scenario6.png',
+    image: 'assets/images/scenario5.png',
   ),
   Scenario(
     text:
@@ -119,7 +119,7 @@ final List<Scenario> story = [
     perspectiveSwitch: 'Switch Perspective',
     perspectiveText:
         'You are still affected by the conflict and the stress from the presentation. What do you do to cope?',
-    image: 'assets/images/scenario7.png',
+    image: 'assets/images/scenario6.png',
   ),
   Scenario(
     text:
@@ -134,7 +134,7 @@ final List<Scenario> story = [
               'Remind them of your plans for the evening to lift their spirits.',
           nextScenarioId: 8),
     ],
-    image: 'assets/images/scenario8.png',
+    image: 'assets/images/scenario7.png',
   ),
   Scenario(
     text:
@@ -152,7 +152,7 @@ final List<Scenario> story = [
     perspectiveSwitch: 'Switch Perspective',
     perspectiveText:
         'You are excited to see your partner but sense their stress. At the same time, you are still disappointed that they forgot your anniversary. How do you react?',
-    image: 'assets/images/scenario9.png',
+    image: 'assets/images/scenario8.png',
   ),
   Scenario(
     text: 'You decide on dinner plans. What do you do?',
@@ -165,7 +165,7 @@ final List<Scenario> story = [
           text: 'Go out to a favorite restaurant to change the atmosphere.',
           nextScenarioId: 10),
     ],
-    image: 'assets/images/scenario10.png',
+    image: 'assets/images/scenario9.png',
   ),
   Scenario(
     text: 'After dinner, how do you propose to spend the evening?',
@@ -200,6 +200,6 @@ final List<Scenario> story = [
     ],
     perspectiveSwitch: 'Switch Perspective',
     perspectiveText: 'Reflecting on the day and your thoughts before bed.',
-    image: 'assets/images/scenario10.png',
+    //image: 'assets/images/scenario10.png',
   ),
 ];

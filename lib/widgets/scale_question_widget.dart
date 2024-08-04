@@ -28,8 +28,8 @@ class _ScaleQuestionWidgetState extends State<ScaleQuestionWidget> {
         Slider(
           value: _sliderValue,
           min: 0,
-          max: 5,
-          divisions: 5,
+          max: 4,
+          divisions: 4,
           onChanged: (value) {
             setState(() {
               _sliderValue = value;
@@ -40,16 +40,18 @@ class _ScaleQuestionWidgetState extends State<ScaleQuestionWidget> {
             widget.onChanged(); // Notify that the slider value has changed
           },
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('0'),
-            Text('1'),
-            Text('2'),
-            Text('3'),
-            Text('4'),
-            Text('5'),
-          ],
+        Padding(
+          padding: const EdgeInsets.only(right: 18.0, left: 18.0, bottom: 10.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('1'),
+              Text('2'),
+              Text('3'),
+              Text('4'),
+              Text('5'),
+            ],
+          ),
         ),
       ],
     );

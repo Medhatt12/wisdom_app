@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -104,10 +106,16 @@ class _SimilaritiesAndDifferencesPageState
         },
         'learnings': {'text': learnings, 'shared': shareLearnings},
       };
+
+      // Encrypt the formattedData using the user ID as the encryption key
+      AuthService authService = AuthService();
+      String encryptedData =
+          authService.encryptData(jsonEncode(formattedData), uid);
+
       await FirebaseFirestore.instance
           .collection('tasks_answers')
           .doc(uid)
-          .set({'SND': formattedData}, SetOptions(merge: true));
+          .set({'SND': encryptedData}, SetOptions(merge: true));
       print('Answers saved to Firestore');
     } catch (e) {
       print('Error saving answers: $e');

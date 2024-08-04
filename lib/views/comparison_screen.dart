@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:wisdom_app/controllers/theme_provider.dart';
+import 'package:wisdom_app/services/auth_service.dart';
 
 class CompareAnswersScreen extends StatefulWidget {
   const CompareAnswersScreen({Key? key}) : super(key: key);
@@ -50,18 +51,66 @@ class _CompareAnswersScreenState extends State<CompareAnswersScreen> {
 
   Future<void> fetchAnswers() async {
     try {
+      AuthService authService = AuthService();
+
+      // Fetch user answers
       DocumentSnapshot userAnswersSnapshot = await FirebaseFirestore.instance
           .collection('tasks_answers')
           .doc(FirebaseAuth.instance.currentUser?.uid)
           .get();
+
+      // Fetch partner answers
       DocumentSnapshot partnerAnswersSnapshot = await FirebaseFirestore.instance
           .collection('tasks_answers')
           .doc(partnerId)
           .get();
 
       setState(() {
-        userAnswers = userAnswersSnapshot.data() as Map<String, dynamic>?;
-        partnerAnswers = partnerAnswersSnapshot.data() as Map<String, dynamic>?;
+        // Process user answers
+        if (userAnswersSnapshot.exists) {
+          userAnswers = userAnswersSnapshot.data() as Map<String, dynamic>?;
+
+          // Decrypt SND answers
+          if (userAnswers!.containsKey('SND')) {
+            String encryptedUserAnswers = userAnswers!['SND'];
+            String decryptedUserAnswers = authService.decryptData(
+                encryptedUserAnswers,
+                FirebaseAuth.instance.currentUser?.uid ?? '');
+            userAnswers!['SND'] =
+                jsonDecode(decryptedUserAnswers) as Map<String, dynamic>;
+          }
+
+          // Process drawing data
+          if (userAnswers!.containsKey('drawing')) {
+            String? imageData = userAnswers!['drawing']['image_data'];
+            if (imageData != null) {
+              userDrawingData = base64Decode(imageData);
+            }
+          }
+        }
+
+        // Process partner answers
+        if (partnerAnswersSnapshot.exists) {
+          partnerAnswers =
+              partnerAnswersSnapshot.data() as Map<String, dynamic>?;
+
+          // Decrypt SND answers
+          if (partnerAnswers!.containsKey('SND')) {
+            String encryptedPartnerAnswers = partnerAnswers!['SND'];
+            String decryptedPartnerAnswers =
+                authService.decryptData(encryptedPartnerAnswers, partnerId);
+            partnerAnswers!['SND'] =
+                jsonDecode(decryptedPartnerAnswers) as Map<String, dynamic>;
+          }
+
+          // Process drawing data
+          if (partnerAnswers!.containsKey('drawing')) {
+            String? imageData = partnerAnswers!['drawing']['image_data'];
+            if (imageData != null) {
+              partnerDrawingData = base64Decode(imageData);
+            }
+          }
+        }
 
         partnerAnswers ??= {};
 
@@ -87,17 +136,10 @@ class _CompareAnswersScreenState extends State<CompareAnswersScreen> {
   Map<String, dynamic> _filterSNDAnswers(Map<String, dynamic> sndAnswers) {
     Map<String, dynamic> filteredSND = {};
     sndAnswers.forEach((category, answers) {
-      if (answers is Map<String, dynamic> &&
-          answers.containsKey('text') &&
-          answers.containsKey('shared')) {
+      if (answers is Map<String, dynamic> && answers.containsKey('text')) {
         List<dynamic> textList = answers['text'];
-        List<dynamic> sharedList = answers['shared'];
-        List<dynamic> filteredText = [];
-        for (int i = 0; i < textList.length; i++) {
-          if (sharedList[i]) {
-            filteredText.add(textList[i]);
-          }
-        }
+        List<dynamic> filteredText =
+            List.from(textList); // Copy the list as it is
         filteredSND[category] = {'text': filteredText};
       }
     });
@@ -242,6 +284,18 @@ class _CompareAnswersScreenState extends State<CompareAnswersScreen> {
                 SizedBox(height: 10),
                 if (taskTitle == 'SND')
                   ..._buildSNDContent(userTaskAnswers, partnerTaskAnswers)
+                else if (taskTitle == 'drawing')
+                  Row(
+                    children: [
+                      _buildDrawingPreview(
+                          userDrawingData, themeProvider, "Your Drawing"),
+                      SizedBox(width: 10),
+                      _buildDrawingPreview(partnerDrawingData, themeProvider,
+                          "Partner's Drawing"),
+                    ],
+                  )
+                else if (taskTitle == 'Questions')
+                  ..._buildQuestionsContent(userTaskAnswers, partnerTaskAnswers)
                 else
                   ...userTaskAnswers.keys.map<Widget>((question) {
                     return Padding(
@@ -256,30 +310,15 @@ class _CompareAnswersScreenState extends State<CompareAnswersScreen> {
                               fontSize: 16,
                             ),
                           ),
-                          taskTitle == 'drawing'
-                              ? Row(
-                                  children: [
-                                    _buildDrawingPreview(userDrawingData,
-                                        themeProvider, "Your Drawing"),
-                                    SizedBox(width: 10),
-                                    _buildDrawingPreview(partnerDrawingData,
-                                        themeProvider, "Partner's Drawing"),
-                                  ],
-                                )
-                              : Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Your Answer: ${userTaskAnswers[question] ?? 'Not done yet'}",
-                                      style: TextStyle(fontSize: 14),
-                                    ),
-                                    SizedBox(height: 5),
-                                    Text(
-                                      "Partner's Answer: ${partnerTaskAnswers[question] ?? 'Not done yet'}",
-                                      style: TextStyle(fontSize: 14),
-                                    ),
-                                  ],
-                                ),
+                          Text(
+                            "Your Answer: ${userTaskAnswers[question] ?? 'Not done yet'}",
+                            style: TextStyle(fontSize: 14),
+                          ),
+                          SizedBox(height: 5),
+                          Text(
+                            "Partner's Answer: ${partnerTaskAnswers[question] ?? 'Not done yet'}",
+                            style: TextStyle(fontSize: 14),
+                          ),
                         ],
                       ),
                     );
@@ -290,6 +329,73 @@ class _CompareAnswersScreenState extends State<CompareAnswersScreen> {
         ),
       ),
     );
+  }
+
+  List<Widget> _buildQuestionsContent(Map<String, dynamic> userTaskAnswers,
+      Map<String, dynamic> partnerTaskAnswers) {
+    List<Widget> content = [];
+
+    if (userTaskAnswers.containsKey('selectedQuestions')) {
+      List<dynamic> userQuestions = userTaskAnswers['selectedQuestions'];
+
+      content.add(
+        Text(
+          "Questions selected by you:",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+      );
+      content.add(SizedBox(height: 5));
+      for (var question in userQuestions) {
+        content.add(
+          Text(
+            question['text'],
+            style: TextStyle(fontSize: 14),
+          ),
+        );
+        content.add(SizedBox(height: 5));
+      }
+    }
+
+    content.add(SizedBox(height: 10)); // Add some spacing between the sections
+
+    if (partnerTaskAnswers.containsKey('selectedQuestions')) {
+      List<dynamic> partnerQuestions = partnerTaskAnswers['selectedQuestions'];
+
+      content.add(
+        Text(
+          "Questions selected by partner:",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+      );
+      content.add(SizedBox(height: 5));
+      if (partnerQuestions.isNotEmpty) {
+        for (var question in partnerQuestions) {
+          content.add(
+            Text(
+              question['text'],
+              style: TextStyle(fontSize: 14),
+            ),
+          );
+          content.add(SizedBox(height: 5));
+        }
+      } else {
+        content.add(
+          Text(
+            "Not yet answered",
+            style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+          ),
+        );
+      }
+    } else {
+      content.add(
+        Text(
+          "Questions selected by partner: Not yet answered",
+          style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+        ),
+      );
+    }
+
+    return content;
   }
 
   List<Widget> _buildSNDContent(Map<String, dynamic> userTaskAnswers,
@@ -336,7 +442,7 @@ class _CompareAnswersScreenState extends State<CompareAnswersScreen> {
   }
 
   Widget _buildDrawingPreview(
-      Uint8List? imageData, ThemeProvider themeProvider, String s) {
+      Uint8List? imageData, ThemeProvider themeProvider, String label) {
     return GestureDetector(
       onTap: () {
         if (imageData != null) {
@@ -367,7 +473,7 @@ class _CompareAnswersScreenState extends State<CompareAnswersScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(s),
+          Text(label),
           Container(
             width: 100,
             height: 100,

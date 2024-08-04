@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:wisdom_app/models/question.dart';
 import 'package:wisdom_app/widgets/mcq_question_widget.dart';
 import 'package:wisdom_app/widgets/scale_question_widget.dart';
 import 'package:wisdom_app/widgets/text_field_question_widget.dart';
+import 'package:wisdom_app/services/auth_service.dart';
 
 class QuestionnaireScreen extends StatefulWidget {
   @override
@@ -18,8 +20,7 @@ class QuestionnaireScreen extends StatefulWidget {
 
 class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
   bool _isLoading = true;
-  bool _allQuestionsAnswered =
-      false; // State variable to track if all questions are answered
+  bool _allQuestionsAnswered = false;
 
   @override
   void initState() {
@@ -33,21 +34,21 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
           .loadQuestions(Provider.of<LanguageProvider>(context, listen: false)
               .locale
               .languageCode);
-      _checkAllQuestionsAnswered(); // Check if all questions are answered after loading
+      _checkAllQuestionsAnswered();
       setState(() {
         _isLoading = false;
       });
     } catch (e) {
       print('Error loading questions: $e');
-      // Handle error loading questions
     }
   }
 
   void _checkAllQuestionsAnswered() {
     final questionnaireController =
         Provider.of<QuestionnaireController>(context, listen: false);
+    final userAnswers = questionnaireController.getUserAnswers();
     bool allAnswered = questionnaireController.questions.every((question) {
-      return questionnaireController.getUserAnswers()[question.id] != null;
+      return userAnswers[question.id] != null;
     });
     setState(() {
       _allQuestionsAnswered = allAnswered;
@@ -86,11 +87,11 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
                   MaterialPageRoute(builder: (context) => MainScreen()),
                 );
               }
-            : null, // Disable the button if not all questions are answered
+            : null,
         child: Icon(Icons.check),
         backgroundColor: _allQuestionsAnswered
             ? Theme.of(context).colorScheme.primaryContainer
-            : Colors.grey, // Change color based on state
+            : Colors.grey,
       ),
     );
   }
@@ -98,19 +99,28 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
   Widget _buildQuestionWidget(BuildContext context, Question question) {
     switch (question.type) {
       case QuestionType.MCQ:
-        return MCQQuestionWidget(
-          question: question,
-          onChanged: _handleAnswerChange,
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: MCQQuestionWidget(
+            question: question,
+            onChanged: _handleAnswerChange,
+          ),
         );
       case QuestionType.SCALE:
-        return ScaleQuestionWidget(
-          question: question,
-          onChanged: _handleAnswerChange,
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: ScaleQuestionWidget(
+            question: question,
+            onChanged: _handleAnswerChange,
+          ),
         );
       case QuestionType.TEXT_FIELD:
-        return TextFieldQuestionWidget(
-          question: question,
-          onChanged: _handleAnswerChange,
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: TextFieldQuestionWidget(
+            question: question,
+            onChanged: _handleAnswerChange,
+          ),
         );
       default:
         return Container();
@@ -133,11 +143,17 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
     }
 
     try {
+      AuthService authService = AuthService();
+
+      // Encrypt the user answers with the fixed key
+      String encryptedData =
+          authService.encryptWithFixedKey(jsonEncode(userAnswers));
+
       await FirebaseFirestore.instance
           .collection('user_answers')
           .doc(FirebaseAuth.instance.currentUser?.uid)
           .set({
-        "first_questionnaire": userAnswers,
+        "first_questionnaire": encryptedData,
       });
       print('User Answers saved to Firestore');
     } catch (e) {

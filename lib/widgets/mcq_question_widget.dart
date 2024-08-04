@@ -5,11 +5,13 @@ import 'package:wisdom_app/models/question.dart';
 
 class MCQQuestionWidget extends StatefulWidget {
   final Question question;
-  final VoidCallback onChanged; // Callback to notify when an answer changes
+  final VoidCallback onChanged;
 
-  const MCQQuestionWidget(
-      {Key? key, required this.question, required this.onChanged})
-      : super(key: key);
+  const MCQQuestionWidget({
+    Key? key,
+    required this.question,
+    required this.onChanged,
+  }) : super(key: key);
 
   @override
   _MCQQuestionWidgetState createState() => _MCQQuestionWidgetState();
@@ -17,6 +19,15 @@ class MCQQuestionWidget extends StatefulWidget {
 
 class _MCQQuestionWidgetState extends State<MCQQuestionWidget> {
   String? _selectedOption;
+
+  @override
+  void initState() {
+    super.initState();
+    final userAnswers =
+        Provider.of<QuestionnaireController>(context, listen: false)
+            .getUserAnswers();
+    _selectedOption = userAnswers[widget.question.id];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +45,7 @@ class _MCQQuestionWidgetState extends State<MCQQuestionWidget> {
                 });
                 Provider.of<QuestionnaireController>(context, listen: false)
                     .setUserAnswer(widget.question.id, _selectedOption);
-                widget.onChanged(); // Notify that an answer has changed
+                widget.onChanged();
               },
             )),
       ],
