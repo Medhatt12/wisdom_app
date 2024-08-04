@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wisdom_app/controllers/theme_provider.dart';
-import 'package:wisdom_app/games_data/story-game-screen.dart';
+import 'package:wisdom_app/games_data/story_game_screen.dart';
 import 'package:wisdom_app/main.dart';
 import 'package:wisdom_app/services/auth_service.dart';
 import 'package:wisdom_app/services/invitation_service.dart';

@@ -44,7 +44,6 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: any
-  flame: ^1.16.0
   audioplayers: ^6.0.0
   image_gallery_saver: ^2.0.3
   random_avatar: ^0.0.8

@@ -89,7 +89,7 @@ class _StoryGameScreenState extends State<StoryGameScreen>
 
   @override
   Widget build(BuildContext context) {
-    final isLastScenario = currentScenarioId == story.length - 1;
+    //final isLastScenario = currentScenarioId == story.length - 1;
     return Scaffold(
       body: PageView.builder(
         controller: pageController,

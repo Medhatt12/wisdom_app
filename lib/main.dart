@@ -9,7 +9,6 @@ import 'package:wisdom_app/controllers/theme_provider.dart';
 import 'package:wisdom_app/models/invitation.dart';
 import 'package:wisdom_app/services/auth_service.dart';
 import 'package:wisdom_app/services/invitation_service.dart';
-import 'package:wisdom_app/views/caterpillar_game_screen.dart';
 import 'package:wisdom_app/views/custom_avatar_screen.dart';
 import 'package:wisdom_app/views/home_screen.dart';
 import 'package:wisdom_app/views/login_screen.dart';
@@ -58,7 +57,6 @@ class MyApp extends StatelessWidget {
             '/login': (context) => LoginPage(),
             '/home': (context) => const MainScreen(),
             '/avatar': (context) => CustomAvatarScreen(),
-            '/caterpillar': (context) => CaterpillarGameScreen(),
             '/settings': (context) => SettingsScreen(),
             '/drawing': (context) => DrawingPage(),
           },

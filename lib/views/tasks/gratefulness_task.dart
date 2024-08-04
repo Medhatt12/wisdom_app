@@ -7,8 +7,6 @@ import 'package:wisdom_app/main.dart';
 import 'package:wisdom_app/services/auth_service.dart';
 import 'package:wisdom_app/services/invitation_service.dart';
 
-import '../../widgets/feedback_popup.dart';
-
 class GratefulnessScreen extends StatefulWidget {
   const GratefulnessScreen({super.key});
 
@@ -166,8 +164,6 @@ class _GratefulnessScreenState extends State<GratefulnessScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authService = Provider.of<AuthService>(context);
-    final invitationService = Provider.of<InvitationService>(context);
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     return Scaffold(

@@ -14,7 +14,6 @@ import 'package:wisdom_app/services/invitation_service.dart';
 import 'package:wisdom_app/widgets/drawn_line.dart';
 import 'package:wisdom_app/widgets/sketcher.dart';
 import '../../main.dart';
-import '../../widgets/feedback_popup.dart';
 
 class DrawingPage extends StatefulWidget {
   @override

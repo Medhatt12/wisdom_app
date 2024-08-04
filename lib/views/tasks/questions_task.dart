@@ -9,7 +9,6 @@ import 'package:wisdom_app/main.dart';
 import 'package:wisdom_app/models/question.dart';
 import 'package:wisdom_app/services/auth_service.dart';
 import 'package:wisdom_app/services/invitation_service.dart';
-import 'package:wisdom_app/widgets/feedback_popup.dart';
 
 class QuestionsTaskScreen extends StatefulWidget {
   const QuestionsTaskScreen({Key? key}) : super(key: key);
@@ -179,8 +178,6 @@ class _QuestionsTaskScreenState extends State<QuestionsTaskScreen> {
   Widget build(BuildContext context) {
     final questionnaireController =
         Provider.of<QuestionnaireController>(context);
-    final authService = Provider.of<AuthService>(context);
-    final invitationService = Provider.of<InvitationService>(context);
     final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(

@@ -477,7 +477,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (userAnswersSnapshot.exists) {
         String encryptedData = userAnswersSnapshot['first_questionnaire'];
         String decryptedData = authService.decryptWithFixedKey(encryptedData);
-        Map<String, dynamic> userAnswers = jsonDecode(decryptedData);
+        jsonDecode(decryptedData);
 
         showDialog(
           context: context,
