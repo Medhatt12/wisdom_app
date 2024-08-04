@@ -3,14 +3,14 @@ class Scenario {
   final List<Choice> choices;
   final String? perspectiveSwitch;
   final String? perspectiveText;
-  final String image;
+  final String? image;
 
   Scenario({
     required this.text,
     required this.choices,
     this.perspectiveSwitch,
     this.perspectiveText,
-    required this.image,
+    this.image,
   });
 }
 

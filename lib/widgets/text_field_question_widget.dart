@@ -5,12 +5,13 @@ import 'package:wisdom_app/models/question.dart';
 
 class TextFieldQuestionWidget extends StatefulWidget {
   final Question question;
-  final VoidCallback
-      onChanged; // Callback to notify when the text field value changes
+  final VoidCallback onChanged;
 
-  const TextFieldQuestionWidget(
-      {Key? key, required this.question, required this.onChanged})
-      : super(key: key);
+  const TextFieldQuestionWidget({
+    Key? key,
+    required this.question,
+    required this.onChanged,
+  }) : super(key: key);
 
   @override
   _TextFieldQuestionWidgetState createState() =>
@@ -18,7 +19,22 @@ class TextFieldQuestionWidget extends StatefulWidget {
 }
 
 class _TextFieldQuestionWidgetState extends State<TextFieldQuestionWidget> {
-  String _textFieldValue = '';
+  TextEditingController _controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    final userAnswers =
+        Provider.of<QuestionnaireController>(context, listen: false)
+            .getUserAnswers();
+    _controller.text = userAnswers[widget.question.id] ?? '';
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,17 +43,11 @@ class _TextFieldQuestionWidgetState extends State<TextFieldQuestionWidget> {
       children: [
         Text(widget.question.text),
         TextField(
-          decoration: InputDecoration(
-            hintText: 'Enter your answer',
-          ),
+          controller: _controller,
           onChanged: (value) {
-            setState(() {
-              _textFieldValue = value;
-            });
-            // Call setUserAnswer to store the selected option in the QuestionnaireController
             Provider.of<QuestionnaireController>(context, listen: false)
-                .setUserAnswer(widget.question.id, _textFieldValue);
-            widget.onChanged(); // Notify that the text field value has changed
+                .setUserAnswer(widget.question.id, value);
+            widget.onChanged();
           },
         ),
       ],

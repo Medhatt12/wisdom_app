@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +21,7 @@ import '../app_tour.dart';
 import '../widgets/grid_item.dart';
 import '../views/tasks/mindfulness_task_screen.dart';
 import 'settings_screen.dart';
+import 'package:wisdom_app/services/auth_service.dart'; // Import AuthService
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -63,7 +66,9 @@ class _HomeScreenState extends State<HomeScreen> {
       TaskItem(
         title: 'Values',
         icon: Icons.admin_panel_settings,
-        route: ValuesScreen(), // Add route to ValuesScreen
+        route: ValuesScreen(
+          name: 'Medhat',
+        ), // Add route to ValuesScreen
       ),
       TaskItem(
         title: 'Gratefulness',
@@ -451,9 +456,87 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             icon: Icons.assignment_turned_in,
           ),
+          // Add this new button for testing decryption
+          ElevatedButton(
+            onPressed: _showDecryptedAnswers,
+            child: Text('Show Decrypted Answers'),
+          ),
         ],
       ),
     );
+  }
+
+  Future<void> _showDecryptedAnswers() async {
+    try {
+      AuthService authService = AuthService();
+      DocumentSnapshot userAnswersSnapshot = await FirebaseFirestore.instance
+          .collection('user_answers')
+          .doc(FirebaseAuth.instance.currentUser?.uid)
+          .get();
+
+      if (userAnswersSnapshot.exists) {
+        String encryptedData = userAnswersSnapshot['first_questionnaire'];
+        String decryptedData = authService.decryptWithFixedKey(encryptedData);
+        Map<String, dynamic> userAnswers = jsonDecode(decryptedData);
+
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Decrypted User Answers'),
+              content: SingleChildScrollView(
+                child: Text(decryptedData),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('No Answers Found'),
+              content: Text('No answers were found for the current user.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } catch (e) {
+      print('Error fetching or decrypting user answers: $e');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text('Error fetching or decrypting user answers: $e'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   Future<String?> getGreeting() async {

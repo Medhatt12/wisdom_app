@@ -147,11 +147,15 @@ class _StoryGameScreenState extends State<StoryGameScreen>
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Image.asset(
-                      scenario.image,
-                      height: 200,
-                      fit: BoxFit.cover,
-                    ),
+                    scenario.image != null
+                        ? Image.asset(
+                            scenario.image!,
+                            height: 200,
+                            fit: BoxFit.cover,
+                          )
+                        : SizedBox(
+                            height: 0,
+                          ),
                     SizedBox(height: 20),
                     Text(
                       scenario.text,
