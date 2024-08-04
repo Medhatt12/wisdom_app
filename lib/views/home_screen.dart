@@ -17,7 +17,7 @@ import 'package:wisdom_app/views/tasks/similarities_and_differences_screen.dart'
 import 'package:wisdom_app/views/tasks/values.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../app_tour.dart';
+import '../app_tour_home_screen.dart';
 import '../widgets/grid_item.dart';
 import '../views/tasks/mindfulness_task_screen.dart';
 import 'settings_screen.dart';

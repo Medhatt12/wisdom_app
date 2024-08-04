@@ -10,7 +10,7 @@ import 'package:wisdom_app/models/invitation.dart';
 import 'package:wisdom_app/services/auth_service.dart';
 import 'package:wisdom_app/services/invitation_service.dart';
 import 'package:wisdom_app/views/invitationsScreen.dart';
-import '../app_tour2.dart';
+import '../app_tour_settings_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
