@@ -1,16 +1,9 @@
 # wisdom_app
 
-A new Flutter project.
+An intervention project that aims to enhance wisdom between couples by making the user go through a series of daily tasks that all aim to enhance personal skills.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+This app will be deployed for web, iOS and android.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The staging instance of the web app can be visited [here](https://medhat.tech/wisdom_app).
