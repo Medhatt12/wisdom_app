@@ -105,5 +105,249 @@
       "text": "Kannst du dich an ein Erlebnis erinnern, in dem du inneren Frieden und eine Verbundenheit zur Welt und zur Natur gespürt hast? Welches war es?",
       "type": "TEXT_FIELD"
     }
+  ],
+  "My-Values-Questions":[
+    {
+      "id": "1",
+      "text": "Mir ist es wichtig frei von Fremdbestimmung zu sein.",
+      "type": "SCALE",
+      "skill": "Selbstbestimmung"
+    },
+    {
+      "id": "2",
+      "text": "Mir ist es wichtig das eigene Leben selbstbestimmt gestalten zu können.",
+      "type": "SCALE",
+      "skill": "Selbstbestimmung"
+    },
+    {
+      "id": "3",
+      "text": "Mir ist es wichtig die Führungsrolle zu übernehmen.",
+      "type": "SCALE",
+      "skill": "Macht"
+    },
+    {
+      "id": "4",
+      "text": "Mir ist es wichtig über Wohlstand und Reichtum zu verfügen.",
+      "type": "SCALE",
+      "skill": "Macht"
+    },
+    {
+      "id": "5",
+      "text": "Mir ist es wichtig dass alle Menschen gleich behandelt werden sollten und die gleichen Rechte haben sollten, auch wenn sie einen anderen kulturellen Hintergrund und eine andere Meinung haben als ich.",
+      "type": "SCALE",
+      "skill": "Universalismus"
+    },
+    {
+      "id": "6",
+      "text": "Mir ist es wichtig dass der Mensch sich um die Umwelt kümmert.",
+      "type": "SCALE",
+      "skill": "Universalismus"
+    },
+    {
+      "id": "7",
+      "text": "Mir ist es wichtig in einer sicheren Umgebung zu leben und potenzielle Gefahren zu vermeiden.",
+      "type": "SCALE",
+      "skill": "Sicherheit"
+    },
+    {
+      "id": "8",
+      "text": "Mir ist es wichtig in einer ordentlichen Umgebung zu leben.",
+      "type": "SCALE",
+      "skill": "Sicherheit"
+    },
+    {
+      "id": "9",
+      "text": "Mir ist es wichtig meine Fähigkeiten zu zeigen und dafür von anderen Menschen bewundert zu werden.",
+      "type": "SCALE",
+      "skill": "Leistung/Erfolgsstreben"
+    },
+    {
+      "id": "10",
+      "text": "Mir ist es wichtig ehrgeizig zu sein und im Konkurrenzkampf mit anderen mithalten zu können.",
+      "type": "SCALE",
+      "skill": "Leistung/Erfolgsstreben"
+    },
+    {
+      "id": "11",
+      "text": "Mir ist es wichtig neue Dinge auszuprobieren, um ein aufregendes Leben zu führen.",
+      "type": "SCALE",
+      "skill": "Anregung/Stimulation"
+    },
+    {
+      "id": "12",
+      "text": "Mir ist es wichtig Abenteuer zu erleben und dafür auch Risiken einzugehen.",
+      "type": "SCALE",
+      "skill": "Anregung/Stimulation"
+    },
+    {
+      "id": "13",
+      "text": "Mir ist es wichtig Regeln einzuhalten.",
+      "type": "SCALE",
+      "skill": "Konformität"
+    },
+    {
+      "id": "14",
+      "text": "Mir ist es wichtig mich an soziale Normen anzupassen, um andere Menschen nicht zu verärgern.",
+      "type": "SCALE",
+      "skill": "Konformität"
+    },
+    {
+      "id": "15",
+      "text": "Mir ist es wichtig religiös zu sein und nach religiösen Vorstellungen zu leben.",
+      "type": "SCALE",
+      "skill": "Tradition"
+    },
+    {
+      "id": "16",
+      "text": "Mir ist es wichtig Traditionen und Bräuchen einen hohen Stellenwert zuzuschreiben.",
+      "type": "SCALE",
+      "skill": "Tradition"
+    },
+    {
+      "id": "17",
+      "text": "Mir ist es wichtig Dinge zu tun, die mir Freude bereiten.",
+      "type": "SCALE",
+      "skill": "Genussstreben/Hedonismus"
+    },
+    {
+      "id": "18",
+      "text": "Mir ist es wichtig das Leben zu genießen.",
+      "type": "SCALE",
+      "skill": "Genussstreben/Hedonismus"
+    },
+    {
+      "id": "19",
+      "text": "Mir ist es wichtig dass es anderen Menschen gut geht.",
+      "type": "SCALE",
+      "skill": "Benevolence"
+    },
+    {
+      "id": "20",
+      "text": "Mir ist es wichtig das Gute im Menschen zu sehen.",
+      "type": "SCALE",
+      "skill": "Benevolence"
+    }
+  ],
+  "Partner-Values-Questions":[
+    {
+      "id": "1",
+      "text": "frei von Fremdbestimmung zu sein.",
+      "type": "SCALE",
+      "skill": "Selbstbestimmung"
+    },
+    {
+      "id": "2",
+      "text": "das eigene Leben selbstbestimmt gestalten zu können.",
+      "type": "SCALE",
+      "skill": "Selbstbestimmung"
+    },
+    {
+      "id": "3",
+      "text": "die Führungsrolle zu übernehmen.",
+      "type": "SCALE",
+      "skill": "Macht"
+    },
+    {
+      "id": "4",
+      "text": "über Wohlstand und Reichtum zu verfügen.",
+      "type": "SCALE",
+      "skill": "Macht"
+    },
+    {
+      "id": "5",
+      "text": "dass alle Menschen gleich behandelt werden sollten und die gleichen Rechte haben sollten, auch wenn sie einen anderen kulturellen Hintergrund und eine andere Meinung haben als ich.",
+      "type": "SCALE",
+      "skill": "Universalismus"
+    },
+    {
+      "id": "6",
+      "text": "dass der Mensch sich um die Umwelt kümmert.",
+      "type": "SCALE",
+      "skill": "Universalismus"
+    },
+    {
+      "id": "7",
+      "text": "in einer sicheren Umgebung zu leben und potenzielle Gefahren zu vermeiden.",
+      "type": "SCALE",
+      "skill": "Sicherheit"
+    },
+    {
+      "id": "8",
+      "text": "in einer ordentlichen Umgebung zu leben.",
+      "type": "SCALE",
+      "skill": "Sicherheit"
+    },
+    {
+      "id": "9",
+      "text": "meine Fähigkeiten zu zeigen und dafür von anderen Menschen bewundert zu werden.",
+      "type": "SCALE",
+      "skill": "Leistung/Erfolgsstreben"
+    },
+    {
+      "id": "10",
+      "text": "ehrgeizig zu sein und im Konkurrenzkampf mit anderen mithalten zu können.",
+      "type": "SCALE",
+      "skill": "Leistung/Erfolgsstreben"
+    },
+    {
+      "id": "11",
+      "text": "neue Dinge auszuprobieren, um ein aufregendes Leben zu führen.",
+      "type": "SCALE",
+      "skill": "Anregung/Stimulation"
+    },
+    {
+      "id": "12",
+      "text": "Abenteuer zu erleben und dafür auch Risiken einzugehen.",
+      "type": "SCALE",
+      "skill": "Anregung/Stimulation"
+    },
+    {
+      "id": "13",
+      "text": "Regeln einzuhalten.",
+      "type": "SCALE",
+      "skill": "Konformität"
+    },
+    {
+      "id": "14",
+      "text": "mich an soziale Normen anzupassen, um andere Menschen nicht zu verärgern.",
+      "type": "SCALE",
+      "skill": "Konformität"
+    },
+    {
+      "id": "15",
+      "text": "religiös zu sein und nach religiösen Vorstellungen zu leben.",
+      "type": "SCALE",
+      "skill": "Tradition"
+    },
+    {
+      "id": "16",
+      "text": "Traditionen und Bräuchen einen hohen Stellenwert zuzuschreiben.",
+      "type": "SCALE",
+      "skill": "Tradition"
+    },
+    {
+      "id": "17",
+      "text": "Dinge zu tun, die mir Freude bereiten.",
+      "type": "SCALE",
+      "skill": "Genussstreben/Hedonismus"
+    },
+    {
+      "id": "18",
+      "text": "das Leben zu genießen.",
+      "type": "SCALE",
+      "skill": "Genussstreben/Hedonismus"
+    },
+    {
+      "id": "19",
+      "text": "dass es anderen Menschen gut geht.",
+      "type": "SCALE",
+      "skill": "Benevolence"
+    },
+    {
+      "id": "20",
+      "text": "das Gute im Menschen zu sehen.",
+      "type": "SCALE",
+      "skill": "Benevolence"
+    }
   ]
 }
