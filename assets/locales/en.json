@@ -105,5 +105,250 @@
       "text": "Can you remember an experience when you felt inner peace and connection to the world and nature? What was it?",
       "type": "TEXT_FIELD"
     }
+  ],
+  "My-Values-Questions":[
+    {
+      "id": "1",
+      "text": "It is important to me to be free of external control.",
+      "type": "SCALE",
+      "skill": "Self-direction"
+    },
+    {
+      "id": "2",
+      "text": "It is important to me to shape life in a self-determined way.",
+      "type": "SCALE",
+      "skill": "Self-direction"
+    },
+    {
+      "id": "3",
+      "text": "It is important to me to take on a leadership role.",
+      "type": "SCALE",
+      "skill": "Power"
+    },
+    {
+      "id": "4",
+      "text": "It is important to me to have prosperity and wealth.",
+      "type": "SCALE",
+      "skill": "Power"
+    },
+    {
+      "id": "5",
+      "text": "It is important to me that everyone should be treated equally and have the same rights even if they have a different cultural background and a different opinion from mine.",
+      "type": "SCALE",
+      "skill": "Universalism"
+    },
+    {
+      "id": "6",
+      "text": "It is important to me that humans take care of the environment.",
+      "type": "SCALE",
+      "skill": "Universalism"
+    },
+    {
+      "id": "7",
+      "text": "It is important to me to live in a safe environment and to avoid potential danger.",
+      "type": "SCALE",
+      "skill": "Security"
+    },
+    {
+      "id": "8",
+      "text": "It is important to me to live in an orderly environment.",
+      "type": "SCALE",
+      "skill": "Security"
+    },
+    {
+      "id": "9",
+      "text": "It is important to me to show my abilities to others and be admired by others.",
+      "type": "SCALE",
+      "skill": "Achievement"
+    },
+    {
+      "id": "10",
+      "text": "It is important to me to be ambitious and to be able to compete with others.",
+      "type": "SCALE",
+      "skill": "Achievement"
+    },
+    {
+      "id": "11",
+      "text": "It is important to me to try new things and have an exciting life.",
+      "type": "SCALE",
+      "skill": "Stimulation"
+    },
+    {
+      "id": "12",
+      "text": "It is important to me to take risks to experience adventures.",
+      "type": "SCALE",
+      "skill": "Stimulation"
+    },
+    {
+      "id": "13",
+      "text": "It is important to me to stick to the rules.",
+      "type": "SCALE",
+      "skill": "Conformity"
+    },
+    {
+      "id": "14",
+      "text": "It is important to me to adapt to social norms in order not to upset others.",
+      "type": "SCALE",
+      "skill": "Conformity"
+    },
+    {
+      "id": "15",
+      "text": "It is important to me to be religious.",
+      "type": "SCALE",
+      "skill": "Tradition"
+    },
+    {
+      "id": "16",
+      "text": "It is important to me to follow religious traditions.",
+      "type": "SCALE",
+      "skill": "Tradition"
+    },
+    {
+      "id": "17",
+      "text": "It is important to me to do things that make them happy.",
+      "type": "SCALE",
+      "skill": "Hedonism"
+    },
+    {
+      "id": "18",
+      "text": "It is important to me to enjoy life.",
+      "type": "SCALE",
+      "skill": "Hedonism"
+    },
+    {
+      "id": "19",
+      "text": "It is important to me that other people are doing well.",
+      "type": "SCALE",
+      "skill": "Benevolence"
+    },
+    {
+      "id": "20",
+      "text": "It is important to me to see the good in people.",
+      "type": "SCALE",
+      "skill": "Benevolence"
+    }
+  ],
+  ,
+  "Partner-Values-Questions":[
+    {
+      "id": "1",
+      "text": "to be free of external control.",
+      "type": "SCALE",
+      "skill": "Self-direction"
+    },
+    {
+      "id": "2",
+      "text": "to shape life in a self-determined way.",
+      "type": "SCALE",
+      "skill": "Self-direction"
+    },
+    {
+      "id": "3",
+      "text": "to take on a leadership role.",
+      "type": "SCALE",
+      "skill": "Power"
+    },
+    {
+      "id": "4",
+      "text": "to have prosperity and wealth.",
+      "type": "SCALE",
+      "skill": "Power"
+    },
+    {
+      "id": "5",
+      "text": "that everyone should be treated equally and have the same rights even if they have a different cultural background and a different opinion from mine.",
+      "type": "SCALE",
+      "skill": "Universalism"
+    },
+    {
+      "id": "6",
+      "text": "that humans take care of the environment.",
+      "type": "SCALE",
+      "skill": "Universalism"
+    },
+    {
+      "id": "7",
+      "text": "to live in a safe environment and to avoid potential danger.",
+      "type": "SCALE",
+      "skill": "Security"
+    },
+    {
+      "id": "8",
+      "text": "to live in an orderly environment.",
+      "type": "SCALE",
+      "skill": "Security"
+    },
+    {
+      "id": "9",
+      "text": "to show my abilities to others and be admired by others.",
+      "type": "SCALE",
+      "skill": "Achievement"
+    },
+    {
+      "id": "10",
+      "text": "to be ambitious and to be able to compete with others.",
+      "type": "SCALE",
+      "skill": "Achievement"
+    },
+    {
+      "id": "11",
+      "text": "to try new things and have an exciting life.",
+      "type": "SCALE",
+      "skill": "Stimulation"
+    },
+    {
+      "id": "12",
+      "text": "to take risks to experience adventures.",
+      "type": "SCALE",
+      "skill": "Stimulation"
+    },
+    {
+      "id": "13",
+      "text": "to stick to the rules.",
+      "type": "SCALE",
+      "skill": "Conformity"
+    },
+    {
+      "id": "14",
+      "text": "to adapt to social norms in order not to upset others.",
+      "type": "SCALE",
+      "skill": "Conformity"
+    },
+    {
+      "id": "15",
+      "text": "to be religious.",
+      "type": "SCALE",
+      "skill": "Tradition"
+    },
+    {
+      "id": "16",
+      "text": "to follow religious traditions.",
+      "type": "SCALE",
+      "skill": "Tradition"
+    },
+    {
+      "id": "17",
+      "text": "to do things that make them happy.",
+      "type": "SCALE",
+      "skill": "Hedonism"
+    },
+    {
+      "id": "18",
+      "text": "to enjoy life.",
+      "type": "SCALE",
+      "skill": "Hedonism"
+    },
+    {
+      "id": "19",
+      "text": "that other people are doing well.",
+      "type": "SCALE",
+      "skill": "Benevolence"
+    },
+    {
+      "id": "20",
+      "text": "to see the good in people.",
+      "type": "SCALE",
+      "skill": "Benevolence"
+    }
   ]
 }
