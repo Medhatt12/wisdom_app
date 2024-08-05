@@ -25,7 +25,7 @@ class AppTour2 {
       colorShadow: const Color.fromARGB(255, 77, 77, 77),
       paddingFocus: 10,
       opacityShadow: 0.8,
-    )..show(context: context);
+    ).show(context: context);
   }
 
   List<TargetFocus> _createTargets() {
@@ -37,7 +37,7 @@ class AppTour2 {
         contents: [
           TargetContent(
             align: ContentAlign.bottom,
-            child: Column(
+            child: const Column(
               children: [
                 Text(
                   "Partner invitaions",
@@ -64,7 +64,7 @@ class AppTour2 {
         contents: [
           TargetContent(
             align: ContentAlign.bottom,
-            child: Column(
+            child: const Column(
               children: [
                 Text(
                   "User invitation code",
@@ -91,7 +91,7 @@ class AppTour2 {
         contents: [
           TargetContent(
             align: ContentAlign.bottom,
-            child: Column(
+            child: const Column(
               children: [
                 Text(
                   "Change language",
@@ -118,7 +118,7 @@ class AppTour2 {
         contents: [
           TargetContent(
             align: ContentAlign.bottom,
-            child: Column(
+            child: const Column(
               children: [
                 Text(
                   "Change Theme",

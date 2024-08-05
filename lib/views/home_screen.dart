@@ -24,7 +24,7 @@ import 'settings_screen.dart';
 import 'package:wisdom_app/services/auth_service.dart'; // Import AuthService
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -50,35 +50,35 @@ class _HomeScreenState extends State<HomeScreen> {
       TaskItem(
         title: 'Mindfulness',
         icon: Icons.self_improvement,
-        route: MindfulnessScreen(), // Add route to MindfulnessScreen
+        route: const MindfulnessScreen(), // Add route to MindfulnessScreen
       ),
       TaskItem(
         title: 'Similarities and differences',
         icon: Icons.compare_arrows,
         route:
-            SimilaritiesAndDifferencesPage(), // Add route to SimilaritiesAndDifferencesPage
+            const SimilaritiesAndDifferencesPage(), // Add route to SimilaritiesAndDifferencesPage
       ),
       TaskItem(
         title: 'Questions',
         icon: Icons.question_answer,
-        route: QuestionsTaskScreen(), // Add route to QuestionsTaskScreen
+        route: const QuestionsTaskScreen(), // Add route to QuestionsTaskScreen
       ),
       TaskItem(
         title: 'Values',
         icon: Icons.admin_panel_settings,
-        route: ValuesScreen(
+        route: const ValuesScreen(
           name: 'Medhat',
         ), // Add route to ValuesScreen
       ),
       TaskItem(
         title: 'Gratefulness',
         icon: Icons.sentiment_satisfied_alt,
-        route: GratefulnessScreen(), // Add route to GratefulnessScreen
+        route: const GratefulnessScreen(), // Add route to GratefulnessScreen
       ),
       TaskItem(
         title: 'A day in the life',
         icon: Icons.directions_walk,
-        route: ADayInTheLifeScreen(), // Add route to ADayInTheLifeScreen
+        route: const ADayInTheLifeScreen(), // Add route to ADayInTheLifeScreen
       )
     ];
     checkUserStatus();
@@ -147,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => SettingsScreen(),
+        builder: (context) => const SettingsScreen(),
       ),
     ).then((_) {
       // Continue the tutorial in the SettingsScreen
@@ -202,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             height: 20,
                             color: Colors.grey[300],
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           Container(
                             width: 200,
                             height: 10,
@@ -216,13 +216,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Container(
                     width: double.infinity,
                     height: 200,
                     color: Colors.grey[300],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   for (int i = 0; i < 3; i++)
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -255,7 +255,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   future: getGreeting(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
+                      return const CircularProgressIndicator();
                     } else if (snapshot.hasError) {
                       return Text('Error: ${snapshot.error}');
                     } else {
@@ -266,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             snapshot.data ?? '',
                             style: const TextStyle(fontSize: 18),
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           ClipRRect(
                             borderRadius: BorderRadius.circular(8),
                             child: Container(
@@ -296,7 +296,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
                 const SizedBox(width: 10),
-                SVGImageWidget(),
+                const SVGImageWidget(),
               ],
             ),
           ),
@@ -309,7 +309,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => QuestionnaireScreen(),
+                        builder: (context) => const QuestionnaireScreen(),
                       ),
                     );
                   }
@@ -332,7 +332,7 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(
             key: dailyTaskKey,
             height: 200.0,
-            child: Container(
+            child: SizedBox(
               width: MediaQuery.of(context).size.width,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
@@ -372,7 +372,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => CompareAnswersScreen(),
+                          builder: (context) => const CompareAnswersScreen(),
                         ),
                       );
                     }
@@ -381,15 +381,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         context: context,
                         builder: (context) {
                           return AlertDialog(
-                            title: Text('No Partner'),
+                            title: const Text('No Partner'),
                             content:
-                                Text('You do not currently have a partner.'),
+                                const Text('You do not currently have a partner.'),
                             actions: [
                               TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                child: Text('OK'),
+                                child: const Text('OK'),
                               ),
                             ],
                           );
@@ -414,7 +414,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       color:
                           themeProvider.themeData.textTheme.bodyMedium?.color,
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
                       "Compare answers with your partner",
                       textAlign: TextAlign.center,
@@ -437,7 +437,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SettingsScreen(),
+                  builder: (context) => const SettingsScreen(),
                 ),
               ).then((_) {
                 // Continue the tutorial in the SettingsScreen
@@ -459,7 +459,7 @@ class _HomeScreenState extends State<HomeScreen> {
           // Add this new button for testing decryption
           ElevatedButton(
             onPressed: _showDecryptedAnswers,
-            child: Text('Show Decrypted Answers'),
+            child: const Text('Show Decrypted Answers'),
           ),
         ],
       ),
@@ -483,7 +483,7 @@ class _HomeScreenState extends State<HomeScreen> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Decrypted User Answers'),
+              title: const Text('Decrypted User Answers'),
               content: SingleChildScrollView(
                 child: Text(decryptedData),
               ),
@@ -492,7 +492,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('OK'),
+                  child: const Text('OK'),
                 ),
               ],
             );
@@ -503,14 +503,14 @@ class _HomeScreenState extends State<HomeScreen> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('No Answers Found'),
-              content: Text('No answers were found for the current user.'),
+              title: const Text('No Answers Found'),
+              content: const Text('No answers were found for the current user.'),
               actions: [
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('OK'),
+                  child: const Text('OK'),
                 ),
               ],
             );
@@ -523,14 +523,14 @@ class _HomeScreenState extends State<HomeScreen> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Error'),
+            title: const Text('Error'),
             content: Text('Error fetching or decrypting user answers: $e'),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           );
@@ -559,6 +559,7 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class SVGImageWidget extends StatelessWidget {
+  @override
   final GlobalKey? key;
 
   const SVGImageWidget({this.key}) : super(key: key);
@@ -569,7 +570,7 @@ class SVGImageWidget extends StatelessWidget {
       future: fetchSVG(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
@@ -589,7 +590,7 @@ class SVGImageWidget extends StatelessWidget {
                         height: 50,
                       ));
           } else {
-            return Text('No SVG data found');
+            return const Text('No SVG data found');
           }
         }
       },

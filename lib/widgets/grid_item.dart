@@ -40,7 +40,7 @@ class GridItem extends StatelessWidget {
                   size: 30, // Adjust size as needed
                   color: themeProvider.themeData.textTheme.bodyMedium?.color,
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   text,
                   textAlign: TextAlign.center,
@@ -79,7 +79,7 @@ class TaskGridItem extends StatelessWidget {
   final bool isCompleted; // New parameter to indicate whether task is completed
   final Function()? onTap;
 
-  const TaskGridItem({
+  const TaskGridItem({super.key, 
     required this.title,
     required this.icon,
     required this.backgroundColor,
@@ -113,7 +113,7 @@ class TaskGridItem extends StatelessWidget {
                     size: 30,
                     color: themeProvider.themeData.textTheme.bodyMedium?.color,
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     title,
                     textAlign: TextAlign
@@ -127,7 +127,7 @@ class TaskGridItem extends StatelessWidget {
               ),
             ),
             if (isCompleted) // Conditional rendering of check mark
-              Positioned(
+              const Positioned(
                 top: 0,
                 right: 0,
                 child: Icon(

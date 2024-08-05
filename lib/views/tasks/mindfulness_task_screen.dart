@@ -7,6 +7,8 @@ import 'package:wisdom_app/views/tasks/drawing_game_screen.dart';
 import 'package:wisdom_app/widgets/player_widget.dart';
 
 class MindfulnessScreen extends StatefulWidget {
+  const MindfulnessScreen({super.key});
+
   @override
   _MindfulnessScreenState createState() => _MindfulnessScreenState();
 }
@@ -52,7 +54,7 @@ class _MindfulnessScreenState extends State<MindfulnessScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Pick a color'),
+          title: const Text('Pick a color'),
           content: SingleChildScrollView(
             child: ColorPicker(
               pickerColor: pickedColor,
@@ -63,7 +65,7 @@ class _MindfulnessScreenState extends State<MindfulnessScreen> {
           ),
           actions: <Widget>[
             ElevatedButton(
-              child: Text('Select'),
+              child: const Text('Select'),
               onPressed: () {
                 setState(() {
                   selectedColor = pickedColor;
@@ -82,20 +84,20 @@ class _MindfulnessScreenState extends State<MindfulnessScreen> {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Mindfulness'),
+        title: const Text('Mindfulness'),
         backgroundColor: themeProvider.themeData.colorScheme.background,
       ),
       body: _isAudioLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Take yourself about 15 minutes time and go to a place which is calm and where you will not be disturbed. Use headphones to listen to the following audio. It is a guided meditation. Try to be open towards your feelings. If unpleasant feelings arise during the exercise, you can interrupt or end it any time.',
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   // Audio Player
                   Container(
                     decoration: BoxDecoration(
@@ -113,11 +115,11 @@ class _MindfulnessScreenState extends State<MindfulnessScreen> {
                     ),
                   ),
 
-                  SizedBox(height: 20),
-                  Text(
+                  const SizedBox(height: 20),
+                  const Text(
                     'If your current feeling towards your relationship with ___ would have colours, which colours would that be? The next step will be the creation of a painting. Don’t think too much, chose the colours that resonate with your feelings.',
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   GestureDetector(
                     onTap: _pickColor,
                     child: Container(
@@ -136,19 +138,19 @@ class _MindfulnessScreenState extends State<MindfulnessScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
                       audioPlayer.stop();
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => DrawingPage(),
+                          builder: (context) => const DrawingPage(),
                         ),
                       );
                     },
-                    child: Text('Continue to Drawing'),
+                    child: const Text('Continue to Drawing'),
                   ),
                 ],
               ),
@@ -160,24 +162,24 @@ class _MindfulnessScreenState extends State<MindfulnessScreen> {
 class SummaryScreen extends StatelessWidget {
   final Color selectedColor;
 
-  SummaryScreen(this.selectedColor);
+  const SummaryScreen(this.selectedColor, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Summary'),
+        title: const Text('Summary'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               'Summary with Painting',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 20),
-            Text(
+            const SizedBox(height: 20),
+            const Text(
               'Selected Color:',
               style: TextStyle(fontSize: 16),
             ),
@@ -185,14 +187,14 @@ class SummaryScreen extends StatelessWidget {
               width: 100,
               height: 100,
               color: selectedColor,
-              margin: EdgeInsets.only(top: 10),
+              margin: const EdgeInsets.only(top: 10),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Container(
               width: 200,
               height: 200,
               color: Colors.grey.shade300,
-              child: Center(
+              child: const Center(
                 child: Text('Painting'),
               ),
             ),

@@ -44,7 +44,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -54,11 +54,11 @@ class MyApp extends StatelessWidget {
           initialRoute: '',
           routes: {
             '': (context) => const OldSplashScreen(),
-            '/login': (context) => LoginPage(),
+            '/login': (context) => const LoginPage(),
             '/home': (context) => const MainScreen(),
-            '/avatar': (context) => CustomAvatarScreen(),
-            '/settings': (context) => SettingsScreen(),
-            '/drawing': (context) => DrawingPage(),
+            '/avatar': (context) => const CustomAvatarScreen(),
+            '/settings': (context) => const SettingsScreen(),
+            '/drawing': (context) => const DrawingPage(),
           },
           debugShowCheckedModeBanner: false,
           theme: themeProvider.themeData,
@@ -80,7 +80,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key});
+  const MainScreen({super.key});
 
   @override
   _MainScreenState createState() => _MainScreenState();
@@ -91,8 +91,8 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
   late User? _currentUser;
   final List<Widget> _screens = [
-    HomeScreen(),
-    SettingsScreen(),
+    const HomeScreen(),
+    const SettingsScreen(),
   ];
 
   int tasksFinished = 0;
@@ -159,18 +159,18 @@ class _MainScreenState extends State<MainScreen> {
                 stream: _invitationsStream,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                    return const CircularProgressIndicator();
                   } else if (snapshot.hasData) {
                     int invitationsCount = snapshot.data!.length;
                     return badges.Badge(
                       badgeContent: Text(
                         '$invitationsCount',
-                        style: TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.white),
                       ),
-                      child: Icon(Icons.settings),
+                      child: const Icon(Icons.settings),
                     );
                   } else {
-                    return Icon(Icons.settings);
+                    return const Icon(Icons.settings);
                   }
                 },
               ),
@@ -193,7 +193,7 @@ class _MainScreenState extends State<MainScreen> {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       );
     } else {
-      return LoginPage();
+      return const LoginPage();
     }
   }
 }

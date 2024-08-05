@@ -10,6 +10,8 @@ import 'package:wisdom_app/services/auth_service.dart';
 import 'package:wisdom_app/services/invitation_service.dart';
 
 class SimilaritiesAndDifferencesPage extends StatefulWidget {
+  const SimilaritiesAndDifferencesPage({super.key});
+
   @override
   _SimilaritiesAndDifferencesPageState createState() =>
       _SimilaritiesAndDifferencesPageState();
@@ -261,7 +263,7 @@ class _SimilaritiesAndDifferencesPageState
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => MainScreen()),
+              MaterialPageRoute(builder: (context) => const MainScreen()),
             );
           },
         ),
@@ -280,7 +282,7 @@ class _SimilaritiesAndDifferencesPageState
               const Text('Similarities', style: TextStyle(fontSize: 20)),
               TextField(
                 controller: similarityController,
-                decoration: InputDecoration(labelText: 'Enter Similarity'),
+                decoration: const InputDecoration(labelText: 'Enter Similarity'),
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 8.0, top: 8.0),
@@ -303,7 +305,7 @@ class _SimilaritiesAndDifferencesPageState
               const Text('Your Differences', style: TextStyle(fontSize: 20)),
               TextField(
                 controller: userDifferenceController,
-                decoration: InputDecoration(labelText: 'Enter Your Difference'),
+                decoration: const InputDecoration(labelText: 'Enter Your Difference'),
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 8.0, top: 8.0),
@@ -328,7 +330,7 @@ class _SimilaritiesAndDifferencesPageState
               TextField(
                 controller: partnerDifferenceController,
                 decoration:
-                    InputDecoration(labelText: 'Enter Partner\'s Difference'),
+                    const InputDecoration(labelText: 'Enter Partner\'s Difference'),
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 8.0, top: 8.0),

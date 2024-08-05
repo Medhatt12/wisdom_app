@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 class LanguageProvider with ChangeNotifier {
-  Locale _locale = Locale('en', 'US');
+  Locale _locale = const Locale('en', 'US');
 
   Locale get locale => _locale;
 
   void toggleLanguage() {
     _locale =
-        _locale.languageCode == 'en' ? Locale('de', 'DE') : Locale('en', 'US');
+        _locale.languageCode == 'en' ? const Locale('de', 'DE') : const Locale('en', 'US');
     notifyListeners();
   }
 

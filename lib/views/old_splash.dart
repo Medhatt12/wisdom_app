@@ -24,7 +24,7 @@ class _OldSplashScreenState extends State<OldSplashScreen> {
 
   Future<void> _preloadImage() async {
     try {
-      await precacheImage(AssetImage('assets/images/wise-owl.png'), context);
+      await precacheImage(const AssetImage('assets/images/wise-owl.png'), context);
       setState(() {
         _isLoading = false;
       });
@@ -44,14 +44,14 @@ class _OldSplashScreenState extends State<OldSplashScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: themeProvider.themeData.colorScheme.background,
-        title: Text("Wisdom App"),
+        title: const Text("Wisdom App"),
         actions: [
           Text(
             languageProvider.locale.languageCode,
-            style: TextStyle(fontSize: 16),
+            style: const TextStyle(fontSize: 16),
           ),
           IconButton(
-            icon: Icon(Icons.language),
+            icon: const Icon(Icons.language),
             onPressed: () {
               languageProvider.toggleLanguage();
               Provider.of<QuestionnaireController>(context, listen: false)
@@ -63,7 +63,7 @@ class _OldSplashScreenState extends State<OldSplashScreen> {
       //backgroundColor: Colors.white,
       body: SafeArea(
         child: _isLoading
-            ? Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator())
             : LayoutBuilder(
                 builder: (context, constraints) {
                   return Column(
@@ -86,7 +86,7 @@ class _OldSplashScreenState extends State<OldSplashScreen> {
                               padding: const EdgeInsets.all(10.0),
                               child: Text(
                                 _getCurrentStepText(),
-                                style: TextStyle(fontSize: 15),
+                                style: const TextStyle(fontSize: 15),
                                 textAlign: TextAlign.center,
                               ),
                             ),
@@ -103,7 +103,7 @@ class _OldSplashScreenState extends State<OldSplashScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0, bottom: 20),
                         child: _currentStep < 2
@@ -119,12 +119,6 @@ class _OldSplashScreenState extends State<OldSplashScreen> {
                                             });
                                           }
                                         : null,
-                                    child: Text(
-                                      AppLocalizations.of(context)!
-                                          .previousButtonText,
-                                      style: TextStyle(
-                                          fontSize: 18, color: Colors.black),
-                                    ),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: themeProvider.themeData
                                           .colorScheme.primaryContainer,
@@ -134,6 +128,12 @@ class _OldSplashScreenState extends State<OldSplashScreen> {
                                               bottomRight:
                                                   Radius.circular(20.0))),
                                     ),
+                                    child: Text(
+                                      AppLocalizations.of(context)!
+                                          .previousButtonText,
+                                      style: const TextStyle(
+                                          fontSize: 18, color: Colors.black),
+                                    ),
                                   ),
                                   ElevatedButton(
                                     onPressed: () {
@@ -141,12 +141,6 @@ class _OldSplashScreenState extends State<OldSplashScreen> {
                                         _currentStep = _currentStep + 1;
                                       });
                                     },
-                                    child: Text(
-                                      AppLocalizations.of(context)!
-                                          .nextButtonText,
-                                      style: TextStyle(
-                                          fontSize: 18, color: Colors.black),
-                                    ),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: themeProvider.themeData
                                           .colorScheme.primaryContainer,
@@ -156,6 +150,12 @@ class _OldSplashScreenState extends State<OldSplashScreen> {
                                               bottomLeft:
                                                   Radius.circular(20.0))),
                                     ),
+                                    child: Text(
+                                      AppLocalizations.of(context)!
+                                          .nextButtonText,
+                                      style: const TextStyle(
+                                          fontSize: 18, color: Colors.black),
+                                    ),
                                   )
                                 ],
                               )
@@ -164,17 +164,17 @@ class _OldSplashScreenState extends State<OldSplashScreen> {
                                   Navigator.pushReplacementNamed(
                                       context, '/login');
                                 },
-                                child: Text(
-                                  "Get Started",
-                                  style: TextStyle(
-                                      fontSize: 18, color: Colors.black),
-                                ),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: themeProvider
                                       .themeData.colorScheme.primaryContainer,
                                   shape: RoundedRectangleBorder(
                                       borderRadius:
                                           BorderRadius.circular(20.0)),
+                                ),
+                                child: const Text(
+                                  "Get Started",
+                                  style: TextStyle(
+                                      fontSize: 18, color: Colors.black),
                                 ),
                               ),
                       ),
@@ -202,14 +202,14 @@ class _OldSplashScreenState extends State<OldSplashScreen> {
   AnimatedContainer buildDot({int? index}) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return AnimatedContainer(
-      duration: Duration(milliseconds: 200),
-      margin: EdgeInsets.only(right: 5),
+      duration: const Duration(milliseconds: 200),
+      margin: const EdgeInsets.only(right: 5),
       height: 6,
       width: _currentStep == index ? 20 : 6,
       decoration: BoxDecoration(
         color: _currentStep == index
             ? themeProvider.themeData.colorScheme.primaryContainer
-            : Color(0xFFD8D8D8),
+            : const Color(0xFFD8D8D8),
         borderRadius: BorderRadius.circular(3),
       ),
     );

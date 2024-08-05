@@ -10,6 +10,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../controllers/theme_provider.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -56,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return Center(
+        return const Center(
           child: CircularProgressIndicator(),
         );
       },
@@ -140,13 +142,13 @@ class _LoginPageState extends State<LoginPage> {
                             showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
-                                title: Text('Error'),
+                                title: const Text('Error'),
                                 content: Text(AppLocalizations.of(context)!
                                     .errorRegisteringUser),
                                 actions: [
                                   TextButton(
                                     onPressed: () => Navigator.pop(context),
-                                    child: Text('OK'),
+                                    child: const Text('OK'),
                                   ),
                                 ],
                               ),
@@ -181,10 +183,10 @@ class _LoginPageState extends State<LoginPage> {
         actions: [
           Text(
             languageProvider.locale.languageCode,
-            style: TextStyle(fontSize: 16),
+            style: const TextStyle(fontSize: 16),
           ),
           IconButton(
-            icon: Icon(Icons.language),
+            icon: const Icon(Icons.language),
             onPressed: () {
               languageProvider.toggleLanguage();
               Provider.of<QuestionnaireController>(context, listen: false)
@@ -208,7 +210,7 @@ class _LoginPageState extends State<LoginPage> {
                       : AppLocalizations.of(context)!.emailErrorText,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextField(
                 controller: _passwordController,
                 decoration: InputDecoration(
@@ -216,9 +218,9 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 obscureText: true,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               isLoading
-                  ? CircularProgressIndicator()
+                  ? const CircularProgressIndicator()
                   : ElevatedButton(
                       onPressed: isButtonEnabled && isEmailValid
                           ? () async {
@@ -244,12 +246,12 @@ class _LoginPageState extends State<LoginPage> {
                                 showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
-                                    title: Text('Error'),
-                                    content: Text('Invalid email or password.'),
+                                    title: const Text('Error'),
+                                    content: const Text('Invalid email or password.'),
                                     actions: [
                                       TextButton(
                                         onPressed: () => Navigator.pop(context),
-                                        child: Text('OK'),
+                                        child: const Text('OK'),
                                       ),
                                     ],
                                   ),
@@ -260,8 +262,8 @@ class _LoginPageState extends State<LoginPage> {
                       child:
                           Text(AppLocalizations.of(context)!.loginButtonText),
                     ),
-              SizedBox(height: 20),
-              Row(
+              const SizedBox(height: 20),
+              const Row(
                 children: <Widget>[
                   Expanded(
                     child: Divider(
@@ -270,7 +272,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    padding: EdgeInsets.symmetric(horizontal: 10.0),
                     child: Text(
                       "or",
                       style: TextStyle(color: Colors.grey),
@@ -284,15 +286,15 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ],
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () => _showRegisterDialog(context),
                 child: Text(AppLocalizations.of(context)!.registerButtonText),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Text(
                 AppLocalizations.of(context)!.registeringHintText,
-                style: TextStyle(color: Colors.grey),
+                style: const TextStyle(color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
             ],

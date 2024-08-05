@@ -72,7 +72,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       });
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => MainScreen()),
+        MaterialPageRoute(builder: (context) => const MainScreen()),
       );
     } catch (e) {
       print('Error updating document: $e');
@@ -86,7 +86,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final invitationService = Provider.of<InvitationService>(context);
 
     if (isLoading) {
-      return Scaffold(
+      return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
     }
@@ -96,13 +96,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
         children: [
           ListTile(
             key: invitationsKey,
-            title: Text('Invitations'), // Add tile for invitations
-            leading: Icon(Icons.mail),
+            title: const Text('Invitations'), // Add tile for invitations
+            leading: const Icon(Icons.mail),
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => InvitationsScreen(),
+                  builder: (context) => const InvitationsScreen(),
                 ),
               );
             },
@@ -112,14 +112,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               builder: (context, snapshot) {
                 print('StreamBuilder snapshot: $snapshot');
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return const CircularProgressIndicator();
                 } else if (snapshot.hasData) {
                   print('Invitations data: ${snapshot.data}');
                   int invitationsCount = snapshot.data!.length;
                   print('Invitations count: $invitationsCount');
                   return Text(
                     '$invitationsCount',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   );
                 } else {
                   print('Snapshot has error: ${snapshot.error}');
@@ -133,10 +133,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             trailing: Text(
               languageProvider
                   .locale.languageCode, // Display current language code
-              style: TextStyle(fontSize: 16), // Adjust style as needed
+              style: const TextStyle(fontSize: 16), // Adjust style as needed
             ),
-            title: Text('Change language'),
-            leading: Icon(Icons.language),
+            title: const Text('Change language'),
+            leading: const Icon(Icons.language),
             onTap: () {
               Provider.of<LanguageProvider>(context, listen: false)
                   .toggleLanguage(); // Toggle language
@@ -149,15 +149,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           ListTile(
             key: themeChangerKey,
-            title: Text('Theme'),
-            leading: Icon(Icons.brightness_6),
+            title: const Text('Theme'),
+            leading: const Icon(Icons.brightness_6),
             onTap: () {
               Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
             },
           ),
           ListTile(
-            title: Text('Log out'),
-            leading: Icon(Icons.logout),
+            title: const Text('Log out'),
+            leading: const Icon(Icons.logout),
             onTap: () async {
               await authService.signOut();
               Navigator.pushReplacementNamed(context, '/login');
@@ -168,7 +168,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 .fetchUserData(authService.getCurrentUser()?.uid ?? ''),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return ListTile(
+                return const ListTile(
                   leading: CircularProgressIndicator(),
                   title: Text('Loading...'),
                 );
@@ -177,10 +177,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   key: invitationsCodeKey,
                   title:
                       Text(snapshot.data?['user_code'] ?? ''), // Show user_code
-                  leading: Text('Invitation code: '), // Change leading text
+                  leading: const Text('Invitation code: '), // Change leading text
                 );
               } else {
-                return ListTile(
+                return const ListTile(
                   title: Text('No user data found'),
                 );
               }

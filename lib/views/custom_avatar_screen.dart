@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wisdom_app/controllers/theme_provider.dart';
 
 class CustomAvatarScreen extends StatefulWidget {
-  CustomAvatarScreen({Key? key, this.title}) : super(key: key);
+  const CustomAvatarScreen({super.key, this.title});
   final String? title;
 
   @override
@@ -34,7 +34,7 @@ class _CustomAvatarScreenState extends State<CustomAvatarScreen> {
 
     if (username.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Please enter a username'),
         ),
       );
@@ -43,7 +43,7 @@ class _CustomAvatarScreenState extends State<CustomAvatarScreen> {
 
     if (newTemp == null || newTemp.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Please customize your avatar'),
         ),
       );
@@ -72,41 +72,41 @@ class _CustomAvatarScreenState extends State<CustomAvatarScreen> {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text("Create your avatar"),
+        title: const Text("Create your avatar"),
         centerTitle: true,
         backgroundColor: themeProvider.themeData.colorScheme.background,
       ),
       body: ListView(
-        physics: BouncingScrollPhysics(),
+        physics: const BouncingScrollPhysics(),
         children: <Widget>[
           FluttermojiCircleAvatar(
             radius: 100,
           ),
-          SizedBox(
+          const SizedBox(
             height: 25,
           ),
           Row(
             children: [
-              Spacer(flex: 2),
+              const Spacer(flex: 2),
               Expanded(
                 flex: 5,
-                child: Container(
+                child: SizedBox(
                   height: 35,
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
                       backgroundColor:
                           themeProvider.themeData.colorScheme.primaryContainer,
                     ),
-                    icon: Icon(Icons.edit),
-                    label: Text("Customize Avatar"),
+                    icon: const Icon(Icons.edit),
+                    label: const Text("Customize Avatar"),
                     onPressed: () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => NewPage()),
+                      MaterialPageRoute(builder: (context) => const NewPage()),
                     ),
                   ),
                 ),
               ),
-              Spacer(flex: 2),
+              const Spacer(flex: 2),
             ],
           ),
           Padding(
@@ -125,18 +125,18 @@ class _CustomAvatarScreenState extends State<CustomAvatarScreen> {
         onPressed: () {
           _saveAvatar(context);
         },
-        child: Icon(Icons.check),
+        child: const Icon(Icons.check),
       ),
     );
   }
 }
 
 class NewPage extends StatelessWidget {
-  const NewPage({Key? key}) : super(key: key);
+  const NewPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    var _width = MediaQuery.of(context).size.width;
+    var width = MediaQuery.of(context).size.width;
     final themeProvider = Provider.of<ThemeProvider>(context);
     const snackBar = SnackBar(
       content: Text('Avatar Saved!'),
@@ -148,7 +148,7 @@ class NewPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Customize Avatar'),
+        title: const Text('Customize Avatar'),
         backgroundColor: themeProvider.themeData.colorScheme.background,
       ),
       body: Center(
@@ -177,8 +177,8 @@ class NewPage extends StatelessWidget {
                         //           .themeData.colorScheme.primaryContainer),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
                         child: Text('Save'),
                       )),
                 ),
@@ -187,7 +187,7 @@ class NewPage extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8.0, vertical: 30),
                 child: FluttermojiCustomizer(
-                  scaffoldWidth: min(600, _width * 0.85),
+                  scaffoldWidth: min(600, width * 0.85),
                   autosave: false,
                   theme: FluttermojiThemeData(
                       labelTextStyle:
@@ -201,7 +201,7 @@ class NewPage extends StatelessWidget {
                                 .themeData.colorScheme.primaryContainer),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      boxDecoration: BoxDecoration(boxShadow: [BoxShadow()])),
+                      boxDecoration: const BoxDecoration(boxShadow: [BoxShadow()])),
                 ),
               ),
             ],

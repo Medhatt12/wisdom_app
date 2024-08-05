@@ -185,7 +185,7 @@ class _GratefulnessScreenState extends State<GratefulnessScreen> {
               const SizedBox(height: 20),
               TextField(
                 controller: _textController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Enter a gratefulness item',
                 ),
               ),

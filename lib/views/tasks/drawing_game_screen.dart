@@ -16,12 +16,14 @@ import 'package:wisdom_app/widgets/sketcher.dart';
 import '../../main.dart';
 
 class DrawingPage extends StatefulWidget {
+  const DrawingPage({super.key});
+
   @override
   _DrawingPageState createState() => _DrawingPageState();
 }
 
 class _DrawingPageState extends State<DrawingPage> {
-  GlobalKey _globalKey = GlobalKey();
+  final GlobalKey _globalKey = GlobalKey();
   List<DrawnLine> lines = [];
   DrawnLine line = DrawnLine([], Colors.black, 5.0);
   Color selectedColor = Colors.black;
@@ -108,7 +110,7 @@ class _DrawingPageState extends State<DrawingPage> {
     showModalBottomSheet(
       context: context,
       backgroundColor: themeProvider.themeData.colorScheme.background,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
       ),
       isScrollControlled: true,
@@ -134,21 +136,21 @@ class _DrawingPageState extends State<DrawingPage> {
                         ),
                       ),
                     ),
-                    Text(
+                    const Text(
                       'Summary of Your Drawing',
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     Center(
                       child: Image.memory(imageBytes, height: 200, width: 200),
                     ),
-                    SizedBox(height: 20),
-                    Text(
+                    const SizedBox(height: 20),
+                    const Text(
                       'Note: Once you submit, you cannot go back to this task.',
                       style: TextStyle(color: Colors.red),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -156,10 +158,10 @@ class _DrawingPageState extends State<DrawingPage> {
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          child: Text('Edit'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.grey,
                           ),
+                          child: const Text('Edit'),
                         ),
                         ElevatedButton(
                           onPressed: () async {
@@ -176,14 +178,14 @@ class _DrawingPageState extends State<DrawingPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => MainScreen()),
+                                  builder: (context) => const MainScreen()),
                             );
                           },
-                          child: Text('Confirm'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
                                 Theme.of(context).colorScheme.primaryContainer,
                           ),
+                          child: const Text('Confirm'),
                         ),
                       ],
                     ),
@@ -226,7 +228,7 @@ class _DrawingPageState extends State<DrawingPage> {
             }
           }
         },
-        child: Icon(Icons.check),
+        child: const Icon(Icons.check),
       ),
     );
   }
@@ -240,7 +242,7 @@ class _DrawingPageState extends State<DrawingPage> {
         child: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
-          padding: EdgeInsets.all(4.0),
+          padding: const EdgeInsets.all(4.0),
           color: Colors.transparent,
           alignment: Alignment.topLeft,
           child: StreamBuilder<DrawnLine>(
@@ -265,7 +267,7 @@ class _DrawingPageState extends State<DrawingPage> {
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         color: Colors.transparent,
-        padding: EdgeInsets.all(4.0),
+        padding: const EdgeInsets.all(4.0),
         alignment: Alignment.topLeft,
         child: StreamBuilder<List<DrawnLine>>(
           stream: linesStreamController.stream,
@@ -345,7 +347,7 @@ class _DrawingPageState extends State<DrawingPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           buildClearButton(),
-          Divider(
+          const Divider(
             height: 10.0,
           ),
           FloatingActionButton(
@@ -354,7 +356,7 @@ class _DrawingPageState extends State<DrawingPage> {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text('Select a color'),
+                    title: const Text('Select a color'),
                     content: SingleChildScrollView(
                       child: BlockPicker(
                         pickerColor: selectedColor,
@@ -383,7 +385,7 @@ class _DrawingPageState extends State<DrawingPage> {
   Widget buildClearButton() {
     return GestureDetector(
       onTap: clear,
-      child: CircleAvatar(
+      child: const CircleAvatar(
         child: Icon(
           Icons.delete,
           size: 20.0,
@@ -403,7 +405,7 @@ class _DrawingPageState extends State<DrawingPage> {
           child: Container(
             width: 40.0,
             height: 40.0,
-            margin: EdgeInsets.symmetric(vertical: 4.0),
+            margin: const EdgeInsets.symmetric(vertical: 4.0),
             decoration: BoxDecoration(
               color: gradientColor,
               border: Border.all(color: Colors.white),

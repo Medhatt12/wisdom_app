@@ -8,10 +8,10 @@ class TextFieldQuestionWidget extends StatefulWidget {
   final VoidCallback onChanged;
 
   const TextFieldQuestionWidget({
-    Key? key,
+    super.key,
     required this.question,
     required this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   _TextFieldQuestionWidgetState createState() =>
@@ -19,7 +19,7 @@ class TextFieldQuestionWidget extends StatefulWidget {
 }
 
 class _TextFieldQuestionWidgetState extends State<TextFieldQuestionWidget> {
-  TextEditingController _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
 
   @override
   void initState() {

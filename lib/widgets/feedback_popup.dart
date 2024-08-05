@@ -27,20 +27,20 @@ void showFeedbackPopup(BuildContext context, String taskName) {
                 color: themeProvider.themeData.colorScheme.primary,
               ),
             ),
-            SizedBox(height: 10),
-            Text(
+            const SizedBox(height: 10),
+            const Text(
               '🎉',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Text(
+            const Text(
               'You have successfully completed the task:',
               style: TextStyle(fontSize: 16),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               taskName,
               style: TextStyle(
@@ -50,16 +50,16 @@ void showFeedbackPopup(BuildContext context, String taskName) {
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MainScreen()),
+                  MaterialPageRoute(builder: (context) => const MainScreen()),
                 );
               },
-              child: Text('Close'),
+              child: const Text('Close'),
             ),
           ],
         ),

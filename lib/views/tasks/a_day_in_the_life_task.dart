@@ -9,7 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ADayInTheLifeScreen extends StatefulWidget {
-  const ADayInTheLifeScreen({Key? key}) : super(key: key);
+  const ADayInTheLifeScreen({super.key});
 
   @override
   _ADayInTheLifeScreenState createState() => _ADayInTheLifeScreenState();
@@ -49,7 +49,7 @@ class _ADayInTheLifeScreenState extends State<ADayInTheLifeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('A Day in the Life'),
+        title: const Text('A Day in the Life'),
         backgroundColor: themeProvider.themeData.colorScheme.background,
       ),
       body: StoryGameScreen(
@@ -59,14 +59,14 @@ class _ADayInTheLifeScreenState extends State<ADayInTheLifeScreen> {
           ? FloatingActionButton(
               heroTag: null,
               key: UniqueKey(),
-              child: Icon(Icons.check),
+              child: const Icon(Icons.check),
               onPressed: () async {
                 saveAnswersToFirestore();
                 invitationService
                     .incrementTasksFinished(authService.getCurrentUser()!.uid);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MainScreen()),
+                  MaterialPageRoute(builder: (context) => const MainScreen()),
                 );
               },
             )

@@ -27,7 +27,7 @@ class AppTour {
       colorShadow: const Color.fromARGB(255, 77, 77, 77),
       paddingFocus: 10,
       opacityShadow: 0.8,
-    )..show(context: context);
+    ).show(context: context);
   }
 
   List<TargetFocus> _createTargets() {
@@ -39,7 +39,7 @@ class AppTour {
         contents: [
           TargetContent(
             align: ContentAlign.bottom,
-            child: Column(
+            child: const Column(
               children: [
                 Text(
                   "Initial Questionnaire",
@@ -66,7 +66,7 @@ class AppTour {
         contents: [
           TargetContent(
             align: ContentAlign.bottom,
-            child: Column(
+            child: const Column(
               children: [
                 Text(
                   "Daily Tasks",
@@ -93,7 +93,7 @@ class AppTour {
         contents: [
           TargetContent(
             align: ContentAlign.top,
-            child: Column(
+            child: const Column(
               children: [
                 Text(
                   "Compare Answers",
@@ -120,7 +120,7 @@ class AppTour {
         contents: [
           TargetContent(
             align: ContentAlign.top,
-            child: Column(
+            child: const Column(
               children: [
                 Text(
                   "Final Questionnaire",
@@ -147,7 +147,7 @@ class AppTour {
         contents: [
           TargetContent(
             align: ContentAlign.bottom,
-            child: Column(
+            child: const Column(
               children: [
                 Text(
                   "Partner invitaions",

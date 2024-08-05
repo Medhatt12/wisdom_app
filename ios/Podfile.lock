@@ -883,6 +883,8 @@ PODS:
   - Flutter (1.0.0)
   - flutter_localization (0.0.1):
     - Flutter
+  - flutter_secure_storage (6.0.0):
+    - Flutter
   - GoogleUtilities/AppDelegateSwizzler (7.13.0):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
@@ -1008,6 +1010,7 @@ DEPENDENCIES:
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - Flutter (from `Flutter`)
   - flutter_localization (from `.symlinks/plugins/flutter_localization/ios`)
+  - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - image_gallery_saver (from `.symlinks/plugins/image_gallery_saver/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
@@ -1047,6 +1050,8 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_localization:
     :path: ".symlinks/plugins/flutter_localization/ios"
+  flutter_secure_storage:
+    :path: ".symlinks/plugins/flutter_secure_storage/ios"
   image_gallery_saver:
     :path: ".symlinks/plugins/image_gallery_saver/ios"
   path_provider_foundation:
@@ -1072,6 +1077,7 @@ SPEC CHECKSUMS:
   FirebaseSharedSwift: c92645b392db3c41a83a0aa967de16f8bad25568
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_localization: f43b18844a2b3d2c71fd64f04ffd6b1e64dd54d4
+  flutter_secure_storage: d33dac7ae2ea08509be337e775f6b59f1ff45f12
   GoogleUtilities: d053d902a8edaa9904e1bd00c37535385b8ed152
   "gRPC-C++": 12f33a422dcab88dcd0c53e52cd549a929f0f244
   gRPC-Core: 6ec9002832e1e22c5bb8c54994b050b0ee4205c6

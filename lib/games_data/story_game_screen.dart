@@ -6,8 +6,7 @@ import 'story_data.dart';
 class StoryGameScreen extends StatefulWidget {
   final VoidCallback onLastScenarioChoiceMade;
 
-  const StoryGameScreen({Key? key, required this.onLastScenarioChoiceMade})
-      : super(key: key);
+  const StoryGameScreen({super.key, required this.onLastScenarioChoiceMade});
 
   @override
   _StoryGameScreenState createState() => _StoryGameScreenState();
@@ -29,7 +28,7 @@ class _StoryGameScreenState extends State<StoryGameScreen>
     super.initState();
     pageController = PageController();
     _controller =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 800));
+        AnimationController(vsync: this, duration: const Duration(milliseconds: 800));
     _animation = Tween<double>(begin: 0, end: 1).animate(_controller)
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
@@ -93,7 +92,7 @@ class _StoryGameScreenState extends State<StoryGameScreen>
     return Scaffold(
       body: PageView.builder(
         controller: pageController,
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         itemCount: story.length,
         itemBuilder: (context, index) {
           final scenario = story[index];
@@ -125,7 +124,7 @@ class _StoryGameScreenState extends State<StoryGameScreen>
           ? FloatingActionButton(
               heroTag: null,
               key: UniqueKey(),
-              child: Icon(Icons.check),
+              child: const Icon(Icons.check),
               onPressed: () async {
                 // Implement saveAnswersToFirestore logic here
               },
@@ -140,7 +139,7 @@ class _StoryGameScreenState extends State<StoryGameScreen>
       height: double.infinity, // Full height of the screen
       child: Card(
         elevation: 8,
-        key: ValueKey(false),
+        key: const ValueKey(false),
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: showFrontContent
@@ -153,15 +152,15 @@ class _StoryGameScreenState extends State<StoryGameScreen>
                             height: 200,
                             fit: BoxFit.cover,
                           )
-                        : SizedBox(
+                        : const SizedBox(
                             height: 0,
                           ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Text(
                       scenario.text,
-                      style: TextStyle(fontSize: 18),
+                      style: const TextStyle(fontSize: 18),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     ...scenario.choices.asMap().entries.map((entry) {
                       int idx = entry.key;
                       Choice choice = entry.value;
@@ -174,13 +173,13 @@ class _StoryGameScreenState extends State<StoryGameScreen>
                         title: Text(choice.text),
                         onTap: () => _makeChoice(idx),
                       );
-                    }).toList(),
+                    }),
                     if (!isLastScenario && selectedChoiceIndex != null)
                       Padding(
                         padding: const EdgeInsets.only(top: 20.0),
                         child: ElevatedButton(
                           onPressed: _nextScenario,
-                          child: Text('Next'),
+                          child: const Text('Next'),
                         ),
                       ),
                     if (scenario.perspectiveSwitch != null)
@@ -204,7 +203,7 @@ class _StoryGameScreenState extends State<StoryGameScreen>
       height: double.infinity, // Full height of the screen
       child: Card(
         elevation: 8,
-        key: ValueKey(true),
+        key: const ValueKey(true),
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: !showFrontContent
@@ -214,12 +213,12 @@ class _StoryGameScreenState extends State<StoryGameScreen>
                     if (perspectiveText != null)
                       Text(
                         perspectiveText,
-                        style: TextStyle(fontSize: 18),
+                        style: const TextStyle(fontSize: 18),
                       ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: _switchPerspective,
-                      child: Text('Back'),
+                      child: const Text('Back'),
                     ),
                   ],
                 )

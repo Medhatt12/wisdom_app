@@ -8,7 +8,7 @@ import 'package:wisdom_app/services/invitation_service.dart'; // Import Invitati
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class InvitationsScreen extends StatefulWidget {
-  const InvitationsScreen({Key? key}) : super(key: key);
+  const InvitationsScreen({super.key});
 
   @override
   _InvitationsScreenState createState() => _InvitationsScreenState();
@@ -88,15 +88,15 @@ class _InvitationsScreenState extends State<InvitationsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Invitations'),
+        title: const Text('Invitations'),
         backgroundColor: themeProvider.themeData.colorScheme.background,
       ),
       body: hasPartner
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
                   child: Text(
                     'Your Partner',
                     style: TextStyle(
@@ -115,7 +115,7 @@ class _InvitationsScreenState extends State<InvitationsScreen> {
                     future: fetchSVG(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return CircularProgressIndicator();
+                        return const CircularProgressIndicator();
                       } else if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
                       } else {
@@ -130,7 +130,7 @@ class _InvitationsScreenState extends State<InvitationsScreen> {
                             ),
                           );
                         } else {
-                          return Text('No SVG data found');
+                          return const Text('No SVG data found');
                         }
                       }
                     },
@@ -139,12 +139,12 @@ class _InvitationsScreenState extends State<InvitationsScreen> {
               ],
             )
           : loadingInvitations
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
                       child: Text(
                         'Invitations Received',
                         style: TextStyle(
@@ -159,7 +159,7 @@ class _InvitationsScreenState extends State<InvitationsScreen> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return Center(child: CircularProgressIndicator());
+                            return const Center(child: CircularProgressIndicator());
                           } else if (snapshot.hasError) {
                             return Center(
                                 child: Text('Error: ${snapshot.error}'));
@@ -176,12 +176,12 @@ class _InvitationsScreenState extends State<InvitationsScreen> {
                                   builder: (context, userSnapshot) {
                                     if (userSnapshot.connectionState ==
                                         ConnectionState.waiting) {
-                                      return ListTile(
+                                      return const ListTile(
                                         title: Text('Loading...'),
                                         // You can add more loading indicators if needed
                                       );
                                     } else if (userSnapshot.hasError) {
-                                      return ListTile(
+                                      return const ListTile(
                                         title: Text('Error fetching sender'),
                                         // You can add error handling here
                                       );
@@ -196,7 +196,7 @@ class _InvitationsScreenState extends State<InvitationsScreen> {
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             IconButton(
-                                              icon: Icon(Icons.check),
+                                              icon: const Icon(Icons.check),
                                               onPressed: () {
                                                 invitationService
                                                     .acceptInvitation(
@@ -208,7 +208,7 @@ class _InvitationsScreenState extends State<InvitationsScreen> {
                                               },
                                             ),
                                             IconButton(
-                                              icon: Icon(Icons.close),
+                                              icon: const Icon(Icons.close),
                                               onPressed: () {
                                                 invitationService
                                                     .rejectInvitation(
@@ -231,8 +231,8 @@ class _InvitationsScreenState extends State<InvitationsScreen> {
                         },
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
                       child: Text(
                         'Invitations Sent',
                         style: TextStyle(
@@ -251,7 +251,7 @@ class _InvitationsScreenState extends State<InvitationsScreen> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return Center(child: CircularProgressIndicator());
+                            return const Center(child: CircularProgressIndicator());
                           } else if (snapshot.hasError) {
                             return Center(
                                 child: Text('Error: ${snapshot.error}'));
@@ -267,7 +267,7 @@ class _InvitationsScreenState extends State<InvitationsScreen> {
                                 String receiverCode =
                                     data['invitedUserCode'] ?? 'Unknown';
                                 return ListTile(
-                                  leading: Icon(Icons.arrow_outward),
+                                  leading: const Icon(Icons.arrow_outward),
                                   title:
                                       Text('Invitation sent to $receiverCode'),
                                   // Add any additional UI elements here
@@ -288,9 +288,9 @@ class _InvitationsScreenState extends State<InvitationsScreen> {
                   builder: (context) => AlertDialog(
                     backgroundColor:
                         themeProvider.themeData.colorScheme.background,
-                    title: Text('Send Invitation'),
+                    title: const Text('Send Invitation'),
                     content: TextField(
-                      decoration: InputDecoration(hintText: 'Enter User Code'),
+                      decoration: const InputDecoration(hintText: 'Enter User Code'),
                       onChanged: (value) {
                         enteredUserCode = value; // Update enteredUserCode
                       },
@@ -325,13 +325,13 @@ class _InvitationsScreenState extends State<InvitationsScreen> {
                           );
                           Navigator.pop(context);
                         },
-                        child: Text('Send'),
+                        child: const Text('Send'),
                       ),
                     ],
                   ),
                 );
               },
-              child: Icon(Icons.add),
+              child: const Icon(Icons.add),
             )
           : null,
     );

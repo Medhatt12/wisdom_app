@@ -108,7 +108,7 @@ class _ValuesScreenState extends State<ValuesScreen>
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Values'), // Add a title to the app bar
+        title: const Text('Values'), // Add a title to the app bar
         backgroundColor: themeProvider.themeData.colorScheme.background,
       ),
       body: Column(
@@ -123,7 +123,7 @@ class _ValuesScreenState extends State<ValuesScreen>
       floatingActionButton: FloatingActionButton(
         heroTag: null,
         key: UniqueKey(),
-        child: Icon(Icons.check),
+        child: const Icon(Icons.check),
         onPressed: () async {
           if (currentPart == 1) {
             startAnimationSequence();
@@ -133,7 +133,7 @@ class _ValuesScreenState extends State<ValuesScreen>
                 .incrementTasksFinished(authService.getCurrentUser()!.uid);
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => MainScreen()),
+              MaterialPageRoute(builder: (context) => const MainScreen()),
             );
           }
         },
@@ -184,7 +184,7 @@ class _ValuesScreenState extends State<ValuesScreen>
   }
 
   Widget _buildLine(Color primaryColor) {
-    return Container(
+    return SizedBox(
       width: 100.0,
       height: 2.0,
       child: CustomPaint(
@@ -202,12 +202,12 @@ class _ValuesScreenState extends State<ValuesScreen>
               children: [
                 Text(
                   "Today’s task is to reflect on your values and compare them with the values of ${widget.name}. Please fill in the questionnaire and indicate how important the following life aspects seem to you.",
-                  style: TextStyle(fontSize: 13.0),
+                  style: const TextStyle(fontSize: 13.0),
                 ),
-                SizedBox(height: 20.0),
+                const SizedBox(height: 20.0),
                 _buildScaleExplanation(),
-                Divider(),
-                SizedBox(height: 20.0),
+                const Divider(),
+                const SizedBox(height: 20.0),
                 ...questionsPart1.map((question) {
                   return ScaleQuestionWidget(
                     question: question,
@@ -215,20 +215,20 @@ class _ValuesScreenState extends State<ValuesScreen>
                       // Handle any action when the slider value changes
                     },
                   );
-                }).toList(),
-                SizedBox(height: 20.0),
+                }),
+                const SizedBox(height: 20.0),
               ],
             )
           : ListView(
               children: [
                 Text(
                   "Now it’s about putting yourself in ${widget.name}’s shoes.\n\nTake some time time to think about a typical action of ${widget.name}. It may be sitting on a place where they usually sit or take a typical posture. You can also enjoy their favorite snack or beverage or listen to their favorite song. Those are examples.\n\nNow you have time for this action. Try to put yourself in ${widget.name}’s perspective. Go on when you feel like you have successfully empathized.\n\nNow it is about ${widget.name}’s values. Please fill out the questionnaire and indicate how important the following life aspects seem to them.",
-                  style: TextStyle(fontSize: 13.0),
+                  style: const TextStyle(fontSize: 13.0),
                 ),
-                SizedBox(height: 20.0),
+                const SizedBox(height: 20.0),
                 _buildScaleExplanation(),
-                Divider(),
-                SizedBox(height: 20.0),
+                const Divider(),
+                const SizedBox(height: 20.0),
                 ...questionsPart2.map((question) {
                   return ScaleQuestionWidget(
                     question: question,
@@ -236,15 +236,15 @@ class _ValuesScreenState extends State<ValuesScreen>
                       // Handle any action when the slider value changes
                     },
                   );
-                }).toList(),
-                SizedBox(height: 20.0),
+                }),
+                const SizedBox(height: 20.0),
               ],
             ),
     );
   }
 
   Widget _buildScaleExplanation() {
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text("Scale Explanation:",

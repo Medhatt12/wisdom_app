@@ -14,6 +14,8 @@ import 'package:wisdom_app/widgets/text_field_question_widget.dart';
 import 'package:wisdom_app/services/auth_service.dart';
 
 class QuestionnaireScreen extends StatefulWidget {
+  const QuestionnaireScreen({super.key});
+
   @override
   _QuestionnaireScreenState createState() => _QuestionnaireScreenState();
 }
@@ -62,12 +64,12 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Wisdom App'),
+        title: const Text('Wisdom App'),
         backgroundColor: themeProvider.themeData.colorScheme.background,
       ),
       backgroundColor: themeProvider.themeData.colorScheme.background,
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Padding(
               padding: const EdgeInsets.all(15.0),
               child: ListView.builder(
@@ -84,14 +86,14 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
                 _saveUserAnswers(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MainScreen()),
+                  MaterialPageRoute(builder: (context) => const MainScreen()),
                 );
               }
             : null,
-        child: Icon(Icons.check),
         backgroundColor: _allQuestionsAnswered
             ? Theme.of(context).colorScheme.primaryContainer
             : Colors.grey,
+        child: const Icon(Icons.check),
       ),
     );
   }

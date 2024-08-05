@@ -8,7 +8,7 @@ import 'package:wisdom_app/controllers/theme_provider.dart';
 import 'package:wisdom_app/services/auth_service.dart';
 
 class CompareAnswersScreen extends StatefulWidget {
-  const CompareAnswersScreen({Key? key}) : super(key: key);
+  const CompareAnswersScreen({super.key});
 
   @override
   _CompareAnswersScreenState createState() => _CompareAnswersScreenState();
@@ -115,10 +115,9 @@ class _CompareAnswersScreenState extends State<CompareAnswersScreen> {
         partnerAnswers ??= {};
 
         // Add default values for unanswered tasks
-        ['drawing', 'SND', 'Questions', 'ADITL', 'Gratefulness', 'Values']
-            .forEach((task) {
+        for (var task in ['drawing', 'SND', 'Questions', 'ADITL', 'Gratefulness', 'Values']) {
           partnerAnswers![task] ??= {'answer': 'Not done yet'};
-        });
+        }
 
         // Filter the SND answers based on the shared flag
         if (userAnswers != null && userAnswers!.containsKey('SND')) {
@@ -184,7 +183,7 @@ class _CompareAnswersScreenState extends State<CompareAnswersScreen> {
         currentIndex++;
         pageController.animateToPage(
           currentIndex,
-          duration: Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
         );
       });
@@ -197,7 +196,7 @@ class _CompareAnswersScreenState extends State<CompareAnswersScreen> {
         currentIndex--;
         pageController.animateToPage(
           currentIndex,
-          duration: Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
         );
       });
@@ -215,7 +214,7 @@ class _CompareAnswersScreenState extends State<CompareAnswersScreen> {
       ),
       body: SafeArea(
         child: userAnswers == null || partnerAnswers == null
-            ? Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator())
             : Column(
                 children: [
                   Expanded(
@@ -236,20 +235,20 @@ class _CompareAnswersScreenState extends State<CompareAnswersScreen> {
                   Padding(
                     padding: const EdgeInsets.only(
                         top: 8, bottom: 20.0, right: 8, left: 8),
-                    child: Container(
+                    child: SizedBox(
                       width: MediaQuery.of(context).size.width,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           ElevatedButton(
                             onPressed: currentIndex > 0 ? _previousCard : null,
-                            child: Text('Previous'),
+                            child: const Text('Previous'),
                           ),
                           ElevatedButton(
                             onPressed: currentIndex < userAnswers!.length - 1
                                 ? _nextCard
                                 : null,
-                            child: Text('Next'),
+                            child: const Text('Next'),
                           ),
                         ],
                       ),
@@ -270,7 +269,7 @@ class _CompareAnswersScreenState extends State<CompareAnswersScreen> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Card(
-        margin: EdgeInsets.symmetric(vertical: 10.0),
+        margin: const EdgeInsets.symmetric(vertical: 10.0),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
@@ -279,9 +278,9 @@ class _CompareAnswersScreenState extends State<CompareAnswersScreen> {
               children: [
                 Text(
                   taskTitle,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 if (taskTitle == 'SND')
                   ..._buildSNDContent(userTaskAnswers, partnerTaskAnswers)
                 else if (taskTitle == 'drawing')
@@ -289,7 +288,7 @@ class _CompareAnswersScreenState extends State<CompareAnswersScreen> {
                     children: [
                       _buildDrawingPreview(
                           userDrawingData, themeProvider, "Your Drawing"),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       _buildDrawingPreview(partnerDrawingData, themeProvider,
                           "Partner's Drawing"),
                     ],
@@ -305,24 +304,24 @@ class _CompareAnswersScreenState extends State<CompareAnswersScreen> {
                         children: [
                           Text(
                             question,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
                           ),
                           Text(
                             "Your Answer: ${userTaskAnswers[question] ?? 'Not done yet'}",
-                            style: TextStyle(fontSize: 14),
+                            style: const TextStyle(fontSize: 14),
                           ),
-                          SizedBox(height: 5),
+                          const SizedBox(height: 5),
                           Text(
                             "Partner's Answer: ${partnerTaskAnswers[question] ?? 'Not done yet'}",
-                            style: TextStyle(fontSize: 14),
+                            style: const TextStyle(fontSize: 14),
                           ),
                         ],
                       ),
                     );
-                  }).toList(),
+                  }),
               ],
             ),
           ),
@@ -339,48 +338,48 @@ class _CompareAnswersScreenState extends State<CompareAnswersScreen> {
       List<dynamic> userQuestions = userTaskAnswers['selectedQuestions'];
 
       content.add(
-        Text(
+        const Text(
           "Questions selected by you:",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
       );
-      content.add(SizedBox(height: 5));
+      content.add(const SizedBox(height: 5));
       for (var question in userQuestions) {
         content.add(
           Text(
             question['text'],
-            style: TextStyle(fontSize: 14),
+            style: const TextStyle(fontSize: 14),
           ),
         );
-        content.add(SizedBox(height: 5));
+        content.add(const SizedBox(height: 5));
       }
     }
 
-    content.add(SizedBox(height: 10)); // Add some spacing between the sections
+    content.add(const SizedBox(height: 10)); // Add some spacing between the sections
 
     if (partnerTaskAnswers.containsKey('selectedQuestions')) {
       List<dynamic> partnerQuestions = partnerTaskAnswers['selectedQuestions'];
 
       content.add(
-        Text(
+        const Text(
           "Questions selected by partner:",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
       );
-      content.add(SizedBox(height: 5));
+      content.add(const SizedBox(height: 5));
       if (partnerQuestions.isNotEmpty) {
         for (var question in partnerQuestions) {
           content.add(
             Text(
               question['text'],
-              style: TextStyle(fontSize: 14),
+              style: const TextStyle(fontSize: 14),
             ),
           );
-          content.add(SizedBox(height: 5));
+          content.add(const SizedBox(height: 5));
         }
       } else {
         content.add(
-          Text(
+          const Text(
             "Not yet answered",
             style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
           ),
@@ -388,7 +387,7 @@ class _CompareAnswersScreenState extends State<CompareAnswersScreen> {
       }
     } else {
       content.add(
-        Text(
+        const Text(
           "Questions selected by partner: Not yet answered",
           style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
         ),
@@ -418,20 +417,20 @@ class _CompareAnswersScreenState extends State<CompareAnswersScreen> {
             children: [
               Text(
                 category,
-                style: TextStyle(
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
               ),
-              SizedBox(height: 5),
+              const SizedBox(height: 5),
               Text(
                 "Your Answers: $userAnswersText",
-                style: TextStyle(fontSize: 14),
+                style: const TextStyle(fontSize: 14),
               ),
-              SizedBox(height: 5),
+              const SizedBox(height: 5),
               Text(
                 "Partner's Answers: $partnerAnswersText",
-                style: TextStyle(fontSize: 14),
+                style: const TextStyle(fontSize: 14),
               ),
             ],
           ),
@@ -491,7 +490,7 @@ class _CompareAnswersScreenState extends State<CompareAnswersScreen> {
                       fit: BoxFit.cover,
                     ),
                   )
-                : Center(child: CircularProgressIndicator()),
+                : const Center(child: CircularProgressIndicator()),
           ),
         ],
       ),

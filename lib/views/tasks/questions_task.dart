@@ -11,7 +11,7 @@ import 'package:wisdom_app/services/auth_service.dart';
 import 'package:wisdom_app/services/invitation_service.dart';
 
 class QuestionsTaskScreen extends StatefulWidget {
-  const QuestionsTaskScreen({Key? key}) : super(key: key);
+  const QuestionsTaskScreen({super.key});
 
   @override
   State<QuestionsTaskScreen> createState() => _QuestionsTaskScreenState();
@@ -19,7 +19,7 @@ class QuestionsTaskScreen extends StatefulWidget {
 
 class _QuestionsTaskScreenState extends State<QuestionsTaskScreen> {
   bool _isLoading = true;
-  Set<Question> _selectedQuestions = {};
+  final Set<Question> _selectedQuestions = {};
 
   @override
   void initState() {

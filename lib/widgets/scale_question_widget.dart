@@ -9,8 +9,7 @@ class ScaleQuestionWidget extends StatefulWidget {
       onChanged; // Callback to notify when the slider value changes
 
   const ScaleQuestionWidget(
-      {Key? key, required this.question, required this.onChanged})
-      : super(key: key);
+      {super.key, required this.question, required this.onChanged});
 
   @override
   _ScaleQuestionWidgetState createState() => _ScaleQuestionWidgetState();
@@ -40,8 +39,8 @@ class _ScaleQuestionWidgetState extends State<ScaleQuestionWidget> {
             widget.onChanged(); // Notify that the slider value has changed
           },
         ),
-        Padding(
-          padding: const EdgeInsets.only(right: 18.0, left: 18.0, bottom: 10.0),
+        const Padding(
+          padding: EdgeInsets.only(right: 18.0, left: 18.0, bottom: 10.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

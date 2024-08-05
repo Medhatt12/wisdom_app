@@ -8,10 +8,10 @@ class MCQQuestionWidget extends StatefulWidget {
   final VoidCallback onChanged;
 
   const MCQQuestionWidget({
-    Key? key,
+    super.key,
     required this.question,
     required this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   _MCQQuestionWidgetState createState() => _MCQQuestionWidgetState();
@@ -41,7 +41,7 @@ class _MCQQuestionWidgetState extends State<MCQQuestionWidget> {
               groupValue: _selectedOption,
               onChanged: (value) {
                 setState(() {
-                  _selectedOption = value as String?;
+                  _selectedOption = value;
                 });
                 Provider.of<QuestionnaireController>(context, listen: false)
                     .setUserAnswer(widget.question.id, _selectedOption);

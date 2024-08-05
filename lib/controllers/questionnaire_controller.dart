@@ -7,7 +7,7 @@ import 'package:wisdom_app/models/question.dart';
 
 class QuestionnaireController with ChangeNotifier {
   List<Question> _questions = [];
-  Map<String, dynamic> _userAnswers = {}; // Store user answers
+  final Map<String, dynamic> _userAnswers = {}; // Store user answers
   List<Question> get questions => _questions;
 
   Future<Object?> getSharedAnswers(String code) async {
