@@ -38,6 +38,15 @@ jobs:
         run: flutter pub get
       - name: Build flutter web
         run: flutter build web
+      - name: Deploy to Server
+        uses: easingthemes/ssh-deploy@main
+        env:
+            SOURCE: "build/web/"
+            SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+            REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+            REMOTE_USER: ${{ secrets.REMOTE_USER }}
+            TARGET: ${{ secrets.REMOTE_TARGET }}
+            REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
 
       # Uncomment this step to verify the use of 'dart format' on each commit.
       # - name: Verify formatting
