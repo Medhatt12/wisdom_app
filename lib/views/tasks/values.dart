@@ -1,13 +1,16 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:wisdom_app/controllers/language_provider.dart';
+import 'package:wisdom_app/controllers/questionnaire_controller.dart';
 import 'package:wisdom_app/controllers/theme_provider.dart';
-import 'package:wisdom_app/main.dart';
 import 'package:wisdom_app/services/auth_service.dart';
 import 'package:wisdom_app/services/invitation_service.dart';
-import 'package:wisdom_app/models/question.dart';
-import 'package:wisdom_app/widgets/scale_question_widget.dart';
+import 'package:wisdom_app/widgets/task_completion_dialog.dart';
+import '../../models/question.dart';
+import '../../main.dart';
+import '../../widgets/scale_question_widget.dart';
 
 class ValuesScreen extends StatefulWidget {
   final String name;
@@ -20,13 +23,53 @@ class ValuesScreen extends StatefulWidget {
 
 class _ValuesScreenState extends State<ValuesScreen>
     with SingleTickerProviderStateMixin {
-  int currentPart = 1; // 1 or 2 to indicate which part the user is on
+  int currentPart = 1;
   late AnimationController _controller;
   late Animation<double> _animation;
   bool isDotFilled = false;
+  String valuesFirstPartText = '';
+  String valuesSecondPartText = '';
+  bool isLoading = true;
 
-  late final List<Question> questionsPart1;
-  late final List<Question> questionsPart2;
+  Map<String, dynamic>? myValuesData;
+  Map<String, dynamic>? partnerValuesData;
+
+  // Value-Question mapping
+  final Map<String, List<int>> valueQuestionMap = {
+    'Self-Direction': [1, 2],
+    'Power': [3, 4],
+    'Universalism': [5, 6],
+    'Security': [7, 8],
+    'Achievement': [9, 10],
+    'Stimulation': [11, 12],
+    'Conformity': [13, 14],
+    'Tradition': [15, 16],
+    'Hedonism': [17, 18],
+    'Benevolence': [19, 20],
+  };
+
+  // Definitions for each value
+  final Map<String, String> valueDefinitions = {
+    'Self-Direction': 'Acting and thinking independently is important to them.',
+    'Power':
+        'Control or dominance over people and resources is important to them.',
+    'Universalism':
+        'Understanding, appreciation, tolerance, and protection for the welfare of all people and of nature is important to them.',
+    'Security':
+        'The person values security, harmony, and stability in relationships, society, and their own self.',
+    'Achievement':
+        'Personal success through demonstrating competence according to social standards is important to them.',
+    'Stimulation':
+        'Excitement, novelty, and challenge in life are important to them.',
+    'Conformity':
+        'The restraint of actions, inclinations, and impulses that are likely to upset or harm others and violate social expectations or norms is important to them.',
+    'Tradition':
+        'Customs, traditions, and religion are important to the person.',
+    'Hedonism':
+        'Pleasure and sensuous gratification for oneself are important to them.',
+    'Benevolence':
+        'Preservation and enhancement of the welfare of people with whom one is in frequent personal contact is important to them.'
+  };
 
   @override
   void initState() {
@@ -41,54 +84,391 @@ class _ValuesScreenState extends State<ValuesScreen>
       });
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        setState(() {
-          currentPart = 2;
-        });
+        if (currentPart == 1) {
+          saveFirstPartAndProceedToSecond();
+        } else {
+          setState(() {
+            currentPart = 2;
+          });
+        }
       }
     });
 
-    questionsPart1 = List.generate(
-      questionsPart1Texts.length,
-      (index) => Question(
-        id: 'q${index + 1}',
-        text:
-            '${String.fromCharCode(97 + index)}. ${questionsPart1Texts[index]}',
-        type: QuestionType.SCALE,
-      ),
-    );
+    final questionnaireController =
+        Provider.of<QuestionnaireController>(context, listen: false);
+    final languageCode = Provider.of<LanguageProvider>(context, listen: false)
+        .locale
+        .languageCode;
 
-    questionsPart2 = List.generate(
-      questionsPart2Texts.length,
-      (index) => Question(
-        id: 'q${index + 1}',
-        text:
-            '${String.fromCharCode(97 + index)}. ${questionsPart2Texts[index].replaceAll('\$name', widget.name)}',
-        type: QuestionType.SCALE,
-      ),
-    );
-  }
-
-  void saveAnswersToFirestore() async {
-    try {
-      String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
-      await FirebaseFirestore.instance
-          .collection('tasks_answers')
-          .doc(uid)
-          .set({
-        'Values': {
-          'answered': true,
-        },
-      }, SetOptions(merge: true)); // Use merge option to merge new data
-      print('Answers saved to Firestore');
-    } catch (e) {
-      print('Error saving answers: $e');
-    }
+    questionnaireController.loadQuestions(languageCode).then((_) {
+      setState(() {
+        valuesFirstPartText = questionnaireController.getValueText(
+            'Values_first_part_text', widget.name);
+        valuesSecondPartText = questionnaireController.getValueText(
+                'Values_second_part_text_p1', widget.name) +
+            "\n\n" +
+            questionnaireController.getValueText(
+                'Values_second_part_text_p2', widget.name);
+        isLoading = false;
+      });
+    });
   }
 
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  // Fetch the values from Firestore
+  Future<void> fetchValuesFromFirestore() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+
+    try {
+      DocumentSnapshot myValuesSnapshot = await FirebaseFirestore.instance
+          .collection('tasks_answers')
+          .doc(uid)
+          .get();
+      DocumentSnapshot partnerValuesSnapshot = await FirebaseFirestore.instance
+          .collection('tasks_answers')
+          .doc(uid)
+          .get();
+
+      setState(() {
+        myValuesData = myValuesSnapshot['MyValues'] as Map<String, dynamic>?;
+        partnerValuesData =
+            partnerValuesSnapshot['PartnerValues'] as Map<String, dynamic>?;
+      });
+    } catch (e) {
+      print('Error fetching values from Firestore: $e');
+    }
+  }
+
+  void saveFirstPartAndProceedToSecond() async {
+    try {
+      final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+      final questionnaireController =
+          Provider.of<QuestionnaireController>(context, listen: false);
+
+      await FirebaseFirestore.instance
+          .collection('tasks_answers')
+          .doc(uid)
+          .set({
+        'MyValues': _prepareAnswersForFirestore(
+            questionnaireController.getUserAnswers(),
+            questionnaireController.myValuesQuestions),
+      }, SetOptions(merge: true));
+
+      print('First part answers saved to Firestore');
+
+      questionnaireController.clearUserAnswers();
+      questionnaireController.switchToPart2(); // Switch to part 2
+
+      setState(() {
+        currentPart = 2;
+        isDotFilled = false;
+      });
+    } catch (e) {
+      print('Error saving first part answers: $e');
+    }
+  }
+
+  // Prepare the answers for Firebase by adding 1 to each value, and defaulting unanswered questions to 1
+  Map<String, dynamic> _prepareAnswersForFirestore(
+      Map<String, dynamic> answers, List<Question> questions) {
+    final updatedAnswers = <String, dynamic>{};
+
+    for (var question in questions) {
+      if (answers.containsKey(question.id)) {
+        updatedAnswers[question.id] =
+            answers[question.id] + 1; // Add 1 to the answered value
+      } else {
+        updatedAnswers[question.id] = 1; // Default to 1 if unanswered
+      }
+    }
+
+    return updatedAnswers;
+  }
+
+  void saveSecondPartToFirestore() async {
+    try {
+      final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+      final questionnaireController =
+          Provider.of<QuestionnaireController>(context, listen: false);
+
+      final partnerAnswers = questionnaireController.getPartnerAnswers();
+      final partnerQuestions = questionnaireController.partnerValuesQuestions;
+
+      print('Partner answers: $partnerAnswers');
+
+      await FirebaseFirestore.instance
+          .collection('tasks_answers')
+          .doc(uid)
+          .set({
+        'PartnerValues':
+            _prepareAnswersForFirestore(partnerAnswers, partnerQuestions),
+      }, SetOptions(merge: true));
+
+      print('Second part answers saved to Firestore');
+      await fetchValuesFromFirestore();
+      _showSummaryBottomSheet(context);
+    } catch (e) {
+      print('Error saving second part answers: $e');
+    }
+  }
+
+  // Calculate averages for the values based on the answers fetched from Firebase
+  Map<String, double> _calculateValueAverages(Map<String, dynamic>? answers) {
+    if (answers == null) return {};
+
+    final valueAverages = <String, double>{};
+
+    valueQuestionMap.forEach((value, questions) {
+      double totalScore = 0;
+      for (int questionId in questions) {
+        totalScore += (answers[questionId.toString()] ?? 1) as double;
+      }
+      valueAverages[value] = (totalScore / (questions.length * 5)) * 100;
+    });
+
+    return valueAverages;
+  }
+
+  void _showSummaryBottomSheet(BuildContext context) {
+    final userAverages = _calculateValueAverages(myValuesData);
+    final partnerAverages = _calculateValueAverages(partnerValuesData);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // Allows resizing
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.75, // 75% height of screen
+          maxChildSize: 1, // Full height of screen
+          minChildSize: 0.4, // Minimum height of 40% screen
+          expand: false,
+          builder: (context, scrollController) {
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ListView(
+                controller: scrollController,
+                children: [
+                  const Text(
+                    'Summary of Values',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  _buildLegend(),
+                  const SizedBox(height: 20),
+                  _buildValueBars(userAverages, partnerAverages),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () async {
+                      // Show task completion dialog instead of going home
+                      final authService =
+                          Provider.of<AuthService>(context, listen: false);
+                      final invitationService = Provider.of<InvitationService>(
+                          context,
+                          listen: false);
+                      invitationService.incrementTasksFinished(
+                          authService.getCurrentUser()!.uid);
+
+                      // Show the task completion dialog
+                      showDialog(
+                        context: context,
+                        builder: (context) => TaskCompletionDialog(
+                          taskName: 'Values Task',
+                          currentStage: 3, // Current stage number
+                          onHomePressed: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const MainScreen()),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                    child: const Text('Next'),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // Display the color legend
+  Widget _buildLegend() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _buildLegendItem('My Values', Colors.blue),
+        const SizedBox(width: 20),
+        _buildLegendItem('Partner\'s Values', Colors.green),
+      ],
+    );
+  }
+
+  Widget _buildLegendItem(String text, Color color) {
+    return Row(
+      children: [
+        Container(
+          width: 20,
+          height: 20,
+          color: color,
+        ),
+        const SizedBox(width: 8),
+        Text(text),
+      ],
+    );
+  }
+
+  // Build animated bars with info icons
+  Widget _buildValueBars(
+      Map<String, double> userAverages, Map<String, double> partnerAverages) {
+    return Column(
+      children: valueQuestionMap.keys.map((value) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(value),
+                  IconButton(
+                    icon: const Icon(Icons.info_outline),
+                    onPressed: () {
+                      _showDefinitionDialog(context, value);
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 5),
+              Row(
+                children: [
+                  // Set a constant width for the bar
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.7, // 70% width
+                    child: Stack(
+                      children: [
+                        Container(
+                          height: 20,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300], // Background color
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        TweenAnimationBuilder<double>(
+                          tween: Tween<double>(
+                              begin: 0, end: userAverages[value]!),
+                          duration: const Duration(seconds: 2),
+                          builder: (context, value, child) {
+                            return Container(
+                              width: (value / 100) *
+                                  MediaQuery.of(context).size.width *
+                                  0.7, // 70% width
+                              height: 20,
+                              decoration: BoxDecoration(
+                                color: Colors.blue, // My Values color
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  // Set a fixed width for the percentage string
+                  Container(
+                    width: 40, // Enough space for 3 digits + '%'
+                    child: AnimatedCounter(
+                      endValue: userAverages[value]!,
+                      label: '%',
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 5),
+              Row(
+                children: [
+                  // Set a constant width for the partner's bar
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.7, // 70% width
+                    child: Stack(
+                      children: [
+                        Container(
+                          height: 20,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300], // Background color
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        TweenAnimationBuilder<double>(
+                          tween: Tween<double>(
+                              begin: 0, end: partnerAverages[value]!),
+                          duration: const Duration(seconds: 2),
+                          builder: (context, value, child) {
+                            return Container(
+                              width: (value / 100) *
+                                  MediaQuery.of(context).size.width *
+                                  0.7, // 70% width
+                              height: 20,
+                              decoration: BoxDecoration(
+                                color: Colors.green, // Partner's Values color
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  // Set a fixed width for the percentage string
+                  Container(
+                    width: 40, // Enough space for 3 digits + '%'
+                    child: AnimatedCounter(
+                      endValue: partnerAverages[value]!,
+                      label: '%',
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  // Show dialog with the definition of the value
+  void _showDefinitionDialog(BuildContext context, String value) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(value),
+          content: Text(valueDefinitions[value] ?? 'No definition available'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void startAnimationSequence() {
@@ -102,39 +482,39 @@ class _ValuesScreenState extends State<ValuesScreen>
 
   @override
   Widget build(BuildContext context) {
-    final authService = Provider.of<AuthService>(context);
-    final invitationService = Provider.of<InvitationService>(context);
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Values'), // Add a title to the app bar
+        title: Text('Values'),
         backgroundColor: themeProvider.themeData.colorScheme.background,
       ),
-      body: Column(
-        children: [
-          _buildTopIndicator(themeProvider.themeData.colorScheme.primary),
-          Expanded(
-            child: _buildQuestionnairePart(
-                themeProvider.themeData.colorScheme.primary),
-          ),
-        ],
-      ),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                _buildTopIndicator(themeProvider.themeData.colorScheme.primary),
+                Expanded(
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 500),
+                    child: _buildQuestionnairePart(
+                        themeProvider.themeData.colorScheme.primary),
+                  ),
+                ),
+              ],
+            ),
       floatingActionButton: FloatingActionButton(
-        heroTag: null,
-        key: UniqueKey(),
-        child: const Icon(Icons.check),
+        child: Icon(Icons.check),
         onPressed: () async {
           if (currentPart == 1) {
             startAnimationSequence();
           } else {
-            saveAnswersToFirestore();
-            invitationService
-                .incrementTasksFinished(authService.getCurrentUser()!.uid);
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const MainScreen()),
-            );
+            saveSecondPartToFirestore();
+            // Provider.of<InvitationService>(context, listen: false)
+            //     .incrementTasksFinished(
+            //         Provider.of<AuthService>(context, listen: false)
+            //             .getCurrentUser()!
+            //             .uid);
           }
         },
       ),
@@ -151,7 +531,7 @@ class _ValuesScreenState extends State<ValuesScreen>
               isActive: currentPart == 1,
               isCompleted: currentPart > 1,
               primaryColor: primaryColor),
-          _buildLine(primaryColor),
+          _buildAnimatedLine(primaryColor),
           _buildDot(
               isActive: currentPart == 2,
               isCompleted: false,
@@ -183,72 +563,109 @@ class _ValuesScreenState extends State<ValuesScreen>
     );
   }
 
-  Widget _buildLine(Color primaryColor) {
-    return SizedBox(
-      width: 100.0,
-      height: 2.0,
-      child: CustomPaint(
-        painter:
-            LinePainter(progress: _animation.value, primaryColor: primaryColor),
-      ),
+  Widget _buildAnimatedLine(Color primaryColor) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Container(
+          width: 100.0,
+          height: 2.0,
+          child: Stack(
+            children: [
+              Container(
+                width: 100.0,
+                height: 2.0,
+                color: Colors.grey,
+              ),
+              Positioned(
+                left: 0,
+                child: Container(
+                  width: 100.0 * _animation.value,
+                  height: 2.0,
+                  color: primaryColor,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
   Widget _buildQuestionnairePart(Color primaryColor) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: currentPart == 1
-          ? ListView(
-              children: [
-                Text(
-                  "Today’s task is to reflect on your values and compare them with the values of ${widget.name}. Please fill in the questionnaire and indicate how important the following life aspects seem to you.",
-                  style: const TextStyle(fontSize: 13.0),
-                ),
-                const SizedBox(height: 20.0),
-                _buildScaleExplanation(),
-                const Divider(),
-                const SizedBox(height: 20.0),
-                ...questionsPart1.map((question) {
-                  return ScaleQuestionWidget(
-                    question: question,
-                    onChanged: () {
-                      // Handle any action when the slider value changes
-                    },
-                  );
-                }),
-                const SizedBox(height: 20.0),
-              ],
-            )
-          : ListView(
-              children: [
-                Text(
-                  "Now it’s about putting yourself in ${widget.name}’s shoes.\n\nTake some time time to think about a typical action of ${widget.name}. It may be sitting on a place where they usually sit or take a typical posture. You can also enjoy their favorite snack or beverage or listen to their favorite song. Those are examples.\n\nNow you have time for this action. Try to put yourself in ${widget.name}’s perspective. Go on when you feel like you have successfully empathized.\n\nNow it is about ${widget.name}’s values. Please fill out the questionnaire and indicate how important the following life aspects seem to them.",
-                  style: const TextStyle(fontSize: 13.0),
-                ),
-                const SizedBox(height: 20.0),
-                _buildScaleExplanation(),
-                const Divider(),
-                const SizedBox(height: 20.0),
-                ...questionsPart2.map((question) {
-                  return ScaleQuestionWidget(
-                    question: question,
-                    onChanged: () {
-                      // Handle any action when the slider value changes
-                    },
-                  );
-                }),
-                const SizedBox(height: 20.0),
-              ],
-            ),
-    );
+    final questionnaireController =
+        Provider.of<QuestionnaireController>(context);
+
+    if (currentPart == 1) {
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView(
+          key: ValueKey<int>(1),
+          children: [
+            Text(valuesFirstPartText, style: TextStyle(fontSize: 13.0)),
+            SizedBox(height: 20.0),
+            _buildScaleExplanation(),
+            Divider(),
+            ...questionnaireController.myValuesQuestions.map((question) {
+              return ScaleQuestionWidget(
+                question: question,
+                onChanged: () {
+                  final value =
+                      questionnaireController.getUserAnswers()[question.id] ??
+                          0.0;
+                  print(
+                      'Part 1 - Set value: $value for question: ${question.id}');
+                  questionnaireController.setUserAnswer(question.id, value);
+                },
+              );
+            }).toList(),
+            SizedBox(height: 20.0),
+          ],
+        ),
+      );
+    } else {
+      final languageProvider = Provider.of<LanguageProvider>(context);
+      final isGerman = languageProvider.locale.languageCode == "de";
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView(
+          key: ValueKey<int>(2),
+          children: [
+            Text(valuesSecondPartText, style: TextStyle(fontSize: 13.0)),
+            SizedBox(height: 20.0),
+            _buildScaleExplanation(),
+            Divider(),
+            ...questionnaireController.partnerValuesQuestions.map((question) {
+              final questionText = isGerman
+                  ? "${widget.name} ist wichtig, ${question.text}"
+                  : "It is important to ${widget.name}, ${question.text}";
+              return ScaleQuestionWidget(
+                question: question.copyWith(text: questionText),
+                onChanged: () {
+                  final value = questionnaireController
+                          .getPartnerAnswers()[question.id] ??
+                      0.0;
+                  print(
+                      'Part 2 - Set value: $value for question: ${question.id}');
+                  questionnaireController.setPartnerAnswer(question.id, value);
+                },
+              );
+            }).toList(),
+            SizedBox(height: 20.0),
+          ],
+        ),
+      );
+    }
   }
 
   Widget _buildScaleExplanation() {
     return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Scale Explanation:",
-            style: TextStyle(fontWeight: FontWeight.bold)),
+        Text(
+          "Scale Explanation:",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         SizedBox(height: 10.0),
         Text("1 - Does not apply"),
         Text("2 - Hardly applies"),
@@ -260,85 +677,24 @@ class _ValuesScreenState extends State<ValuesScreen>
   }
 }
 
-class LinePainter extends CustomPainter {
-  final double progress;
-  final Color primaryColor;
+class AnimatedCounter extends StatelessWidget {
+  final double endValue;
+  final String label;
 
-  LinePainter({required this.progress, required this.primaryColor});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.grey
-      ..strokeWidth = 2.0
-      ..strokeCap = StrokeCap.round;
-
-    canvas.drawLine(
-      Offset(0, size.height / 2),
-      Offset(size.width, size.height / 2),
-      paint,
-    );
-
-    final highlightPaint = Paint()
-      ..color = primaryColor
-      ..strokeWidth = 2.0
-      ..strokeCap = StrokeCap.round;
-
-    canvas.drawLine(
-      Offset(0, size.height / 2),
-      Offset(size.width * progress, size.height / 2),
-      highlightPaint,
-    );
-  }
+  const AnimatedCounter({Key? key, required this.endValue, required this.label})
+      : super(key: key);
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: endValue),
+      duration: const Duration(seconds: 2),
+      builder: (context, value, child) {
+        return Text(
+          '${value.toInt()}$label',
+          style: const TextStyle(fontSize: 16),
+        );
+      },
+    );
   }
 }
-
-const questionsPart1Texts = [
-  'It is important to me to be free of external control.',
-  'It is important to me to shape life in a self-determined way.',
-  'It is important to me to take on a leadership role.',
-  'It is important to me to have prosperity and wealth.',
-  'It is important to me that everyone should be treated equally and have the same rights even if they have a different cultural background and a different opinion from mine.',
-  'It is important to me that humans take care of the environment.',
-  'It is important to me to live in a safe environment and to avoid potential danger.',
-  'It is important to me to live in an orderly environment.',
-  'It is important to me to show my abilities to others and be admired by others.',
-  'It is important to me to be ambitious and to be able to compete with others.',
-  'It is important to me to try new things and have an exciting life.',
-  'It is important to me to take risks to experience adventures.',
-  'It is important to me to stick to the rules.',
-  'It is important to me to adapt to social norms in order not to upset others.',
-  'It is important to me to be religious.',
-  'It is important to me to follow religious traditions.',
-  'It is important to me to do things that make them happy.',
-  'It is important to me to enjoy life.',
-  'It is important to me that other people are doing well.',
-  'It is important to me to see the good in people.',
-];
-
-const questionsPart2Texts = [
-  'It is important to \$name to be free of external control.',
-  'It is important to \$name to shape life in a self-determined way.',
-  'It is important to \$name to take on a leadership role.',
-  'It is important to \$name to have prosperity and wealth.',
-  'It is important to \$name that everyone should be treated equally and have the same rights even if they have a different cultural background and a different opinion from mine.',
-  'It is important to \$name that humans take care of the environment.',
-  'It is important to \$name to live in a safe environment and to avoid potential danger.',
-  'It is important to \$name to live in an orderly environment.',
-  'It is important to \$name to show my abilities to others and be admired by others.',
-  'It is important to \$name to be ambitious and to be able to compete with others.',
-  'It is important to \$name to try new things and have an exciting life.',
-  'It is important to \$name to take risks to experience adventures.',
-  'It is important to \$name to stick to the rules.',
-  'It is important to \$name to adapt to social norms in order not to upset others.',
-  'It is important to \$name to be religious.',
-  'It is important to \$name to follow religious traditions.',
-  'It is important to \$name to do things that make them happy.',
-  'It is important to \$name to enjoy life.',
-  'It is important to \$name that other people are doing well.',
-  'It is important to \$name to see the good in people.',
-];

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
 import '../models/scenario.dart';
 import 'story_data.dart';
 
 class StoryGameScreen extends StatefulWidget {
-  final VoidCallback onLastScenarioChoiceMade;
+  final Function(List<String>)
+      onLastScenarioChoiceMade; // Callback to pass story summary
 
   const StoryGameScreen({super.key, required this.onLastScenarioChoiceMade});
 
@@ -12,41 +12,20 @@ class StoryGameScreen extends StatefulWidget {
   _StoryGameScreenState createState() => _StoryGameScreenState();
 }
 
-class _StoryGameScreenState extends State<StoryGameScreen>
-    with SingleTickerProviderStateMixin {
+class _StoryGameScreenState extends State<StoryGameScreen> {
   int currentScenarioId = 0;
   late PageController pageController;
-  bool isLastScenarioChoiceMade = false;
   int? selectedChoiceIndex;
-  bool isFlipped = false;
-  bool showFrontContent = true;
-  late AnimationController _controller;
-  late Animation<double> _animation;
+  List<String> otherPerspectiveStory =
+      []; // Collect the "Other Perspective" texts
+  bool isLastScenario = false;
+  bool isFabEnabled =
+      false; // Track if the FAB should be enabled for the last scenario
 
   @override
   void initState() {
     super.initState();
     pageController = PageController();
-    _controller =
-        AnimationController(vsync: this, duration: const Duration(milliseconds: 800));
-    _animation = Tween<double>(begin: 0, end: 1).animate(_controller)
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          setState(() {
-            showFrontContent = false;
-          });
-        } else if (status == AnimationStatus.dismissed) {
-          setState(() {
-            showFrontContent = true;
-          });
-        }
-      });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 
   void _nextScenario() {
@@ -54,41 +33,35 @@ class _StoryGameScreenState extends State<StoryGameScreen>
       currentScenarioId++;
       selectedChoiceIndex =
           null; // Reset the selected choice for the next scenario
-      isLastScenarioChoiceMade =
-          false; // Reset the flag when moving to another scenario
-      isFlipped = false;
+      isFabEnabled = false; // Reset the FAB state
+      isLastScenario =
+          currentScenarioId == story.length - 1; // Check if last scenario
     });
     pageController.jumpToPage(currentScenarioId);
   }
 
   void _makeChoice(int index) {
-    if (currentScenarioId == story.length - 1) {
-      setState(() {
-        isLastScenarioChoiceMade = true;
-        selectedChoiceIndex = index;
-      });
-      widget.onLastScenarioChoiceMade();
-    } else {
-      setState(() {
-        selectedChoiceIndex = index;
-      });
-    }
-  }
+    final scenario = story[currentScenarioId];
 
-  void _switchPerspective() {
-    if (isFlipped) {
-      _controller.reverse();
-    } else {
-      _controller.forward();
+    // Track the "Other Perspective" based on the user's choice
+    if (scenario.otherPerspectives != null) {
+      otherPerspectiveStory.add(scenario.otherPerspectives![index]);
+    } else if (scenario.singlePerspective != null) {
+      otherPerspectiveStory.add(scenario.singlePerspective!);
     }
+
     setState(() {
-      isFlipped = !isFlipped;
+      selectedChoiceIndex = index;
+
+      // If it's the last scenario, enable the FAB
+      if (isLastScenario) {
+        isFabEnabled = true;
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    //final isLastScenario = currentScenarioId == story.length - 1;
     return Scaffold(
       body: PageView.builder(
         controller: pageController,
@@ -99,35 +72,26 @@ class _StoryGameScreenState extends State<StoryGameScreen>
           return Padding(
             padding: const EdgeInsets.all(10.0),
             child: Center(
-              child: AnimatedBuilder(
-                animation: _controller,
-                builder: (context, child) {
-                  final angle = _animation.value * pi;
-                  final transform = Matrix4.rotationY(angle);
-                  if (angle >= pi / 2) {
-                    transform.rotateY(pi);
-                  }
-                  return Transform(
-                    transform: transform,
-                    alignment: Alignment.center,
-                    child: angle >= pi / 2
-                        ? _buildPerspectiveCard(scenario.perspectiveText)
-                        : _buildScenarioCard(scenario),
-                  );
-                },
-              ),
+              child: _buildScenarioCard(scenario),
             ),
           );
         },
       ),
-      floatingActionButton: isLastScenarioChoiceMade
+      // Show FAB only for the last scenario, disabled until choice is made
+      floatingActionButton: isLastScenario
           ? FloatingActionButton(
               heroTag: null,
               key: UniqueKey(),
+              onPressed: isFabEnabled
+                  ? () {
+                      // Directly trigger the callback to show the bottom sheet
+                      widget.onLastScenarioChoiceMade(otherPerspectiveStory);
+                    }
+                  : null, // Disable FAB if no choice is made
+              backgroundColor: isFabEnabled
+                  ? Theme.of(context).primaryColor
+                  : Colors.grey, // Grey when disabled
               child: const Icon(Icons.check),
-              onPressed: () async {
-                // Implement saveAnswersToFirestore logic here
-              },
             )
           : null,
     );
@@ -142,87 +106,45 @@ class _StoryGameScreenState extends State<StoryGameScreen>
         key: const ValueKey(false),
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
-          child: showFrontContent
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    scenario.image != null
-                        ? Image.asset(
-                            scenario.image!,
-                            height: 200,
-                            fit: BoxFit.cover,
-                          )
-                        : const SizedBox(
-                            height: 0,
-                          ),
-                    const SizedBox(height: 20),
-                    Text(
-                      scenario.text,
-                      style: const TextStyle(fontSize: 18),
-                    ),
-                    const SizedBox(height: 20),
-                    ...scenario.choices.asMap().entries.map((entry) {
-                      int idx = entry.key;
-                      Choice choice = entry.value;
-                      return ListTile(
-                        leading: Icon(
-                          selectedChoiceIndex == idx
-                              ? Icons.check_box
-                              : Icons.check_box_outline_blank,
-                        ),
-                        title: Text(choice.text),
-                        onTap: () => _makeChoice(idx),
-                      );
-                    }),
-                    if (!isLastScenario && selectedChoiceIndex != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20.0),
-                        child: ElevatedButton(
-                          onPressed: _nextScenario,
-                          child: const Text('Next'),
-                        ),
-                      ),
-                    if (scenario.perspectiveSwitch != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20.0),
-                        child: ElevatedButton(
-                          onPressed: _switchPerspective,
-                          child: Text(scenario.perspectiveSwitch!),
-                        ),
-                      ),
-                  ],
-                )
-              : Container(), // Empty container to hide the content during flip
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPerspectiveCard(String? perspectiveText) {
-    return SizedBox(
-      height: double.infinity, // Full height of the screen
-      child: Card(
-        elevation: 8,
-        key: const ValueKey(true),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: !showFrontContent
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    if (perspectiveText != null)
-                      Text(
-                        perspectiveText,
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: _switchPerspective,
-                      child: const Text('Back'),
-                    ),
-                  ],
-                )
-              : Container(), // Empty container to hide the content during flip
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              scenario.image != null
+                  ? Image.asset(
+                      scenario.image!,
+                      height: 200,
+                      fit: BoxFit.cover,
+                    )
+                  : const SizedBox(height: 0),
+              const SizedBox(height: 20),
+              Text(
+                scenario.text,
+                style: const TextStyle(fontSize: 18),
+              ),
+              const SizedBox(height: 20),
+              ...scenario.choices.asMap().entries.map((entry) {
+                int idx = entry.key;
+                Choice choice = entry.value;
+                return ListTile(
+                  leading: Icon(
+                    selectedChoiceIndex == idx
+                        ? Icons.check_box
+                        : Icons.check_box_outline_blank,
+                  ),
+                  title: Text(choice.text),
+                  onTap: () => _makeChoice(idx),
+                );
+              }),
+              if (!isLastScenario && selectedChoiceIndex != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: ElevatedButton(
+                    onPressed: _nextScenario,
+                    child: const Text('Next'),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );

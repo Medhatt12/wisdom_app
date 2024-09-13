@@ -1,88 +1,125 @@
 import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http; // Import the http package
+import 'package:http/http.dart' as http;
 import 'package:wisdom_app/models/question.dart';
 
 class QuestionnaireController with ChangeNotifier {
   List<Question> _questions = [];
-  final Map<String, dynamic> _userAnswers = {}; // Store user answers
+  List<Question> _taskQuestions = [];
+  List<Question> _myValuesQuestions = [];
+  List<Question> _partnerValuesQuestions = [];
+  Map<String, String> _localizedTexts = {};
+  final Map<String, dynamic> _userAnswers = {};
+  final Map<String, dynamic> _partnerAnswers = {};
+  bool isPart1 = true;
+
   List<Question> get questions => _questions;
+  List<Question> get taskQuestions => _taskQuestions;
+  List<Question> get myValuesQuestions => _myValuesQuestions;
+  List<Question> get partnerValuesQuestions => _partnerValuesQuestions;
+
+  Map<String, dynamic> getCurrentAnswers() {
+    return isPart1 ? getUserAnswers() : getPartnerAnswers();
+  }
 
   Future<Object?> getSharedAnswers(String code) async {
     try {
-      // Retrieve shared answers from Firestore using the entered code
       DocumentSnapshot snapshot = await FirebaseFirestore.instance
           .collection('user_answers')
           .doc(code)
           .get();
 
       if (snapshot.exists) {
-        // Extract and display shared answers from the snapshot
         Object sharedAnswers = snapshot.data()!;
         return sharedAnswers;
-        // Display sharedAnswers in your application
       } else {
         print('Shared answers not found');
-        // Display a message in your application indicating that no shared answers were found
         return null;
       }
     } catch (e) {
       print('Error getting shared answers: $e');
-      // Handle the error, e.g., show a snackbar to the user
     }
     return null;
   }
 
+  void switchToPart2() {
+    isPart1 = false;
+    notifyListeners();
+  }
+
   Future<void> loadTaskQuestions(String languageCode) async {
     try {
-      // Make HTTP GET request to fetch JSON data
       http.Response response = await http.get(Uri.parse(
           'https://raw.githubusercontent.com/Medhatt12/wisdom_app/main/assets/locales/$languageCode.json'));
 
-      // Check if the request was successful (status code 200)
       if (response.statusCode == 200) {
-        // Parse JSON response
         String jsonString = response.body;
         final jsonMap = json.decode(jsonString);
-        _questions = (jsonMap['Task-Questions'] as List)
-            .map((questionJson) => Question.fromJson(questionJson))
-            .toList();
+
+        // Print the entire JSON to see what's actually being fetched
+        print('Fetched JSON for $languageCode: $jsonMap');
+
+        // Check for Task-Questions
+        if (jsonMap.containsKey('Task-Questions')) {
+          _taskQuestions = (jsonMap['Task-Questions'] as List)
+              .map((questionJson) => Question.fromJson(questionJson))
+              .toList();
+          print('Task-Questions loaded.');
+        } else {
+          print('Task-Questions not found in the JSON.');
+        }
+
         notifyListeners();
       } else {
-        // Handle other status codes
         print('Failed to load questions: ${response.statusCode}');
       }
     } catch (e) {
-      // Handle any errors that occur during the HTTP request
       print('Error loading questions: $e');
     }
   }
 
   Future<void> loadQuestions(String languageCode) async {
     try {
-      // Make HTTP GET request to fetch JSON data
       http.Response response = await http.get(Uri.parse(
           'https://raw.githubusercontent.com/Medhatt12/wisdom_app/main/assets/locales/$languageCode.json'));
 
-      // Check if the request was successful (status code 200)
       if (response.statusCode == 200) {
-        // Parse JSON response
         String jsonString = response.body;
         final jsonMap = json.decode(jsonString);
         _questions = (jsonMap['questions'] as List)
             .map((questionJson) => Question.fromJson(questionJson))
             .toList();
+        _taskQuestions = (jsonMap['Task-Questions'] as List)
+            .map((questionJson) => Question.fromJson(questionJson))
+            .toList();
+        _myValuesQuestions = (jsonMap['My-Values-Questions'] as List)
+            .map((questionJson) => Question.fromJson(questionJson))
+            .toList();
+        _partnerValuesQuestions = (jsonMap['Partner-Values-Questions'] as List)
+            .map((questionJson) => Question.fromJson(questionJson))
+            .toList();
+
+        _localizedTexts = {
+          'Values_first_part_text': jsonMap['Values_first_part_text'] ?? '',
+          'Values_second_part_text_p1':
+              jsonMap['Values_second_part_text_p1'] ?? '',
+          'Values_second_part_text_p2':
+              jsonMap['Values_second_part_text_p2'] ?? '',
+        };
+
         notifyListeners();
       } else {
-        // Handle other status codes
         print('Failed to load questions: ${response.statusCode}');
       }
     } catch (e) {
-      // Handle any errors that occur during the HTTP request
       print('Error loading questions: $e');
     }
+  }
+
+  String getValueText(String key, String name) {
+    String text = _localizedTexts[key] ?? '';
+    return text.replaceAll('\$name', name);
   }
 
   void setUserAnswersByTask(String taskTitle, Map<String, dynamic> answers) {
@@ -90,15 +127,43 @@ class QuestionnaireController with ChangeNotifier {
     notifyListeners();
   }
 
-  // Add methods for handling user responses
-  // Store user's answer to a question
   void setUserAnswer(String questionId, dynamic answer) {
     _userAnswers[questionId] = answer;
     notifyListeners();
   }
 
-  // Get user's answers
+  void setPartnerAnswer(String questionId, dynamic answer) {
+    _partnerAnswers[questionId] = answer;
+    notifyListeners();
+  }
+
   Map<String, dynamic> getUserAnswers() {
-    return Map.from(_userAnswers); // Return a copy to avoid mutation
+    return Map.from(_userAnswers);
+  }
+
+  Map<String, dynamic> getPartnerAnswers() {
+    return Map.from(_partnerAnswers);
+  }
+
+  // New method to clear user answers
+  void clearUserAnswers() {
+    _userAnswers.clear();
+    notifyListeners();
+  }
+
+  Map<String, double> calculateSkillAverages(
+      Map<String, dynamic> answers, List<Question> questions) {
+    Map<String, List<double>> skillScores = {};
+
+    for (var question in questions) {
+      if (answers.containsKey(question.id) && question.skill != null) {
+        skillScores
+            .putIfAbsent(question.skill!, () => [])
+            .add(answers[question.id]);
+      }
+    }
+
+    return skillScores.map((skill, scores) =>
+        MapEntry(skill, scores.reduce((a, b) => a + b) / scores.length));
   }
 }

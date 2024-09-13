@@ -9,6 +9,7 @@ import 'package:wisdom_app/main.dart';
 import 'package:wisdom_app/models/question.dart';
 import 'package:wisdom_app/services/auth_service.dart';
 import 'package:wisdom_app/services/invitation_service.dart';
+import 'package:wisdom_app/widgets/task_completion_dialog.dart';
 
 class QuestionsTaskScreen extends StatefulWidget {
   const QuestionsTaskScreen({super.key});
@@ -152,10 +153,22 @@ class _QuestionsTaskScreenState extends State<QuestionsTaskScreen> {
                                         listen: false);
                                 invitationService.incrementTasksFinished(
                                     authService.getCurrentUser()!.uid);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const MainScreen()),
+
+                                // Show the task completion dialog
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => TaskCompletionDialog(
+                                    taskName: 'Questions Task',
+                                    currentStage: 2, // Current stage number
+                                    onHomePressed: () {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const MainScreen()),
+                                      );
+                                    },
+                                  ),
                                 );
                               },
                               child: const Text('Confirm'),
@@ -198,14 +211,15 @@ class _QuestionsTaskScreenState extends State<QuestionsTaskScreen> {
                   const SizedBox(height: 20),
                   Expanded(
                     child: ListView.builder(
-                      itemCount: questionnaireController.questions.length,
+                      itemCount: questionnaireController.taskQuestions
+                          .length, // Use taskQuestions instead of questions
                       itemBuilder: (context, index) {
                         final question =
-                            questionnaireController.questions[index];
+                            questionnaireController.taskQuestions[index];
                         final isSelected =
                             _selectedQuestions.contains(question);
                         return ListTile(
-                          title: Text(question.text),
+                          title: Text(question.text), // Display question text
                           trailing: Icon(
                             isSelected
                                 ? Icons.check_circle

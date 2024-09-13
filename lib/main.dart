@@ -16,6 +16,7 @@ import 'package:wisdom_app/views/old_splash.dart';
 import 'package:wisdom_app/views/settings_screen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:wisdom_app/views/tasks/drawing_game_screen.dart';
+import 'package:wisdom_app/widgets/animated_stage_button.dart';
 import 'firebase_options.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:badges/badges.dart' as badges;
@@ -32,6 +33,7 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => QuestionnaireController()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider.value(value: languageProvider),
         ChangeNotifierProvider.value(value: questionnaireController),
@@ -180,15 +182,9 @@ class _MainScreenState extends State<MainScreen> {
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
         ),
-        floatingActionButton: FloatingActionButton(
-          elevation: 0,
-          shape: const CircleBorder(),
+        floatingActionButton: AnimatedStageButton(
+          tasksFinished: tasksFinished,
           backgroundColor: themeProvider.themeData.colorScheme.primaryContainer,
-          onPressed: () {},
-          child: Text(
-            tasksFinished > 5 ? '🦋' : '🐛',
-            style: const TextStyle(fontSize: 30),
-          ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       );

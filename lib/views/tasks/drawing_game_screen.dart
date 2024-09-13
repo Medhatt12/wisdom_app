@@ -1,19 +1,19 @@
+import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
-import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:wisdom_app/controllers/theme_provider.dart';
+import 'package:wisdom_app/main.dart';
 import 'package:wisdom_app/services/auth_service.dart';
 import 'package:wisdom_app/services/invitation_service.dart';
 import 'package:wisdom_app/widgets/drawn_line.dart';
 import 'package:wisdom_app/widgets/sketcher.dart';
-import '../../main.dart';
 
 class DrawingPage extends StatefulWidget {
   const DrawingPage({super.key});
@@ -41,7 +41,6 @@ class _DrawingPageState extends State<DrawingPage> {
   }
 
   List<Color> generateColorGradients(Color color) {
-    // Generate lighter and darker shades of the selected color
     final hslColor = HSLColor.fromColor(color);
     final lighterColor = hslColor
         .withLightness((hslColor.lightness + 0.2).clamp(0.0, 1.0))
@@ -62,7 +61,6 @@ class _DrawingPageState extends State<DrawingPage> {
             await image.toByteData(format: ui.ImageByteFormat.png);
         if (byteData != null) {
           Uint8List pngBytes = byteData.buffer.asUint8List();
-          // Save image to Firestore
           await saveImageToFirestore(pngBytes);
         }
       }
@@ -73,28 +71,22 @@ class _DrawingPageState extends State<DrawingPage> {
 
   Future<String> saveImageToFirestore(Uint8List imageData) async {
     try {
-      // Convert Uint8List to base64 string
       String base64Image = base64Encode(imageData);
-
-      // Save base64 image data to Firestore
       String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
-      await FirebaseFirestore.instance.collection('tasks_answers').doc(uid).set(
-          {
-            'drawing': {
-              'image_data': base64Image,
-            },
-          },
-          SetOptions(
-              merge:
-                  true)); // Use merge option to avoid overwriting existing data
+      await FirebaseFirestore.instance
+          .collection('tasks_answers')
+          .doc(uid)
+          .set({
+        'drawing': {
+          'image_data': base64Image,
+        },
+      }, SetOptions(merge: true));
 
       print('Image data saved to Firestore');
-
-      // Return the saved base64 image data
       return base64Image;
     } catch (e) {
       print('Error saving image data: $e');
-      return ''; // Return empty string or handle error appropriately
+      return '';
     }
   }
 
@@ -174,12 +166,9 @@ class _DrawingPageState extends State<DrawingPage> {
                                     listen: false);
                             invitationService.incrementTasksFinished(
                                 authService.getCurrentUser()!.uid);
-                            //showFeedbackPopup(context, 'Mindfulness Task');
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const MainScreen()),
-                            );
+                            Navigator.pop(context);
+                            _showTaskCompletionDialog(
+                                context); // Show the dialog
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
@@ -194,6 +183,48 @@ class _DrawingPageState extends State<DrawingPage> {
               ),
             );
           },
+        );
+      },
+    );
+  }
+
+  // Custom Task Completion Dialog
+  void _showTaskCompletionDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ShakeImage(), // Custom widget to animate stage 1 image
+                const SizedBox(height: 16),
+                const Text(
+                  "Keep going to turn the wisdom caterpillar into a beautiful butterfly!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18),
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const MainScreen()),
+                    );
+                  },
+                  child: const Text('Go to Home'),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );
@@ -414,6 +445,45 @@ class _DrawingPageState extends State<DrawingPage> {
           ),
         );
       }).toList(),
+    );
+  }
+}
+
+// Shake effect for the task completion image
+class ShakeImage extends StatefulWidget {
+  @override
+  _ShakeImageState createState() => _ShakeImageState();
+}
+
+class _ShakeImageState extends State<ShakeImage>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    )..repeat(reverse: true); // Make it shake
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Transform.translate(
+          offset: Offset(_controller.value * 10 - 5, 0),
+          child: Image.asset('assets/images/STAGE1.png', height: 100),
+        );
+      },
     );
   }
 }

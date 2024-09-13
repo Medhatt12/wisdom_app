@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,6 +7,7 @@ import 'package:wisdom_app/controllers/theme_provider.dart';
 import 'package:wisdom_app/main.dart';
 import 'package:wisdom_app/services/auth_service.dart';
 import 'package:wisdom_app/services/invitation_service.dart';
+import 'package:wisdom_app/widgets/task_completion_dialog.dart';
 
 class SimilaritiesAndDifferencesPage extends StatefulWidget {
   const SimilaritiesAndDifferencesPage({super.key});
@@ -198,11 +198,22 @@ class _SimilaritiesAndDifferencesPageState
                                           listen: false);
                                   invitationService.incrementTasksFinished(
                                       authService.getCurrentUser()!.uid);
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const MainScreen()),
+
+                                  // Show the task completion dialog
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => TaskCompletionDialog(
+                                      taskName: 'Similarities & Differences',
+                                      currentStage: 1, // Current stage number
+                                      onHomePressed: () {
+                                        Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const MainScreen()),
+                                        );
+                                      },
+                                    ),
                                   );
                                 }
                               : null,
@@ -282,7 +293,8 @@ class _SimilaritiesAndDifferencesPageState
               const Text('Similarities', style: TextStyle(fontSize: 20)),
               TextField(
                 controller: similarityController,
-                decoration: const InputDecoration(labelText: 'Enter Similarity'),
+                decoration:
+                    const InputDecoration(labelText: 'Enter Similarity'),
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 8.0, top: 8.0),
@@ -305,7 +317,8 @@ class _SimilaritiesAndDifferencesPageState
               const Text('Your Differences', style: TextStyle(fontSize: 20)),
               TextField(
                 controller: userDifferenceController,
-                decoration: const InputDecoration(labelText: 'Enter Your Difference'),
+                decoration:
+                    const InputDecoration(labelText: 'Enter Your Difference'),
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 8.0, top: 8.0),
@@ -329,8 +342,8 @@ class _SimilaritiesAndDifferencesPageState
                   style: TextStyle(fontSize: 20)),
               TextField(
                 controller: partnerDifferenceController,
-                decoration:
-                    const InputDecoration(labelText: 'Enter Partner\'s Difference'),
+                decoration: const InputDecoration(
+                    labelText: 'Enter Partner\'s Difference'),
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 8.0, top: 8.0),

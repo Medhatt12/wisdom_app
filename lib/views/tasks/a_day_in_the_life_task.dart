@@ -7,6 +7,7 @@ import 'package:wisdom_app/services/auth_service.dart';
 import 'package:wisdom_app/services/invitation_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:wisdom_app/widgets/task_completion_dialog.dart';
 
 class ADayInTheLifeScreen extends StatefulWidget {
   const ADayInTheLifeScreen({super.key});
@@ -17,6 +18,8 @@ class ADayInTheLifeScreen extends StatefulWidget {
 
 class _ADayInTheLifeScreenState extends State<ADayInTheLifeScreen> {
   bool isLastScenarioChoiceMade = false;
+  List<String> otherPerspectiveStory =
+      []; // Collect the "Other Perspective" texts
 
   void saveAnswersToFirestore() async {
     try {
@@ -35,10 +38,79 @@ class _ADayInTheLifeScreenState extends State<ADayInTheLifeScreen> {
     }
   }
 
-  void _onLastScenarioChoiceMade() {
+  void _onLastScenarioChoiceMade(List<String> storySummary) {
     setState(() {
       isLastScenarioChoiceMade = true;
+      otherPerspectiveStory = storySummary;
     });
+  }
+
+  void _showBottomSheetWithSummary() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // Allows the bottom sheet to be draggable
+      builder: (BuildContext context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.75, // Bottom sheet starts at 75% height
+          minChildSize: 0.5, // Minimum height of the bottom sheet
+          maxChildSize: 0.9, // Maximum height of the bottom sheet
+          expand: false, // Prevents full-screen expansion
+          builder: (context, scrollController) {
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Summary from Your Partner\'s Perspective',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      controller: scrollController,
+                      child: Text(
+                        otherPerspectiveStory.join('\n\n'),
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context); // Close the bottom sheet
+                      _showTaskCompletionDialog(
+                          context); // Show task completion dialog
+                    },
+                    child: const Text('Complete Task'),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showTaskCompletionDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return TaskCompletionDialog(
+          taskName: "A Day in the Life",
+          currentStage: 5, // Assuming this is the second task
+          onHomePressed: () {
+            Navigator.of(context).pop(); // Close the dialog
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const MainScreen()),
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -53,7 +125,8 @@ class _ADayInTheLifeScreenState extends State<ADayInTheLifeScreen> {
         backgroundColor: themeProvider.themeData.colorScheme.background,
       ),
       body: StoryGameScreen(
-        onLastScenarioChoiceMade: _onLastScenarioChoiceMade,
+        onLastScenarioChoiceMade: (storySummary) =>
+            _onLastScenarioChoiceMade(storySummary),
       ),
       floatingActionButton: isLastScenarioChoiceMade
           ? FloatingActionButton(
@@ -64,10 +137,7 @@ class _ADayInTheLifeScreenState extends State<ADayInTheLifeScreen> {
                 saveAnswersToFirestore();
                 invitationService
                     .incrementTasksFinished(authService.getCurrentUser()!.uid);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MainScreen()),
-                );
+                _showBottomSheetWithSummary(); // Show bottom sheet with the story summary
               },
             )
           : null,

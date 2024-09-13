@@ -10,6 +10,7 @@ import 'package:wisdom_app/controllers/theme_provider.dart';
 import 'package:wisdom_app/views/comparison_screen.dart';
 import 'package:wisdom_app/views/questionnaire_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:wisdom_app/views/tasks/a_day_in_the_life_of_2.dart';
 import 'package:wisdom_app/views/tasks/a_day_in_the_life_task.dart';
 import 'package:wisdom_app/views/tasks/gratefulness_task.dart';
 import 'package:wisdom_app/views/tasks/questions_task.dart';
@@ -79,6 +80,12 @@ class _HomeScreenState extends State<HomeScreen> {
         title: 'A day in the life',
         icon: Icons.directions_walk,
         route: const ADayInTheLifeScreen(), // Add route to ADayInTheLifeScreen
+      ),
+      TaskItem(
+        title: 'A day in the life - Twine',
+        icon: Icons.directions_walk,
+        route:
+            const ADayInTheLifeTwineScreen(), // Add route to ADayInTheLifeScreen
       )
     ];
     checkUserStatus();
@@ -382,8 +389,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         builder: (context) {
                           return AlertDialog(
                             title: const Text('No Partner'),
-                            content:
-                                const Text('You do not currently have a partner.'),
+                            content: const Text(
+                                'You do not currently have a partner.'),
                             actions: [
                               TextButton(
                                 onPressed: () {
@@ -504,7 +511,8 @@ class _HomeScreenState extends State<HomeScreen> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text('No Answers Found'),
-              content: const Text('No answers were found for the current user.'),
+              content:
+                  const Text('No answers were found for the current user.'),
               actions: [
                 TextButton(
                   onPressed: () {

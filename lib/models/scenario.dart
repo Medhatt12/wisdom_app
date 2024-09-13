@@ -1,15 +1,17 @@
 class Scenario {
   final String text;
   final List<Choice> choices;
-  final String? perspectiveSwitch;
-  final String? perspectiveText;
+  final List<String>?
+      otherPerspectives; // For multiple perspectives, one per choice
+  final String?
+      singlePerspective; // For scenarios with one shared perspective for all choices
   final String? image;
 
   Scenario({
     required this.text,
     required this.choices,
-    this.perspectiveSwitch,
-    this.perspectiveText,
+    this.otherPerspectives, // Optional for scenarios with multiple perspectives
+    this.singlePerspective, // Optional for scenarios with a single perspective
     this.image,
   });
 }

@@ -6,6 +6,7 @@ import 'package:wisdom_app/controllers/theme_provider.dart';
 import 'package:wisdom_app/main.dart';
 import 'package:wisdom_app/services/auth_service.dart';
 import 'package:wisdom_app/services/invitation_service.dart';
+import 'package:wisdom_app/widgets/task_completion_dialog.dart';
 
 class GratefulnessScreen extends StatefulWidget {
   const GratefulnessScreen({super.key});
@@ -129,13 +130,25 @@ class _GratefulnessScreenState extends State<GratefulnessScreen> {
                                         listen: false);
                                 invitationService.incrementTasksFinished(
                                     authService.getCurrentUser()!.uid);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const MainScreen()),
+
+                                // Show the task completion dialog
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => TaskCompletionDialog(
+                                    taskName: 'Gratefulness Task',
+                                    currentStage: 4, // Current stage number
+                                    onHomePressed: () {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const MainScreen()),
+                                      );
+                                    },
+                                  ),
                                 );
                               },
-                              child: const Text('Confirm'),
+                              child: const Text('Next'),
                             ),
                           ],
                         ),
