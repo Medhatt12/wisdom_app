@@ -13,9 +13,9 @@ import '../../main.dart';
 import '../../widgets/scale_question_widget.dart';
 
 class ValuesScreen extends StatefulWidget {
-  final String name;
+  //final String name;
 
-  const ValuesScreen({super.key, required this.name});
+  const ValuesScreen({super.key});
 
   @override
   State<ValuesScreen> createState() => _ValuesScreenState();
@@ -30,6 +30,7 @@ class _ValuesScreenState extends State<ValuesScreen>
   String valuesFirstPartText = '';
   String valuesSecondPartText = '';
   bool isLoading = true;
+  String partnerName = "";
 
   Map<String, dynamic>? myValuesData;
   Map<String, dynamic>? partnerValuesData;
@@ -73,7 +74,8 @@ class _ValuesScreenState extends State<ValuesScreen>
 
   @override
   void initState() {
-    super.initState();
+    partnerName = _fetchPartnerName() as String;
+
     _controller = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,
@@ -103,13 +105,31 @@ class _ValuesScreenState extends State<ValuesScreen>
     questionnaireController.loadQuestions(languageCode).then((_) {
       setState(() {
         valuesFirstPartText = questionnaireController.getValueText(
-            'Values_first_part_text', widget.name);
-        valuesSecondPartText = "${questionnaireController.getValueText(
-                'Values_second_part_text_p1', widget.name)}\n\n${questionnaireController.getValueText(
-                'Values_second_part_text_p2', widget.name)}";
+            'Values_first_part_text', partnerName);
+        valuesSecondPartText =
+            "${questionnaireController.getValueText('Values_second_part_text_p1', partnerName)}\n\n${questionnaireController.getValueText('Values_second_part_text_p2', partnerName)}";
         isLoading = false;
       });
     });
+
+    super.initState();
+  }
+
+  Future<String?> _fetchPartnerName() async {
+    try {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('user_data')
+          .doc(FirebaseAuth.instance.currentUser?.uid)
+          .get();
+
+      if (userDoc.exists && userDoc.data() != null) {
+        Map<String, dynamic> data = userDoc.data() as Map<String, dynamic>;
+        return data['partner_given_name'] as String?;
+      }
+    } catch (e) {
+      print('Error fetching partner name: $e');
+    }
+    return null; // Return null if partner name not found or error occurs
   }
 
   @override
@@ -635,8 +655,8 @@ class _ValuesScreenState extends State<ValuesScreen>
             const Divider(),
             ...questionnaireController.partnerValuesQuestions.map((question) {
               final questionText = isGerman
-                  ? "${widget.name} ist wichtig, ${question.text}"
-                  : "It is important to ${widget.name}, ${question.text}";
+                  ? "${partnerName} ist wichtig, ${question.text}"
+                  : "It is important to ${partnerName}, ${question.text}";
               return ScaleQuestionWidget(
                 question: question.copyWith(text: questionText),
                 onChanged: () {
@@ -679,7 +699,8 @@ class AnimatedCounter extends StatelessWidget {
   final double endValue;
   final String label;
 
-  const AnimatedCounter({super.key, required this.endValue, required this.label});
+  const AnimatedCounter(
+      {super.key, required this.endValue, required this.label});
 
   @override
   Widget build(BuildContext context) {

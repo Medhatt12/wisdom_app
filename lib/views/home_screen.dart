@@ -65,9 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
       TaskItem(
         title: 'Values',
         icon: Icons.admin_panel_settings,
-        route: const ValuesScreen(
-          name: 'Medhat',
-        ), // Add route to ValuesScreen
+        route: const ValuesScreen(), // Add route to ValuesScreen
       ),
       TaskItem(
         title: 'Gratefulness',
