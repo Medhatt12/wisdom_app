@@ -5,10 +5,10 @@ class AnimatedStageButton extends StatefulWidget {
   final Color backgroundColor;
 
   const AnimatedStageButton({
-    Key? key,
+    super.key,
     required this.tasksFinished,
     required this.backgroundColor,
-  }) : super(key: key);
+  });
 
   @override
   _AnimatedStageButtonState createState() => _AnimatedStageButtonState();
@@ -43,12 +43,12 @@ class _AnimatedStageButtonState extends State<AnimatedStageButton>
     _controller.repeat(reverse: true); // Start shaking
 
     // Stop the shaking after 3 seconds, return to original position, and restart
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () {
       _controller.stop();
       setState(() {}); // Ensure the UI updates to show the stopped state
 
       // Wait for 3 seconds in the original position
-      Future.delayed(Duration(seconds: 3), () {
+      Future.delayed(const Duration(seconds: 3), () {
         _controller.reset(); // Ensure it resets to 0 degrees
         _startShaking(); // Restart the shaking
       });

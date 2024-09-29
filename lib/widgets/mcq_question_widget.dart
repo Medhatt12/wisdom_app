@@ -72,7 +72,7 @@ class _MCQQuestionWidgetState extends State<MCQQuestionWidget> {
               widget.onChanged();
             },
           );
-        }).toList(),
+        }),
         if (_isOtherSelected)
           Padding(
             padding: const EdgeInsets.only(top: 10),

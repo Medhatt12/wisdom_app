@@ -203,7 +203,7 @@ class _DrawingPageState extends State<DrawingPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                ShakeImage(), // Custom widget to animate stage 1 image
+                const ShakeImage(), // Custom widget to animate stage 1 image
                 const SizedBox(height: 16),
                 const Text(
                   "Keep going to turn the wisdom caterpillar into a beautiful butterfly!",
@@ -451,6 +451,8 @@ class _DrawingPageState extends State<DrawingPage> {
 
 // Shake effect for the task completion image
 class ShakeImage extends StatefulWidget {
+  const ShakeImage({super.key});
+
   @override
   _ShakeImageState createState() => _ShakeImageState();
 }

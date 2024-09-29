@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
+import 'package:wisdom_app/app_tour_home_screen.dart';
 
 class AppTour2 {
   final BuildContext context;
@@ -22,119 +23,105 @@ class AppTour2 {
     TutorialCoachMark(
       onFinish: onFinish,
       targets: _createTargets(),
-      colorShadow: const Color.fromARGB(255, 77, 77, 77),
+      colorShadow: const Color.fromARGB(255, 11, 11, 11),
       paddingFocus: 10,
       opacityShadow: 0.8,
+      pulseEnable: false,
+      hideSkip: true,
+      onClickTarget: (target) {
+        print("${target.identify}");
+      },
+      alignSkip: Alignment.topRight,
     ).show(context: context);
   }
 
   List<TargetFocus> _createTargets() {
     return [
       TargetFocus(
-        identify: "Partner invitaions",
+        identify: "Partner-invitaions",
         keyTarget: invitationsKey,
         shape: ShapeLightFocus.RRect,
         contents: [
           TargetContent(
             align: ContentAlign.bottom,
-            child: const Column(
-              children: [
-                Text(
-                  "Partner invitaions",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: 24,
-                  ),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  "Here you can invite your partner using their invitation code, each user has an invitation code which can be found below!",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ],
-            ),
+            builder: (context, controller) {
+              return CoachmarkDesc(
+                text:
+                    "Here you can invite your partner using their invitation code, each user has an invitation code which can be found below!",
+                onNext: () {
+                  controller.next();
+                },
+                onSkip: () {
+                  controller.skip();
+                },
+              );
+            },
           ),
         ],
       ),
       TargetFocus(
-        identify: "User invitation code",
+        identify: "User-invitation-code",
         keyTarget: invitationsCodeKey,
         shape: ShapeLightFocus.RRect,
         contents: [
           TargetContent(
             align: ContentAlign.bottom,
-            child: const Column(
-              children: [
-                Text(
-                  "User invitation code",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: 24,
-                  ),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  "Share your invitation code with your partner to connect!",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ],
-            ),
+            builder: (context, controller) {
+              return CoachmarkDesc(
+                text:
+                    "Share your invitation code with your partner to connect!",
+                onNext: () {
+                  controller.next();
+                },
+                onSkip: () {
+                  controller.skip();
+                },
+              );
+            },
           ),
         ],
       ),
       TargetFocus(
-        identify: "Change language",
+        identify: "Change-language",
         keyTarget: languageChangerKey,
         shape: ShapeLightFocus.RRect,
         contents: [
           TargetContent(
             align: ContentAlign.bottom,
-            child: const Column(
-              children: [
-                Text(
-                  "Change language",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: 24,
-                  ),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  "Clicking this button switches between English and German !",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ],
-            ),
+            builder: (context, controller) {
+              return CoachmarkDesc(
+                text:
+                    "Clicking this button switches between English and German!",
+                onNext: () {
+                  controller.next();
+                },
+                onSkip: () {
+                  controller.skip();
+                },
+              );
+            },
           ),
         ],
       ),
       TargetFocus(
-        identify: "Change Theme",
+        identify: "Change-Theme",
         keyTarget: themeChangerKey,
         shape: ShapeLightFocus.RRect,
         contents: [
           TargetContent(
             align: ContentAlign.bottom,
-            child: const Column(
-              children: [
-                Text(
-                  "Change Theme",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: 24,
-                  ),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  "Clicking this button switches between dark and light mode!",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ],
-            ),
+            builder: (context, controller) {
+              return CoachmarkDesc(
+                text:
+                    "Clicking this button switches between dark and light mode!",
+                onNext: () {
+                  controller.next();
+                },
+                onSkip: () {
+                  controller.skip();
+                },
+              );
+            },
           ),
         ],
       ),
