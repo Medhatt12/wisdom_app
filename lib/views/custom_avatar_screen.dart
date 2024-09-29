@@ -18,10 +18,13 @@ class CustomAvatarScreen extends StatefulWidget {
 
 class _CustomAvatarScreenState extends State<CustomAvatarScreen> {
   final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _partnerNameController =
+      TextEditingController(); // Added controller for partner's name
 
   @override
   void dispose() {
     _usernameController.dispose();
+    _partnerNameController.dispose(); // Dispose of the partner name controller
     super.dispose();
   }
 
@@ -50,18 +53,79 @@ class _CustomAvatarScreenState extends State<CustomAvatarScreen> {
       return;
     }
 
+    // Show dialog to ask for partner's name
+    _showPartnerNameDialog(context, newTemp, username);
+  }
+
+  // Dialog to get the partner's name
+  Future<void> _showPartnerNameDialog(
+      BuildContext context, String avatarData, String username) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Enter Partner\'s Name'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                  'To make the app experience better, please enter your partner\'s name. This is required to proceed.'),
+              TextField(
+                controller: _partnerNameController,
+                decoration: const InputDecoration(
+                  labelText: 'Partner\'s Name',
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog without saving
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                String partnerName = _partnerNameController.text.trim();
+
+                if (partnerName.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Partner\'s name cannot be empty'),
+                    ),
+                  );
+                  return;
+                }
+
+                // Save the data to Firestore
+                await _saveDataToFirestore(username, avatarData, partnerName);
+
+                Navigator.of(context).pop(); // Close the dialog
+                Navigator.pushReplacementNamed(context, '/home');
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _saveDataToFirestore(
+      String username, String avatarData, String partnerName) async {
     DocumentReference userDocRef = FirebaseFirestore.instance
         .collection('user_data')
         .doc(FirebaseAuth.instance.currentUser?.uid);
 
     try {
-      // Update the document with the new attributes (username and user_image)
+      // Update the document with the new attributes (username, user_image, partner_given_name)
       await userDocRef.update({
         'username': username,
-        'user_image': newTemp,
+        'user_image': avatarData,
+        'partner_given_name': partnerName,
       });
       print('Document updated successfully');
-      Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
       print('Error updating document: $e');
     }
@@ -163,7 +227,6 @@ class NewPage extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                //width: min(600, _width * 0.85),
                 child: FluttermojiSaveWidget(
                   onTap: showSnackbar,
                   child: Container(
@@ -172,9 +235,6 @@ class NewPage extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: themeProvider
                             .themeData.colorScheme.primaryContainer,
-                        // border: Border.all(
-                        //       color: themeProvider
-                        //           .themeData.colorScheme.primaryContainer),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: const Padding(
@@ -201,7 +261,8 @@ class NewPage extends StatelessWidget {
                                 .themeData.colorScheme.primaryContainer),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      boxDecoration: const BoxDecoration(boxShadow: [BoxShadow()])),
+                      boxDecoration:
+                          const BoxDecoration(boxShadow: [BoxShadow()])),
                 ),
               ),
             ],

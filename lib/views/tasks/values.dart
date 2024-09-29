@@ -104,11 +104,9 @@ class _ValuesScreenState extends State<ValuesScreen>
       setState(() {
         valuesFirstPartText = questionnaireController.getValueText(
             'Values_first_part_text', widget.name);
-        valuesSecondPartText = questionnaireController.getValueText(
-                'Values_second_part_text_p1', widget.name) +
-            "\n\n" +
-            questionnaireController.getValueText(
-                'Values_second_part_text_p2', widget.name);
+        valuesSecondPartText = "${questionnaireController.getValueText(
+                'Values_second_part_text_p1', widget.name)}\n\n${questionnaireController.getValueText(
+                'Values_second_part_text_p2', widget.name)}";
         isLoading = false;
       });
     });
@@ -355,7 +353,7 @@ class _ValuesScreenState extends State<ValuesScreen>
               Row(
                 children: [
                   // Set a constant width for the bar
-                  Container(
+                  SizedBox(
                     width: MediaQuery.of(context).size.width * 0.7, // 70% width
                     child: Stack(
                       children: [
@@ -388,7 +386,7 @@ class _ValuesScreenState extends State<ValuesScreen>
                   ),
                   const SizedBox(width: 10),
                   // Set a fixed width for the percentage string
-                  Container(
+                  SizedBox(
                     width: 40, // Enough space for 3 digits + '%'
                     child: AnimatedCounter(
                       endValue: userAverages[value]!,
@@ -401,7 +399,7 @@ class _ValuesScreenState extends State<ValuesScreen>
               Row(
                 children: [
                   // Set a constant width for the partner's bar
-                  Container(
+                  SizedBox(
                     width: MediaQuery.of(context).size.width * 0.7, // 70% width
                     child: Stack(
                       children: [
@@ -434,7 +432,7 @@ class _ValuesScreenState extends State<ValuesScreen>
                   ),
                   const SizedBox(width: 10),
                   // Set a fixed width for the percentage string
-                  Container(
+                  SizedBox(
                     width: 40, // Enough space for 3 digits + '%'
                     child: AnimatedCounter(
                       endValue: partnerAverages[value]!,
@@ -486,11 +484,11 @@ class _ValuesScreenState extends State<ValuesScreen>
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Values'),
+        title: const Text('Values'),
         backgroundColor: themeProvider.themeData.colorScheme.background,
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
                 _buildTopIndicator(themeProvider.themeData.colorScheme.primary),
@@ -504,7 +502,7 @@ class _ValuesScreenState extends State<ValuesScreen>
               ],
             ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.check),
+        child: const Icon(Icons.check),
         onPressed: () async {
           if (currentPart == 1) {
             startAnimationSequence();
@@ -567,7 +565,7 @@ class _ValuesScreenState extends State<ValuesScreen>
     return AnimatedBuilder(
       animation: _animation,
       builder: (context, child) {
-        return Container(
+        return SizedBox(
           width: 100.0,
           height: 2.0,
           child: Stack(
@@ -600,12 +598,12 @@ class _ValuesScreenState extends State<ValuesScreen>
       return Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
-          key: ValueKey<int>(1),
+          key: const ValueKey<int>(1),
           children: [
-            Text(valuesFirstPartText, style: TextStyle(fontSize: 13.0)),
-            SizedBox(height: 20.0),
+            Text(valuesFirstPartText, style: const TextStyle(fontSize: 13.0)),
+            const SizedBox(height: 20.0),
             _buildScaleExplanation(),
-            Divider(),
+            const Divider(),
             ...questionnaireController.myValuesQuestions.map((question) {
               return ScaleQuestionWidget(
                 question: question,
@@ -618,8 +616,8 @@ class _ValuesScreenState extends State<ValuesScreen>
                   questionnaireController.setUserAnswer(question.id, value);
                 },
               );
-            }).toList(),
-            SizedBox(height: 20.0),
+            }),
+            const SizedBox(height: 20.0),
           ],
         ),
       );
@@ -629,12 +627,12 @@ class _ValuesScreenState extends State<ValuesScreen>
       return Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
-          key: ValueKey<int>(2),
+          key: const ValueKey<int>(2),
           children: [
-            Text(valuesSecondPartText, style: TextStyle(fontSize: 13.0)),
-            SizedBox(height: 20.0),
+            Text(valuesSecondPartText, style: const TextStyle(fontSize: 13.0)),
+            const SizedBox(height: 20.0),
             _buildScaleExplanation(),
-            Divider(),
+            const Divider(),
             ...questionnaireController.partnerValuesQuestions.map((question) {
               final questionText = isGerman
                   ? "${widget.name} ist wichtig, ${question.text}"
@@ -650,8 +648,8 @@ class _ValuesScreenState extends State<ValuesScreen>
                   questionnaireController.setPartnerAnswer(question.id, value);
                 },
               );
-            }).toList(),
-            SizedBox(height: 20.0),
+            }),
+            const SizedBox(height: 20.0),
           ],
         ),
       );
@@ -681,8 +679,7 @@ class AnimatedCounter extends StatelessWidget {
   final double endValue;
   final String label;
 
-  const AnimatedCounter({Key? key, required this.endValue, required this.label})
-      : super(key: key);
+  const AnimatedCounter({super.key, required this.endValue, required this.label});
 
   @override
   Widget build(BuildContext context) {

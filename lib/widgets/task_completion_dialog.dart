@@ -6,11 +6,11 @@ class TaskCompletionDialog extends StatefulWidget {
   final VoidCallback onHomePressed;
 
   const TaskCompletionDialog({
-    Key? key,
+    super.key,
     required this.taskName,
     required this.currentStage,
     required this.onHomePressed,
-  }) : super(key: key);
+  });
 
   @override
   _TaskCompletionDialogState createState() => _TaskCompletionDialogState();

@@ -48,7 +48,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     bool showTour = !(data['viewedTour'] ?? false);
 
     if (showTour) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(seconds: 1), () {
         AppTour2(
           context: context,
           invitationsKey: invitationsKey,
@@ -177,7 +177,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   key: invitationsCodeKey,
                   title:
                       Text(snapshot.data?['user_code'] ?? ''), // Show user_code
-                  leading: const Text('Invitation code: '), // Change leading text
+                  leading:
+                      const Text('Invitation code: '), // Change leading text
                 );
               } else {
                 return const ListTile(

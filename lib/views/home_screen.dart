@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -46,7 +45,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    super.initState();
     _dailyTasks = [
       TaskItem(
         title: 'Mindfulness',
@@ -89,6 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
       )
     ];
     checkUserStatus();
+    super.initState();
   }
 
   Future<void> checkUserStatus() async {
@@ -97,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       isLoading = false;
       if (showTour) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(const Duration(seconds: 1), () {
           AppTour(
             context: context,
             startQuestionnaireKey: startQuestionnaireKey,
@@ -586,17 +585,11 @@ class SVGImageWidget extends StatelessWidget {
           if (svgData != null && svgData.isNotEmpty) {
             return CircleAvatar(
                 radius: 34,
-                child: kIsWeb
-                    ? SvgPicture.string(
-                        svgData,
-                        width: 50,
-                        height: 50,
-                      )
-                    : Image.network(
-                        svgData,
-                        width: 50,
-                        height: 50,
-                      ));
+                child: SvgPicture.string(
+                  svgData,
+                  width: 50,
+                  height: 50,
+                ));
           } else {
             return const Text('No SVG data found');
           }

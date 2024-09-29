@@ -59,7 +59,6 @@ dependencies:
   asn1lib: ^1.5.3
   flutter_inappwebview: ^6.0.0
 
-  
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -102,6 +101,7 @@ flutter:
     - assets/images/STAGE1.png
     - assets/images/STAGE2.png
     - assets/images/STAGE3.png
+    - assets/images/STAGE3.5.png
     - assets/images/STAGE4.png
     - assets/images/STAGE5.png
     - assets/images/STAGE6.png
