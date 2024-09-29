@@ -37,7 +37,7 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
       - name: Build flutter web
-        run: flutter build web
+        run: flutter build web --web-renderer canvaskit --release --no-tree-shake-icons   
       - name: Deploy to Server
         uses: easingthemes/ssh-deploy@main
         env:
