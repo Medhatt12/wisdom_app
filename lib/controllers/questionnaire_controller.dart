@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:wisdom_app/models/question.dart';
@@ -115,6 +116,29 @@ class QuestionnaireController with ChangeNotifier {
     } catch (e) {
       print('Error loading questions: $e');
     }
+  }
+
+  // New method to fetch partner_given_name from Firestore
+  Future<String?> getPartnerGivenName() async {
+    try {
+      String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('user_data')
+          .doc(uid)
+          .get();
+
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+      String partnerName = data['partner_given_name'] ?? 0;
+
+      if (snapshot.exists) {
+        return partnerName;
+      } else {
+        print('Partner document not found.');
+      }
+    } catch (e) {
+      print('Error fetching partner given name');
+    }
+    return null;
   }
 
   String getValueText(String key, String name) {

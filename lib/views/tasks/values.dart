@@ -13,8 +13,6 @@ import '../../main.dart';
 import '../../widgets/scale_question_widget.dart';
 
 class ValuesScreen extends StatefulWidget {
-  //final String name;
-
   const ValuesScreen({super.key});
 
   @override
@@ -30,7 +28,7 @@ class _ValuesScreenState extends State<ValuesScreen>
   String valuesFirstPartText = '';
   String valuesSecondPartText = '';
   bool isLoading = true;
-  String partnerName = "";
+  String? partnerName; // State variable for partner's name
 
   Map<String, dynamic>? myValuesData;
   Map<String, dynamic>? partnerValuesData;
@@ -74,8 +72,7 @@ class _ValuesScreenState extends State<ValuesScreen>
 
   @override
   void initState() {
-    partnerName = _fetchPartnerName() as String;
-
+    super.initState();
     _controller = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,
@@ -96,40 +93,37 @@ class _ValuesScreenState extends State<ValuesScreen>
       }
     });
 
+    loadPartnerNameAndQuestions();
+  }
+
+  Future<void> loadPartnerNameAndQuestions() async {
     final questionnaireController =
         Provider.of<QuestionnaireController>(context, listen: false);
     final languageCode = Provider.of<LanguageProvider>(context, listen: false)
         .locale
         .languageCode;
 
-    questionnaireController.loadQuestions(languageCode).then((_) {
-      setState(() {
-        valuesFirstPartText = questionnaireController.getValueText(
-            'Values_first_part_text', partnerName);
-        valuesSecondPartText =
-            "${questionnaireController.getValueText('Values_second_part_text_p1', partnerName)}\n\n${questionnaireController.getValueText('Values_second_part_text_p2', partnerName)}";
-        isLoading = false;
-      });
+    setState(() {
+      isLoading = true; // Start loading state
     });
 
-    super.initState();
-  }
+    // Fetch the partner's name asynchronously
+    partnerName = await questionnaireController.getPartnerGivenName();
 
-  Future<String?> _fetchPartnerName() async {
-    try {
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance
-          .collection('user_data')
-          .doc(FirebaseAuth.instance.currentUser?.uid)
-          .get();
+    // Load the questions
+    await questionnaireController.loadQuestions(languageCode);
 
-      if (userDoc.exists && userDoc.data() != null) {
-        Map<String, dynamic> data = userDoc.data() as Map<String, dynamic>;
-        return data['partner_given_name'] as String?;
-      }
-    } catch (e) {
-      print('Error fetching partner name: $e');
-    }
-    return null; // Return null if partner name not found or error occurs
+    setState(() {
+      valuesFirstPartText = questionnaireController.getValueText(
+          'Values_first_part_text',
+          partnerName ?? ""); // Handle null partner name if necessary
+      valuesSecondPartText = questionnaireController.getValueText(
+              'Values_second_part_text_p1', partnerName ?? "") +
+          "\n\n" +
+          questionnaireController.getValueText(
+              'Values_second_part_text_p2', partnerName ?? "");
+      isLoading = false; // End loading state
+    });
   }
 
   @override
@@ -373,7 +367,7 @@ class _ValuesScreenState extends State<ValuesScreen>
               Row(
                 children: [
                   // Set a constant width for the bar
-                  SizedBox(
+                  Container(
                     width: MediaQuery.of(context).size.width * 0.7, // 70% width
                     child: Stack(
                       children: [
@@ -406,7 +400,7 @@ class _ValuesScreenState extends State<ValuesScreen>
                   ),
                   const SizedBox(width: 10),
                   // Set a fixed width for the percentage string
-                  SizedBox(
+                  Container(
                     width: 40, // Enough space for 3 digits + '%'
                     child: AnimatedCounter(
                       endValue: userAverages[value]!,
@@ -419,7 +413,7 @@ class _ValuesScreenState extends State<ValuesScreen>
               Row(
                 children: [
                   // Set a constant width for the partner's bar
-                  SizedBox(
+                  Container(
                     width: MediaQuery.of(context).size.width * 0.7, // 70% width
                     child: Stack(
                       children: [
@@ -452,7 +446,7 @@ class _ValuesScreenState extends State<ValuesScreen>
                   ),
                   const SizedBox(width: 10),
                   // Set a fixed width for the percentage string
-                  SizedBox(
+                  Container(
                     width: 40, // Enough space for 3 digits + '%'
                     child: AnimatedCounter(
                       endValue: partnerAverages[value]!,
@@ -504,11 +498,11 @@ class _ValuesScreenState extends State<ValuesScreen>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Values'),
+        title: Text('Values'),
         backgroundColor: themeProvider.themeData.colorScheme.background,
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(child: CircularProgressIndicator())
           : Column(
               children: [
                 _buildTopIndicator(themeProvider.themeData.colorScheme.primary),
@@ -522,17 +516,12 @@ class _ValuesScreenState extends State<ValuesScreen>
               ],
             ),
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.check),
+        child: Icon(Icons.check),
         onPressed: () async {
           if (currentPart == 1) {
             startAnimationSequence();
           } else {
             saveSecondPartToFirestore();
-            // Provider.of<InvitationService>(context, listen: false)
-            //     .incrementTasksFinished(
-            //         Provider.of<AuthService>(context, listen: false)
-            //             .getCurrentUser()!
-            //             .uid);
           }
         },
       ),
@@ -585,7 +574,7 @@ class _ValuesScreenState extends State<ValuesScreen>
     return AnimatedBuilder(
       animation: _animation,
       builder: (context, child) {
-        return SizedBox(
+        return Container(
           width: 100.0,
           height: 2.0,
           child: Stack(
@@ -618,12 +607,12 @@ class _ValuesScreenState extends State<ValuesScreen>
       return Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
-          key: const ValueKey<int>(1),
+          key: ValueKey<int>(1),
           children: [
-            Text(valuesFirstPartText, style: const TextStyle(fontSize: 13.0)),
-            const SizedBox(height: 20.0),
+            Text(valuesFirstPartText, style: TextStyle(fontSize: 13.0)),
+            SizedBox(height: 20.0),
             _buildScaleExplanation(),
-            const Divider(),
+            Divider(),
             ...questionnaireController.myValuesQuestions.map((question) {
               return ScaleQuestionWidget(
                 question: question,
@@ -636,27 +625,30 @@ class _ValuesScreenState extends State<ValuesScreen>
                   questionnaireController.setUserAnswer(question.id, value);
                 },
               );
-            }),
-            const SizedBox(height: 20.0),
+            }).toList(),
+            SizedBox(height: 20.0),
           ],
         ),
       );
     } else {
       final languageProvider = Provider.of<LanguageProvider>(context);
       final isGerman = languageProvider.locale.languageCode == "de";
+
       return Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
-          key: const ValueKey<int>(2),
+          key: ValueKey<int>(2),
           children: [
-            Text(valuesSecondPartText, style: const TextStyle(fontSize: 13.0)),
-            const SizedBox(height: 20.0),
+            Text(valuesSecondPartText, style: TextStyle(fontSize: 13.0)),
+            SizedBox(height: 20.0),
             _buildScaleExplanation(),
-            const Divider(),
+            Divider(),
             ...questionnaireController.partnerValuesQuestions.map((question) {
+              // Use the fetched partnerName here in questionText
               final questionText = isGerman
-                  ? "${partnerName} ist wichtig, ${question.text}"
-                  : "It is important to ${partnerName}, ${question.text}";
+                  ? "$partnerName ist wichtig, ${question.text}"
+                  : "It is important to $partnerName, ${question.text}";
+
               return ScaleQuestionWidget(
                 question: question.copyWith(text: questionText),
                 onChanged: () {
@@ -668,8 +660,8 @@ class _ValuesScreenState extends State<ValuesScreen>
                   questionnaireController.setPartnerAnswer(question.id, value);
                 },
               );
-            }),
-            const SizedBox(height: 20.0),
+            }).toList(),
+            SizedBox(height: 20.0),
           ],
         ),
       );
@@ -699,8 +691,8 @@ class AnimatedCounter extends StatelessWidget {
   final double endValue;
   final String label;
 
-  const AnimatedCounter(
-      {super.key, required this.endValue, required this.label});
+  const AnimatedCounter({Key? key, required this.endValue, required this.label})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
